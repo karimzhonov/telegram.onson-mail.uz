@@ -1,12 +1,16 @@
 import asyncio, logging
 from django.core.management import BaseCommand
 from bot.loader import dp
-from bot import handlers
+from bot import handlers, middlewares
+from bot.settings import TOKEN
+from bot.utils import create_bot
 
 logger = logging.getLogger(__name__)
 
 
 async def main():
+    assert TOKEN, "TELEGRAM_BOT_TOKEN not found in environment"
+
     logging.basicConfig(
         level=logging.INFO,
         format=u'%(filename)s:%(lineno)d #%(levelname)-8s [%(asctime)s] - %(name)s - %(message)s',
@@ -14,10 +18,11 @@ async def main():
     logger.info("Starting bot")
 
     handlers.setup(dp)
+    middlewares.setup(dp)
 
     # start
     try:
-        await dp.start_polling()
+        await dp.start_polling(create_bot(TOKEN))
     finally:
         await dp.storage.close()
         await dp.storage.wait_closed()

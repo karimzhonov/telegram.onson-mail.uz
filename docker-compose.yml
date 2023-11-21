@@ -33,11 +33,22 @@ services:
     env_file: .env
 
   db:
-    image: postgres:15.0-alpine
+    image: postgis/postgis:latest
     volumes:
       - ./postgres_data:/var/lib/postgresql/data
     restart: always
     container_name: onson-db
     env_file: .env
+
+  redis:
+    container_name: onson-redis
+    image: redis:7.2-rc3-alpine
+    restart: always
+    env_file:
+      - .env
     ports:
-      - 5433:5432
+      - ${REDIS_PORT}:${REDIS_PORT}
+    expose:
+      - ${REDIS_PORT}
+    volumes:
+      - ./redis_data:/data

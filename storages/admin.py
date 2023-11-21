@@ -1,3 +1,12 @@
-from django.contrib import admin
+from django.contrib.gis import admin
+from .models import Storage, Image
 
-# Register your models here.
+
+class ImageInline(admin.TabularInline):
+    model = Image
+    extra = 0
+
+
+@admin.register(Storage)
+class StorageAdmin(admin.OSMGeoAdmin):
+    pass
