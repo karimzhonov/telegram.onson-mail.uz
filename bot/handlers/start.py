@@ -3,9 +3,9 @@ from django.conf import settings
 from aiogram import types
 from aiogram.fsm.context import FSMContext
 from aiogram.utils.keyboard import ReplyKeyboardBuilder
-from bot.models import User, Info, LANGUAGES, aget_text as _
+from bot.models import User, Info, LANGUAGES, get_text as _
 from bot.states import LanguageChooseState
-from bot.text_keywords import TAKE_ID, SETTINGS, INFO, LISTID
+from bot.text_keywords import TAKE_ID, SETTINGS, INFO, LISTID, CHECK
 from users.models import ClientId
 
 async def start(msg: types.Message, state: FSMContext):
@@ -17,29 +17,32 @@ async def start(msg: types.Message, state: FSMContext):
 
 async def menu(msg: types.Message, state: FSMContext):
     await state.clear()
-    text = await _("menu_text", msg.bot.lang)
+    text = _("menu_text", msg.bot.lang)
     keyboard = ReplyKeyboardBuilder()
     if await ClientId.objects.filter(user_id=msg.from_user.id, deleted=False).aexists():
-        keyboard.row(types.KeyboardButton(text=await _(LISTID, msg.bot.lang)))
+        keyboard.row(types.KeyboardButton(text=_(LISTID, msg.bot.lang)))
     else:
-        keyboard.row(types.KeyboardButton(text=await _(TAKE_ID, msg.bot.lang)))
-    keyboard.row(types.KeyboardButton(text=await _(SETTINGS, msg.bot.lang)))
-    keyboard.row(types.KeyboardButton(text=await _(INFO, msg.bot.lang)))
+        keyboard.row(types.KeyboardButton(text=_(TAKE_ID, msg.bot.lang)))
+    keyboard.row(types.KeyboardButton(text=_(SETTINGS, msg.bot.lang)))
+    keyboard.row(types.KeyboardButton(text=_(INFO, msg.bot.lang)))
     await msg.answer(text=text, reply_markup=keyboard.as_markup(resize_keyboard=True))
 
 
 async def choose_lang(msg: types.Message, state: FSMContext):
-    keyboard = ReplyKeyboardBuilder([
-        [types.KeyboardButton(text=text)] for code, text in LANGUAGES
-    ])
-    await msg.answer(await _("choose_lang_text", msg.bot.lang), reply_markup=keyboard.as_markup(resize_keyboard=True))
+    keyboard = ReplyKeyboardBuilder()
+    for code, text in LANGUAGES:
+        if msg.bot.lang == code:
+            text = f"{CHECK} {text}"
+        keyboard.row(types.KeyboardButton(text=text))
+    
+    await msg.answer(_("choose_lang_text", msg.bot.lang), reply_markup=keyboard.as_markup(resize_keyboard=True))
     await state.set_state(LanguageChooseState.lang)
 
 
 async def choosed_lang(msg: types.Message, state: FSMContext):
-    text = msg.text
+    text: str = msg.text
     for code, ltext in LANGUAGES:
-        if text == ltext:
+        if ltext in text:
             if await User.objects.filter(id=msg.from_user.id).aexists():
                 await User.objects.filter(id=msg.from_user.id).aupdate(lang=code)
             else:
@@ -50,18 +53,19 @@ async def choosed_lang(msg: types.Message, state: FSMContext):
                     last_name=msg.from_user.last_name,
                     lang=code
                 )
+            msg.bot.lang = code
             break
     await menu(msg, state)
     
 
 async def info(msg: types.Message, state: FSMContext):
     if not await Info.objects.filter(is_active=True).aexists():
-        return await msg.answer(await _("info_not_upload_yeat", msg.bot.lang))
+        return await msg.answer(_("info_not_upload_yeat", msg.bot.lang))
     async for info in Info.objects.filter(is_active=True):
         text = f"""
-{await _(f'{info.slug}_header', msg.bot.lang)}
+{_(f'{info.slug}_header', msg.bot.lang)}
 
-{await _(f'{info.slug}_desc', msg.bot.lang)}
+{_(f'{info.slug}_desc', msg.bot.lang)}
 """
         file_path = os.path.join(settings.BASE_DIR, "media", str(info.file))
         file = types.BufferedInputFile.from_file(file_path)

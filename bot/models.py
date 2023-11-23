@@ -1,4 +1,8 @@
+import json, os
 from django.db import models
+from django.conf import settings
+
+LOCALE_PATH = os.path.join(settings.BASE_DIR, "bot/assets/jsons/locale.json")
 
 LANGUAGES = (
     ("ru", "Русский"),
@@ -24,30 +28,28 @@ class Info(models.Model):
 
     def __str__(self):
         return self.slug
-
-
-class Text(models.Model):
-    slug = models.SlugField()
-    text = models.TextField()
-    lang = models.CharField(choices=LANGUAGES, max_length=20)
-
-    def __str__(self) -> str:
-        return self.text
-    
-    class Meta:
-        unique_together = (("slug", "lang"),)
     
 
 def get_text(slug, lang, **kwargs):
-    try:
-        text = Text.objects.get(slug=slug, lang=lang)
-    except Text.DoesNotExist:
-        text = Text.objects.create(slug=slug, lang=lang, text=slug)
-    return text.text.format(**kwargs)
+    with open(LOCALE_PATH, encoding="utf-8") as file:
+        locale: dict[str, dict[str, str]] = json.load(file)
 
-async def aget_text(slug, lang, **kwargs):
-    try:
-        text = await Text.objects.aget(slug=slug, lang=lang)
-    except Text.DoesNotExist:
-        text = await Text.objects.acreate(slug=slug, lang=lang, text=slug)
-    return text.text.format(**kwargs)
+    for _lang, _ in LANGUAGES:
+        locale[_lang].setdefault(slug, slug)
+    if settings.DEBUG:
+        with open(LOCALE_PATH, "w", encoding="utf-8") as file:
+            json.dump(locale, file, indent=4, ensure_ascii=False)
+    return locale[lang][slug].format(**kwargs)
+
+
+def check_text(slug, text, lang):
+    with open(LOCALE_PATH, encoding="utf-8") as file:
+        locale: dict[str, dict[str, str]] = json.load(file)
+    locale[lang].setdefault(slug, slug)
+    test = locale[lang][slug] == text or locale[lang][slug] == slug
+    if test:
+        return True
+    texts = []
+    for _, values in locale.items():
+        texts.append(values.get(slug))
+    return text in texts

@@ -13,6 +13,9 @@ class Client(models.Model):
 
     def __str__(self) -> str:
         return self.fio
+    
+    async def save_passport_image(self, content):
+        return await sync_to_async(self.passport_image.save)(f"{self.fio}.png", content, True)
 
 
 class ClientId(models.Model):
