@@ -5,10 +5,11 @@ from aiogram.fsm.context import FSMContext
 from aiogram.utils.keyboard import ReplyKeyboardBuilder
 from bot.models import User, Info, LANGUAGES, aget_text as _
 from bot.states import LanguageChooseState
-from bot.text_keywords import TAKE_ID, SETTINGS, INFO
-
+from bot.text_keywords import TAKE_ID, SETTINGS, INFO, LISTID
+from users.models import ClientId
 
 async def start(msg: types.Message, state: FSMContext):
+    await state.clear()
     if await User.objects.filter(id=msg.from_user.id).aexists():
         return await menu(msg, state)
     await choose_lang(msg, state)
@@ -17,11 +18,13 @@ async def start(msg: types.Message, state: FSMContext):
 async def menu(msg: types.Message, state: FSMContext):
     await state.clear()
     text = await _("menu_text", msg.bot.lang)
-    keyboard = ReplyKeyboardBuilder([
-        [types.KeyboardButton(text=await _(TAKE_ID, msg.bot.lang))],
-        [types.KeyboardButton(text=await _(SETTINGS, msg.bot.lang))],
-        [types.KeyboardButton(text=await _(INFO, msg.bot.lang))]
-    ])
+    keyboard = ReplyKeyboardBuilder()
+    if await ClientId.objects.filter(user_id=msg.from_user.id, deleted=False).aexists():
+        keyboard.row(types.KeyboardButton(text=await _(LISTID, msg.bot.lang)))
+    else:
+        keyboard.row(types.KeyboardButton(text=await _(TAKE_ID, msg.bot.lang)))
+    keyboard.row(types.KeyboardButton(text=await _(SETTINGS, msg.bot.lang)))
+    keyboard.row(types.KeyboardButton(text=await _(INFO, msg.bot.lang)))
     await msg.answer(text=text, reply_markup=keyboard.as_markup(resize_keyboard=True))
 
 

@@ -1,4 +1,4 @@
-import os
+import os, io
 from aiogram import types
 from aiogram.fsm.context import FSMContext
 from aiogram.utils.keyboard import ReplyKeyboardBuilder
@@ -7,15 +7,15 @@ from bot.models import aget_text as _
 from bot.states import RegisterState
 from bot.text_keywords import MENU, ACCEPT
 from users.validators import validate_pnfl, validate_passport, validate_phone
-from users.models import Client
+from users.models import Client, ClientId
 from storages.models import Storage
 from django.conf import settings
 from django.core.exceptions import ValidationError
-
+from django.core.files.base import ContentFile
+from django.db.models import Q
 
 async def take_id(msg: types.Message, state: FSMContext):
     text = await _("enter_pnfl_text", msg.bot.lang)
-    
     await msg.answer_photo(
         types.BufferedInputFile.from_file(os.path.join(settings.BASE_DIR, "bot/static/images/passport.jpg")), 
         text, reply_markup=types.ReplyKeyboardRemove())
@@ -24,7 +24,7 @@ async def take_id(msg: types.Message, state: FSMContext):
 
 async def entered_pnfl(msg: types.Message, state: FSMContext):
     try:
-        value = validate_pnfl(msg.text)
+        value = await validate_pnfl(msg.text)
     except ValidationError as _exp:
         await msg.answer(await _(_exp.message, msg.bot.lang, pnfl=msg.text))
     else:
@@ -53,12 +53,23 @@ async def enter_passport(msg: types.Message, state: FSMContext):
 
 async def entered_passport(msg: types.Message, state: FSMContext):
     try:
-        value = validate_passport(msg.text)
+        value = await validate_passport(msg.text)
     except ValidationError as _exp:
         await msg.answer(await _(_exp.message, msg.bot.lang, pnfl=msg.text))
     else:
         await state.update_data(passport=value)
-        await enter_phone(msg, state)
+        await enter_passport_image(msg, state)
+
+
+async def enter_passport_image(msg: types.Message, state: FSMContext):
+    text = await _("enter_passport_image_text", msg.bot.lang)
+    await msg.answer(text)
+    await state.set_state(RegisterState.passport_image)
+
+
+async def entered_passport_image(msg: types.Message, state: FSMContext):
+    await state.update_data(passport_image=msg.photo[0].file_id)
+    await enter_phone(msg, state)
 
 
 async def enter_phone(msg: types.Message, state: FSMContext):
@@ -69,14 +80,14 @@ async def enter_phone(msg: types.Message, state: FSMContext):
 
 async def entered_phone(msg: types.Message, state: FSMContext):
     try:
-        value = validate_phone(msg.text)
+        value = await validate_phone(msg.text)
     except ValidationError as _exp:
         await msg.answer(await _(_exp.message, msg.bot.lang, pnfl=msg.text))
     else:
         await state.update_data(phone=value)
         # await client_created(msg, state)
         await msg.answer(await _("accept-creating", msg.bot.lang))
-        await msg.answer('url', reply_markup=ReplyKeyboardBuilder([[types.KeyboardButton(text= await _(ACCEPT, msg.bot.lang))]]).as_markup(resize_keyboard=True))
+        await msg.answer('https://teletype.in/@khtkarimzhonov/shartnoma', reply_markup=ReplyKeyboardBuilder([[types.KeyboardButton(text= await _(ACCEPT, msg.bot.lang))]]).as_markup(resize_keyboard=True))
         await state.set_state(RegisterState.accept)
 
 async def accepted_creating(msg: types.Message, state: FSMContext):
@@ -85,15 +96,30 @@ async def accepted_creating(msg: types.Message, state: FSMContext):
     await msg.answer(await _('error_accept_creating', msg.bot.lang))
 
 
-
 async def client_created(msg: types.Message, state: FSMContext):
     data = await state.get_data()
-    await Client.objects.acreate(
+    file: io.BytesIO = await msg.bot.download(data["passport_image"])
+    client = await Client.objects.acreate(
         pnfl=data["pnfl"],
         fio=data['fio'],
         phone=data['phone'],
-        passport=data['passport']
+        passport=data['passport'],
+        passport_image=ContentFile(file.getvalue())
     )
+    if data.get("client_id"):
+        client_id = await ClientId.objects.select_related("storage", "selected_client").aget(id=data.get("client_id"))
+        await client_id.aadd_client(client)
+    else:
+        async for storage in Storage.objects.all():
+            client_id, created = await ClientId.objects.aget_or_create({
+                "storage": storage,
+                "selected_client": client
+            }, storage=storage, selected_client=client
+            )
+            if not client_id.user_id == msg.from_user.id:
+                await ClientId.objects.filter(id=client_id.id).aupdate(user_id=msg.from_user.id)
+            if not await client_id.clients.filter(id=client.id).aexists():
+                await client_id.aadd_client(client)
     await msg.answer(await _('client_created', msg.bot.lang))
     await client_render(msg, state)    
 
@@ -106,16 +132,46 @@ async def entered_storage(msg: types.Message, state: FSMContext):
         data = await state.get_data()
         storage = await Storage.objects.aget(name=msg.text)
         client = await Client.objects.aget(pnfl=data['pnfl'])
+        if data.get("client_id"):
+            # if await ClientId.objects.filter(~Q(id=data.get("client_id")) & ~Q(user_id=msg.from_user.id), selected_client=client, deleted=False, storage=storage).aexists():
+            #     client_id = await ClientId.objects.filter(~Q(id=data.get("client_id")), selected_client=client, deleted=False, storage=storage).afirst()
+            #     if await client_id.clients.acount() > 1:
+            #         await client_id.aremove_client(client)
+            #         await ClientId.objects.filter(~Q(id=data.get("client_id")), selected_client=client, deleted=False, storage=storage).aupdate(selected_client=await client_id.clients.afirst())
+            #     else:
+            #         await ClientId.objects.filter(~Q(id=data.get("client_id")), selected_client=client, deleted=False, storage=storage).aupdate(deleted=True)
+            client_id = await ClientId.objects.select_related("storage", "selected_client").aget(id=data.get("client_id"))
+            await client_id.aadd_client(client)
+            await ClientId.objects.filter(id=data.get("client_id")).aupdate(selected_client=client)
+        else:
+            try:
+                # if await ClientId.objects.filter(~Q(user_id=msg.from_user.id), clients__in=[client], deleted=False, storage=storage).aexists():
+                #     client_id = await ClientId.objects.filter(selected_client=client, deleted=False, storage=storage).afirst()
+                #     if await client_id.clients.acount() > 1:
+                #         await client_id.aremove_client(client)
+                #         await ClientId.objects.filter(selected_client=client, deleted=False, storage=storage).aupdate(selected_client=await client_id.clients.afirst())
+                #     else:
+                #         await ClientId.objects.filter(selected_client=client, deleted=False, storage=storage).aupdate(deleted=True)
+                client_id = await ClientId.objects.select_related("storage", "selected_client").aget(clients__in=[client], storage=storage, deleted=False)              
+            except ClientId.DoesNotExist:
+                client_id, created = await ClientId.objects.aget_or_create({"storage": storage, "selected_client": client}, 
+                                                                           storage=storage, selected_client=client)
+            if not client_id.user_id == msg.from_user.id:
+                await ClientId.objects.filter(id=client_id.id).aupdate(user_id=msg.from_user.id)
+            if client_id.deleted:
+                await ClientId.objects.filter(id=client_id.id).aupdate(deleted=False)
+            if not await client_id.clients.filter(id=client.id).aexists():
+                await client_id.aadd_client(client)
     except (Storage.DoesNotExist, Client.DoesNotExist):
         await msg.answer(await _("invalid_storage", msg.bot.lang))
     else:
-        id = f"{storage.slug}-{client.id}"
+        id = client_id.get_id()
         text = f"""
 {await _('storage_name', msg.bot.lang)}: {storage.name}
-{await _('storage_address', msg.bot.lang)}: {storage.address}
+{await _('storage_address', msg.bot.lang)}: <code>{storage.address}</code>
 
 {await _('client', msg.bot.lang)}: {client.fio}
-ID: {id}
+ID: <code>{id}</code>
 """
         await msg.answer(text)
 

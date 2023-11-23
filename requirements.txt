@@ -4,4 +4,5 @@ psycopg2-binary==2.9.5
 python-dotenv==0.21.0
 redis
 pillow
+django-import-export
 phonenumbers==8.12.54
