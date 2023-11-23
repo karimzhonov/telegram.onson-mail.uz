@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.gis',
     'import_export',
+    'parler',
     'bot',
     'storages',
     'users',
@@ -115,12 +116,27 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'ru'
 
-TIME_ZONE = 'UTC'
+LANGUAGES = (
+    ("ru", "Русский"),
+    ("uz", "O'zbekcha"),
+    ("uz-cl", "Узбекча"),
+)
+
+TIME_ZONE = "Asia/Tashkent"
 
 USE_I18N = True
 
 USE_TZ = True
 
+PARLER_LANGUAGES = {
+    None: tuple([{'code': code[0]} for code in LANGUAGES]),
+    'default': {
+        'fallback': 'uz',             # defaults to PARLER_DEFAULT_LANGUAGE_CODE
+        'hide_untranslated': False,   # the default; let .active_translations() return fallbacks too.
+    }
+}
+
+PARLER_DEFAULT_LANGUAGE_CODE = 'uz'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/

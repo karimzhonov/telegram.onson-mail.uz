@@ -69,6 +69,28 @@ async def enter_passport_image(msg: types.Message, state: FSMContext):
 
 async def entered_passport_image(msg: types.Message, state: FSMContext):
     await state.update_data(passport_image=msg.photo[-1].file_id)
+    await enter_city(msg, state)
+
+
+async def enter_city(msg: types.Message, state: FSMContext):
+    text = _("enter_city_text", msg.bot.lang)
+    await msg.answer(text)
+    await state.set_state(RegisterState.city)
+
+
+async def entered_city(msg: types.Message, state: FSMContext):
+    await state.update_data(city=msg.text)
+    await enter_region(msg, state)
+
+
+async def enter_region(msg: types.Message, state: FSMContext):
+    text = _("enter_region_text", msg.bot.lang)
+    await msg.answer(text)
+    await state.set_state(RegisterState.region)
+
+
+async def entered_region(msg: types.Message, state: FSMContext):
+    await state.update_data(region=msg.text)
     await enter_phone(msg, state)
 
 
@@ -105,13 +127,14 @@ async def client_created(msg: types.Message, state: FSMContext):
         fio=data['fio'],
         phone=data['phone'],
         passport=data['passport'],
+        address=", ".join([data["city"], data['region']])
     )
     await client.save_passport_image(ContentFile(file.getvalue()))
     if data.get("client_id"):
         client_id = await ClientId.objects.select_related("storage", "selected_client").aget(id=data.get("client_id"))
         await client_id.aadd_client(client)
     else:
-        async for storage in Storage.objects.all():
+        async for storage in Storage.objects.translated(msg.bot.lang).all():
             client_id, created = await ClientId.objects.aget_or_create({
                 "storage": storage,
                 "selected_client": client
@@ -131,7 +154,7 @@ async def entered_storage(msg: types.Message, state: FSMContext):
         return await start(msg, state)
     try:
         data = await state.get_data()
-        storage = await Storage.objects.aget(name=msg.text)
+        storage = await Storage.translated(msg.bot.lang).objects.aget(name=msg.text)
         client = await Client.objects.aget(pnfl=data['pnfl'])
         if data.get("client_id"):
             # if await ClientId.objects.filter(~Q(id=data.get("client_id")) & ~Q(user_id=msg.from_user.id), selected_client=client, deleted=False, storage=storage).aexists():
@@ -169,8 +192,9 @@ async def entered_storage(msg: types.Message, state: FSMContext):
         id = client_id.get_id()
         text = f"""
 {_('storage_name', msg.bot.lang)}: {storage.name}
+{_('storage_phone', msg.bot.lang)}: {storage.phone}
 {_('storage_address', msg.bot.lang)}: <code>{storage.address}</code>
-
+{storage.text}
 {_('client', msg.bot.lang)}: {client.fio}
 ID: <code>{id}</code>
 """
@@ -186,15 +210,14 @@ async def client_render(msg: types.Message, state: FSMContext):
 {_('passport', msg.bot.lang)}: {client.passport}
 {_('pnfl', msg.bot.lang)}: {client.pnfl}
 {_('phone', msg.bot.lang)}: {client.phone}
+{_('address', msg.bot.lang)}: {client.address}
 
 {_('select_storage_for_id', msg.bot.lang)}
 """
     keyboard = ReplyKeyboardBuilder(
-        [[types.KeyboardButton(text=storage.name)] async for storage in Storage.objects.filter(is_active=True)]
+        [[types.KeyboardButton(text=storage.name)] async for storage in Storage.objects.translated(msg.bot.lang).filter(is_active=True)]
     )
     keyboard.row(types.KeyboardButton(text=_(MENU, msg.bot.lang)))
 
     await msg.answer(text, reply_markup=keyboard.as_markup(resize_keyboard=True))
     await state.set_state(RegisterState.storage)
-
-    

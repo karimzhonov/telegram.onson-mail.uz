@@ -1,14 +1,10 @@
 import json, os
 from django.db import models
 from django.conf import settings
-
+from parler.models import TranslatableModel, TranslatedFields
+from app.settings import LANGUAGES
 LOCALE_PATH = os.path.join(settings.BASE_DIR, "bot/assets/jsons/locale.json")
 
-LANGUAGES = (
-    ("ru", "Русский"),
-    ("uz", "O'zbekcha"),
-    ("uz_cl", "Узбекча"),
-)
 
 class User(models.Model):
     id = models.IntegerField(primary_key=True)
@@ -21,8 +17,11 @@ class User(models.Model):
         return self.username
     
 
-class Info(models.Model):
-    slug = models.SlugField(unique=True)
+class Info(TranslatableModel):
+    translations = TranslatedFields(
+        title=models.CharField(max_length=255, null=True),
+        text=models.TextField(null=True)
+    )
     file = models.FileField(upload_to="info")
     is_active = models.BooleanField(default=True)
 

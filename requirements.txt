@@ -6,3 +6,4 @@ redis
 pillow
 django-import-export
 phonenumbers==8.12.54
+django-parler

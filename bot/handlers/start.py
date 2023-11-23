@@ -61,7 +61,7 @@ async def choosed_lang(msg: types.Message, state: FSMContext):
 async def info(msg: types.Message, state: FSMContext):
     if not await Info.objects.filter(is_active=True).aexists():
         return await msg.answer(_("info_not_upload_yeat", msg.bot.lang))
-    async for info in Info.objects.filter(is_active=True):
+    async for info in Info.objects.translated(msg.bot.lang).filter(is_active=True):
         text = f"""
 {_(f'{info.slug}_header', msg.bot.lang)}
 

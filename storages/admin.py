@@ -1,4 +1,5 @@
 from django.contrib.gis import admin
+from parler.admin import TranslatableAdmin
 from .models import Storage, Image
 
 
@@ -8,5 +9,5 @@ class ImageInline(admin.TabularInline):
 
 
 @admin.register(Storage)
-class StorageAdmin(admin.OSMGeoAdmin):
+class StorageAdmin(TranslatableAdmin):
     pass

@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.http.request import HttpRequest
-
+from parler.admin import TranslatableAdmin
 from .models import User, Info
 
 
@@ -15,5 +15,5 @@ class UserAdmin(admin.ModelAdmin):
 
 
 @admin.register(Info)
-class InfoAdmin(admin.ModelAdmin):
+class InfoAdmin(TranslatableAdmin):
     pass

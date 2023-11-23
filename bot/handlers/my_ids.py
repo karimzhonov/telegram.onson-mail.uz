@@ -13,12 +13,12 @@ async def my_ids(msg: types.Message, state: FSMContext):
 
 
 async def _render_ids(msg: types.Message, edit=False, state=None):
-    async for storage in Storage.objects.filter(is_active=True):
+    async for storage in Storage.objects.translated(msg.bot.lang).filter(is_active=True):
         await _render_id(msg.from_user.id, msg, state, storage, edit)  
 
 
 async def _render_id(user_id, msg: types.Message, state: FSMContext, storage, edit=False):
-    client_id, created = await ClientId.objects.select_related("storage", "selected_client").prefetch_related("clients").aget_or_create(user_id=user_id, deleted=False, storage=storage)
+    client_id, created = await ClientId.objects.select_related("storage", "selected_client").prefetch_related("clients", "storage__translations").aget_or_create(user_id=user_id, deleted=False, storage=storage)
     keyboard = InlineKeyboardBuilder()
     async for client in client_id.clients.all():
         text = []

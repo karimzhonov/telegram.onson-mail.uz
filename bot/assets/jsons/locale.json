@@ -13,7 +13,7 @@
         "enter_fio_text": "👤 Введите ФИО (с латинскими буквими)",
         "enter_passport_text": "📄 Введите серия и номер паспорта (Пример: AB1234567)",
         "passport_already_exists": "⚠️ Этот паспорт уже добавлено, проверте вводи ли провилни ПИНФЛ. (Если нет начните занова получения ИД) ⚠️",
-        "enter_passport_image_text": "📷 Загрузите фото паспорта",
+        "enter_passport_image_text": "📷 Загрузите фото паспорта (Убедитесь, что на фотографии указаны серийный номер паспорта и ПНФЛ, иначе возникнут проблемы с поиском владельца багажа)",
         "enter_phone_text": "📱 Введите номер телефона",
         "accept-creating": "📖 Прочтите и примите партнерское соглашение",
         "accept_creating": "✅ Принятие партнерского соглашения",
@@ -28,7 +28,10 @@
         "client": "👤 Клиент",
         "invalid_pnfl_error": "⚠️ Неверный ПИНФЛ ⚠️",
         "invalid_passport_error": "⚠️ Неверный паспорт ⚠️",
-        "menu_take_id": "🆔 Получить ID"
+        "menu_take_id": "🆔 Получить ID",
+        "enter_city_text": "📍 Введите город или область проживание",
+        "enter_region_text": "📍 Введите район проживание",
+        "address": "📍 Адресс"
     },
     "uz": {
         "add_passport": "➕ Pasport qo'shish",
@@ -44,7 +47,7 @@
         "enter_fio_text": "👤 Toʻliq ismingizni kiriting (lotin harflari bilan)",
         "enter_passport_text": "📄 Seriya va pasport raqamini kiriting (masalan: AB1234567)",
         "passport_already_exists": "⚠️ Ushbu pasport oldin qo'shilgan, PINFL to'g'ri kiritilganini tekshiring. (Agar notog'ri bo'lsa, ID olishni qaytadan boshlang) ⚠️",
-        "enter_passport_image_text": "📷 Pasport rasmini yuklang",
+        "enter_passport_image_text": "📷 Pasport rasmini yuklang (Rasmda passport seriya raqami va pnfl toliq tushishini taminlang, agar toliq tushmasa olip kelingan yukni egasini topishda muommoga duch kelinadi)",
         "enter_phone_text": "📱 Telefon raqamingizni kiriting",
         "accept-creating": "📖 Hamkorlik shartnomasini o'qing va qabul qiling",
         "accept_creating": "✅ Hamkorlik shartnomasini qabul qilish",
@@ -59,9 +62,12 @@
         "client": "👤 Mijoz",
         "invalid_pnfl_error": "⚠️ Notog'ri PINFL ⚠️",
         "invalid_passport_error": "⚠️ Notog'ri passport ⚠️",
-        "menu_take_id": "🆔 ID olish"
+        "menu_take_id": "🆔 ID olish",
+        "enter_city_text": "📍 Yashash shahar yoki viloyatingizni kiriting",
+        "enter_region_text": "📍 Yashash tumaningizni kiriting",
+        "address": "📍 Yashash manzili"
     },
-    "uz_cl": {
+    "uz-cl": {
         "add_passport": "➕ Паспорт қўшиш",
         "storage_name": "📦 Омбор номи",
         "storage_address": "📍 Омбор манзили",
@@ -75,7 +81,7 @@
         "enter_fio_text": "👤 Тоʻлиқ исмингизни киритинг (лотин ҳарфлари билан)",
         "enter_passport_text": "📄 Серия ва паспорт рақамини киритинг (масалан: AB1234567)",
         "passport_already_exists": "⚠️ Ушбу паспорт олдин қўшилган, ПИНФЛ тўғри киритилганини текширинг. (Агар нотоғри бўлса, ИД олишни қайтадан бошланг) ⚠️",
-        "enter_passport_image_text": "📷 Паспорт расмини юкланг",
+        "enter_passport_image_text": "📷 Паспорт расмини юкланг (Расмда пасспорт серия рақами ва пнфл толиқ тушишини таминланг, агар толиқ тушмаса олип келинган юкни эгасини топишда муоммога дуч келинади)",
         "enter_phone_text": "📱 Телефон рақамингизни киритинг",
         "accept-creating": "📖 Ҳамкорлик шартномасини ўқинг ва қабул қилинг",
         "accept_creating": "✅ Ҳамкорлик шартномасини қабул қилиш",
@@ -90,6 +96,9 @@
         "client": "👤 Мижоз",
         "invalid_pnfl_error": "⚠️ Нотоғри ПИНФЛ ⚠️",
         "invalid_passport_error": "⚠️ Нотоғри пасспорт ⚠️",
-        "menu_take_id": "🆔 ИД олиш"
+        "menu_take_id": "🆔 ИД олиш",
+        "enter_city_text": "📍 Яшаш шаҳар ёки вилоятингизни киритинг",
+        "enter_region_text": "📍 Яшаш туманингизни киритинг",
+        "address": "📍 Яшаш манзили"
     }
 }

@@ -13,6 +13,8 @@ class RegisterState(StatesGroup):
     phone = State()
     accept = State()
     storage = State()
+    city = State()
+    region = State()
 
 
 class ListId(StatesGroup):
