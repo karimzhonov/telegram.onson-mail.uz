@@ -5,7 +5,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.utils.keyboard import ReplyKeyboardBuilder
 from bot.models import User, Info, LANGUAGES, get_text as _
 from bot.states import LanguageChooseState
-from bot.text_keywords import TAKE_ID, SETTINGS, INFO, LISTID, CHECK
+from bot.text_keywords import TAKE_ID, SETTINGS, INFO, LISTID, CHECK, LISTPASSPORT
 from users.models import ClientId
 
 async def start(msg: types.Message, state: FSMContext):
@@ -21,6 +21,7 @@ async def menu(msg: types.Message, state: FSMContext):
     keyboard = ReplyKeyboardBuilder()
     if await ClientId.objects.filter(user_id=msg.from_user.id, deleted=False).aexists():
         keyboard.row(types.KeyboardButton(text=_(LISTID, msg.bot.lang)))
+        keyboard.row(types.KeyboardButton(text=_(LISTPASSPORT, msg.bot.lang)))
     else:
         keyboard.row(types.KeyboardButton(text=_(TAKE_ID, msg.bot.lang)))
     keyboard.row(types.KeyboardButton(text=_(SETTINGS, msg.bot.lang)))
@@ -29,6 +30,7 @@ async def menu(msg: types.Message, state: FSMContext):
 
 
 async def choose_lang(msg: types.Message, state: FSMContext):
+    await state.clear()
     keyboard = ReplyKeyboardBuilder()
     for code, text in LANGUAGES:
         if msg.bot.lang == code:

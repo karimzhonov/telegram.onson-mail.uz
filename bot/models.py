@@ -29,7 +29,7 @@ class Info(TranslatableModel):
         return self.slug
     
 
-def get_text(slug, lang, **kwargs):
+def get_text(slug, lang, **kwargs) -> str:
     with open(LOCALE_PATH, encoding="utf-8") as file:
         locale: dict[str, dict[str, str]] = json.load(file)
 
@@ -41,7 +41,7 @@ def get_text(slug, lang, **kwargs):
     return locale[lang][slug].format(**kwargs)
 
 
-def check_text(slug, text, lang):
+def check_text(slug, text, lang) -> str:
     with open(LOCALE_PATH, encoding="utf-8") as file:
         locale: dict[str, dict[str, str]] = json.load(file)
     locale[lang].setdefault(slug, slug)

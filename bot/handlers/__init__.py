@@ -1,13 +1,13 @@
 from aiogram import Dispatcher, F
 from aiogram.types import ContentType as CT
 from aiogram.filters.command import CommandStart
-from bot.states import LanguageChooseState, RegisterState, ListId
+from bot.states import LanguageChooseState, RegisterState, ListId, ListPassport
 from bot.filters.db_filter import DbSearchFilter
-from bot.text_keywords import SETTINGS, TAKE_ID, INFO,LISTID, MENU
+from bot.text_keywords import SETTINGS, TAKE_ID, INFO,LISTID, MENU, LISTPASSPORT
 from .start import start, choosed_lang, choose_lang, info
 from .register import take_id, entered_fio, entered_passport, entered_phone, entered_pnfl, entered_storage, accepted_creating, entered_passport_image, entered_city, entered_region
 from .my_ids import my_ids, selected_passport
-
+from .my_passport import my_passports, select_passport
 
 def setup(dp: Dispatcher):
     dp.message(CommandStart())(start)
@@ -27,3 +27,5 @@ def setup(dp: Dispatcher):
     dp.message(RegisterState.storage)(entered_storage) 
     dp.message(DbSearchFilter(LISTID))(my_ids)
     dp.callback_query(ListId.passport)(selected_passport)
+    dp.message(DbSearchFilter(LISTPASSPORT))(my_passports)
+    dp.callback_query(ListPassport.passport)(select_passport)

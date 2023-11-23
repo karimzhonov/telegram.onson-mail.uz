@@ -2,12 +2,13 @@ from aiogram import types
 from aiogram.fsm.context import FSMContext
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 from users.models import ClientId
-from bot.text_keywords import MENU, CHECK
+from bot.text_keywords import MENU, CHECK, WARINNG
 from bot.models import get_text as _
 from bot.states import ListId
 from storages.models import Storage
 
 async def my_ids(msg: types.Message, state: FSMContext):
+    await state.clear()
     await _render_ids(msg, state=state)
     await state.set_state(ListId.passport)
 
@@ -24,8 +25,13 @@ async def _render_id(user_id, msg: types.Message, state: FSMContext, storage, ed
         text = []
         if client.id == client_id.selected_client_id:
             text.append(CHECK)
+        is_warning = await client.ais_warning()
+        if is_warning:
+            text.append(WARINNG)
         text.append(str(client.fio))
         text.append(f"({client.passport})")
+        if is_warning:
+            text.append(WARINNG)
         keyboard.row(types.InlineKeyboardButton(text= " ".join(text), callback_data=f"{client_id.id}:{client.id}"))
     keyboard.row(types.InlineKeyboardButton(text=_("add_passport", msg.bot.lang), callback_data=f"{client_id.id}:add_passport"))
     text = f"""
@@ -33,6 +39,8 @@ async def _render_id(user_id, msg: types.Message, state: FSMContext, storage, ed
 {_('storage_address', msg.bot.lang)}: <code>{client_id.storage.address}</code>
 
 ID: <code>{client_id.get_id()}</code>
+
+{WARINNG} {_('client_warning_quater_limit', msg.bot.lang)} {WARINNG}
 """
     if not edit:
         await msg.answer(text, reply_markup=keyboard.as_markup(resize_keyboard=True))

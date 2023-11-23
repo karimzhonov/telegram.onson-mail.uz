@@ -1,5 +1,5 @@
 from django.contrib.gis import admin
-from parler.admin import TranslatableAdmin
+from contrib.parler.admin import TranslatableAdmin
 from .models import Storage, Image
 
 

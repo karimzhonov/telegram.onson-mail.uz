@@ -16,6 +16,21 @@ class Client(models.Model):
     
     async def save_passport_image(self, content):
         return await sync_to_async(self.passport_image.save)(f"{self.fio}.png", content, True)
+    
+    def order_quarters(self):
+        from orders.models import Order
+
+        return Order.objects.filter(client=self).quarter("date", "facture_price")
+    
+    def is_warning(self):
+        from orders.models import LIMIT_FOR_QUARTER
+        last_quarter = self.order_quarters().order_by("quarter").last()
+        if not last_quarter:
+            return False
+        return last_quarter["value"] >= LIMIT_FOR_QUARTER
+    
+    async def ais_warning(self):
+        return await sync_to_async(self.is_warning)()
 
 
 class ClientId(models.Model):

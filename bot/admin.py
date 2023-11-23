@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.http.request import HttpRequest
-from parler.admin import TranslatableAdmin
+from contrib.parler.admin import TranslatableAdmin
 from .models import User, Info
 
 

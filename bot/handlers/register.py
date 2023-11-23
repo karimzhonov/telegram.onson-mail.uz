@@ -154,7 +154,7 @@ async def entered_storage(msg: types.Message, state: FSMContext):
         return await start(msg, state)
     try:
         data = await state.get_data()
-        storage = await Storage.translated(msg.bot.lang).objects.aget(name=msg.text)
+        storage = await Storage.objects.prefetch_related("translations").aget(translations__name=msg.text, translations__language_code=msg.bot.lang)
         client = await Client.objects.aget(pnfl=data['pnfl'])
         if data.get("client_id"):
             # if await ClientId.objects.filter(~Q(id=data.get("client_id")) & ~Q(user_id=msg.from_user.id), selected_client=client, deleted=False, storage=storage).aexists():

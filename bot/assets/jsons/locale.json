@@ -31,7 +31,15 @@
         "menu_take_id": "🆔 Получить ID",
         "enter_city_text": "📍 Введите город или область проживание",
         "enter_region_text": "📍 Введите район проживание",
-        "address": "📍 Адресс"
+        "address": "📍 Адресс",
+        "storage_phone": "📱 Номер телефона",
+        "client_warning_quater_limit": "⚠️ - Паспорт, отмеченный этим символом, считается превышенным лимитом, и рекомендуется добавить еще один паспорт или выбрать один из следующих паспортов.",
+        "my_passports": "📄 Мои паспорта",
+        "my_passports_text": "Ниже указано ваши паспорта. Выберите любой из паспортов, чтобы получить информацию о лимитах",
+        "quarter": "Квартал",
+        "limit": "Лимит ($)",
+        "summa": "Итого",
+        "current_quarter": "🕒 Текущий квартал"
     },
     "uz": {
         "add_passport": "➕ Pasport qo'shish",
@@ -65,7 +73,15 @@
         "menu_take_id": "🆔 ID olish",
         "enter_city_text": "📍 Yashash shahar yoki viloyatingizni kiriting",
         "enter_region_text": "📍 Yashash tumaningizni kiriting",
-        "address": "📍 Yashash manzili"
+        "address": "📍 Yashash manzili",
+        "storage_phone": "📱 Telefon raqam",
+        "client_warning_quater_limit": "⚠️ - Ushbu belgi bilan belgilangan pasport limitdan oshib ketgan deb hisoblanadi va unga boshqa pasport qoʻshish yoki quyidagi pasportlardan birini tanlash tavsiya etiladi.",
+        "my_passports": "📄 Mening pasportlarim",
+        "my_passports_text": "Quyida sizning pasportlaringiz ko'rsatilgan. Limitlar haqida ma'lumot olish uchun pasportlardan birini tanlang",
+        "quarter": "Chorak",
+        "limit": "Limit ($)",
+        "summa": "Jami",
+        "current_quarter": "🕒 Joriy chorak"
     },
     "uz-cl": {
         "add_passport": "➕ Паспорт қўшиш",
@@ -99,6 +115,14 @@
         "menu_take_id": "🆔 ИД олиш",
         "enter_city_text": "📍 Яшаш шаҳар ёки вилоятингизни киритинг",
         "enter_region_text": "📍 Яшаш туманингизни киритинг",
-        "address": "📍 Яшаш манзили"
+        "address": "📍 Яшаш манзили",
+        "storage_phone": "📱 Телефон рақами",
+        "client_warning_quater_limit": "⚠️ - Ушбу белги билан белгиланган паспорт лимитдан ошиб кетган деб ҳисобланади ва унга бошқа паспорт қўшиш ёки қуйидаги паспортлардан бирини танлаш тавсия етилади.",
+        "my_passports": "📄 Менинг паспортларим",
+        "my_passports_text": "Қуйида сизнинг паспортларингиз кўрсатилган. Лимитлар ҳақида маълумот олиш учун паспортлардан бирини танланг",
+        "quarter": "Чорак",
+        "limit": "Лимит ($)",
+        "summa": "Жами",
+        "current_quarter": "🕒 Жорий чорак"
     }
 }

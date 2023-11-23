@@ -20,3 +20,6 @@ class RegisterState(StatesGroup):
 class ListId(StatesGroup):
     id = State()
     passport = State()
+
+class ListPassport(StatesGroup):
+    passport = State()
