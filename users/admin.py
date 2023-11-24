@@ -1,11 +1,8 @@
-from typing import Any
 from django.contrib import admin
-from django.db.models.query import QuerySet
-from django.http.request import HttpRequest
+from simple_history.admin import SimpleHistoryAdmin
 from django.utils.html import format_html
 from import_export.admin import ImportExportActionModelAdmin
 from contrib.django.admin import table
-from orders.inlines import ClientOrderQuarterInline
 from .models import ClientId, Client
 from .resources import ClientIdResource
 
@@ -32,9 +29,12 @@ class ClientAdmin(admin.ModelAdmin):
 
 
 @admin.register(ClientId)
-class ClientIdAdmin(ImportExportActionModelAdmin):
+class ClientIdAdmin(SimpleHistoryAdmin, ImportExportActionModelAdmin):
     list_display = ["get_id", "storage", "selected_client", "user"]
+    readonly_fields = ["get_id", "storage"]
     resource_classes = [ClientIdResource]
     skip_admin_log = True
     list_filter = ["deleted", "storage"]
     search_fields = ["get_id"]
+    fields = ["get_id", "storage", "selected_client", "user", "clients", "deleted"]
+    

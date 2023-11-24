@@ -32,8 +32,8 @@ JET_THEMES = [
         'title': 'Light Gray'
     }
 ]
-JET_SIDE_MENU_COMPACT = False
+JET_SIDE_MENU_COMPACT = True
 
-# JET_INDEX_DASHBOARD = 'dashboard.IndexDashboard'
-# JET_APP_INDEX_DASHBOARD = 'dashboard.AppIndexDashboard'
+JET_INDEX_DASHBOARD = 'dashboard.IndexDashboard'
+JET_APP_INDEX_DASHBOARD = 'dashboard.AppIndexDashboard'
 # JET_MODULE_YANDEX_METRIKA_ACCESS_TOKEN = os.getenv('JET_MODULE_YANDEX_METRIKA_ACCESS_TOKEN')

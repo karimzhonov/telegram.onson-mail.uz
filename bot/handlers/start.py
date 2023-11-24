@@ -26,7 +26,9 @@ async def menu(msg: types.Message, state: FSMContext):
         keyboard.row(types.KeyboardButton(text=_(TAKE_ID, msg.bot.lang)))
     keyboard.row(types.KeyboardButton(text=_(SETTINGS, msg.bot.lang)))
     keyboard.row(types.KeyboardButton(text=_(INFO, msg.bot.lang)))
-    await msg.answer(text=text, reply_markup=keyboard.as_markup(resize_keyboard=True))
+    await msg.answer_photo(
+        types.BufferedInputFile.from_file(os.path.join(settings.BASE_DIR, "bot/assets/images/onson-logo.png")), 
+        text, reply_markup=keyboard.as_markup(resize_keyboard=True))
 
 
 async def choose_lang(msg: types.Message, state: FSMContext):
@@ -61,13 +63,13 @@ async def choosed_lang(msg: types.Message, state: FSMContext):
     
 
 async def info(msg: types.Message, state: FSMContext):
-    if not await Info.objects.filter(is_active=True).aexists():
+    if not await Info.objects.translated(msg.bot.lang).filter(is_active=True).aexists():
         return await msg.answer(_("info_not_upload_yeat", msg.bot.lang))
-    async for info in Info.objects.translated(msg.bot.lang).filter(is_active=True):
+    async for info in Info.objects.translated(msg.bot.lang).prefetch_related("translations").filter(is_active=True):
         text = f"""
-{_(f'{info.slug}_header', msg.bot.lang)}
+{info.title}
 
-{_(f'{info.slug}_desc', msg.bot.lang)}
+{info.text}
 """
         file_path = os.path.join(settings.BASE_DIR, "media", str(info.file))
         file = types.BufferedInputFile.from_file(file_path)

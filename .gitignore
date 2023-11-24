@@ -162,5 +162,5 @@ cython_debug/
 .vscode
 postgres_data
 redis_data
-media
-static
+/media
+/static

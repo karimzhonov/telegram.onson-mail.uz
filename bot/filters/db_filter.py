@@ -1,3 +1,4 @@
+from django.utils import timezone
 from aiogram.types import Message
 from aiogram import Bot
 from aiogram.filters.base import Filter
@@ -12,5 +13,6 @@ class DbSearchFilter(Filter):
         if not hasattr(bot, "lang"):
             user = await User.objects.filter(id=message.from_user.id).afirst()
             bot.lang = user.lang if user else "uz"
+            await user.acreate_historical_record()
         return check_text(self.slug, message.text, bot.lang)
     

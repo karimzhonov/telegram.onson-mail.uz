@@ -157,25 +157,27 @@ async def entered_storage(msg: types.Message, state: FSMContext):
         storage = await Storage.objects.prefetch_related("translations").aget(translations__name=msg.text, translations__language_code=msg.bot.lang)
         client = await Client.objects.aget(pnfl=data['pnfl'])
         if data.get("client_id"):
-            # if await ClientId.objects.filter(~Q(id=data.get("client_id")) & ~Q(user_id=msg.from_user.id), selected_client=client, deleted=False, storage=storage).aexists():
-            #     client_id = await ClientId.objects.filter(~Q(id=data.get("client_id")), selected_client=client, deleted=False, storage=storage).afirst()
-            #     if await client_id.clients.acount() > 1:
-            #         await client_id.aremove_client(client)
-            #         await ClientId.objects.filter(~Q(id=data.get("client_id")), selected_client=client, deleted=False, storage=storage).aupdate(selected_client=await client_id.clients.afirst())
-            #     else:
-            #         await ClientId.objects.filter(~Q(id=data.get("client_id")), selected_client=client, deleted=False, storage=storage).aupdate(deleted=True)
+            if await ClientId.objects.filter(~Q(id=data.get("client_id")) & ~Q(user_id=msg.from_user.id), selected_client=client, deleted=False, storage=storage).aexists():
+                client_id = await ClientId.objects.filter(~Q(id=data.get("client_id")), selected_client=client, deleted=False, storage=storage).afirst()
+                if await client_id.clients.acount() > 1:
+                    await client_id.aremove_client(client)
+                    await ClientId.objects.filter(~Q(id=data.get("client_id")), selected_client=client, deleted=False, storage=storage).aupdate(selected_client=await client_id.clients.afirst())
+                else:
+                    await ClientId.objects.filter(~Q(id=data.get("client_id")), selected_client=client, deleted=False, storage=storage).aupdate(deleted=True, selected_client=None)
+                    await client_id.aremove_client(client)
             client_id = await ClientId.objects.select_related("storage", "selected_client").aget(id=data.get("client_id"))
             await client_id.aadd_client(client)
             await ClientId.objects.filter(id=data.get("client_id")).aupdate(selected_client=client)
         else:
             try:
-                # if await ClientId.objects.filter(~Q(user_id=msg.from_user.id), clients__in=[client], deleted=False, storage=storage).aexists():
-                #     client_id = await ClientId.objects.filter(selected_client=client, deleted=False, storage=storage).afirst()
-                #     if await client_id.clients.acount() > 1:
-                #         await client_id.aremove_client(client)
-                #         await ClientId.objects.filter(selected_client=client, deleted=False, storage=storage).aupdate(selected_client=await client_id.clients.afirst())
-                #     else:
-                #         await ClientId.objects.filter(selected_client=client, deleted=False, storage=storage).aupdate(deleted=True)
+                if await ClientId.objects.filter(~Q(user_id=msg.from_user.id), clients__in=[client], deleted=False, storage=storage).aexists():
+                    client_id = await ClientId.objects.filter(selected_client=client, deleted=False, storage=storage).afirst()
+                    if await client_id.clients.acount() > 1:
+                        await client_id.aremove_client(client)
+                        await ClientId.objects.filter(selected_client=client, deleted=False, storage=storage).aupdate(selected_client=await client_id.clients.afirst())
+                    else:
+                        await ClientId.objects.filter(selected_client=client, deleted=False, storage=storage).aupdate(deleted=True, selected_client=None)
+                        await client_id.aremove_client(client)
                 client_id = await ClientId.objects.select_related("storage", "selected_client").aget(clients__in=[client], storage=storage, deleted=False)              
             except ClientId.DoesNotExist:
                 client_id, created = await ClientId.objects.aget_or_create({"storage": storage, "selected_client": client}, 

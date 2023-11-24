@@ -39,7 +39,21 @@
         "quarter": "Квартал",
         "limit": "Лимит ($)",
         "summa": "Итого",
-        "current_quarter": "🕒 Текущий квартал"
+        "current_quarter": "🕒 Текущий квартал",
+        "part": "📋 Партия",
+        "order_number": "#️⃣ Номер заказа",
+        "client_id": "🆔 ИД",
+        "order_name": "📦 Название заказа",
+        "order_weight": "⚖️ Вес товара",
+        "kg": "кг",
+        "order_facture_price": "📄 Стоимость счета-фактуры",
+        "order_price": "🤑 Цена за доставки",
+        "order_status": "📦 Статус заказа",
+        "order_status_in_storage": "Готовится к доставки",
+        "order_status_in_delivery": "В процессе доставки",
+        "order_status_done": "Доставлено",
+        "storage_address_copy": "👆 Нажатие на адрес чтобы скопировать",
+        "client_id_copy": "👈 Нажатие на ID чтобы скопировать"
     },
     "uz": {
         "add_passport": "➕ Pasport qo'shish",
@@ -81,7 +95,21 @@
         "quarter": "Chorak",
         "limit": "Limit ($)",
         "summa": "Jami",
-        "current_quarter": "🕒 Joriy chorak"
+        "current_quarter": "🕒 Joriy chorak",
+        "part": "📋 Partiya",
+        "order_number": "#️⃣ Buyurtma raqami",
+        "client_id": "🆔 ID",
+        "order_name": "📦 Buyurtma nomi",
+        "order_weight": "⚖️ Mahsulot og'irligi",
+        "kg": "kg",
+        "order_facture_price": "📄 Hisob-faktura qiymati",
+        "order_price": "🤑 Yetkazib berish narxi",
+        "order_status": "📦 Buyurtma holati",
+        "order_status_in_storage": "Yetkazib berishga tayyorlanmoqda",
+        "order_status_in_delivery": "Yetkazib berish jarayonida",
+        "order_status_done": "Yetkazib berildi",
+        "storage_address_copy": "👆 Nusxa olish uchun manzilni bosing",
+        "client_id_copy": "👈 Nusxa olish uchun ID ni bosing"
     },
     "uz-cl": {
         "add_passport": "➕ Паспорт қўшиш",
@@ -123,6 +151,20 @@
         "quarter": "Чорак",
         "limit": "Лимит ($)",
         "summa": "Жами",
-        "current_quarter": "🕒 Жорий чорак"
+        "current_quarter": "🕒 Жорий чорак",
+        "part": "📋 Партия",
+        "order_number": "#️⃣ Буюртма рақами",
+        "client_id": "🆔 ID",
+        "order_name": "📦 Буюртма номи",
+        "order_weight": "⚖️ Маҳсулот оғирлиги",
+        "kg": "кг",
+        "order_facture_price": "📄 Ҳисоб-фактура қиймати",
+        "order_price": "🤑 Етказиб бериш нархи",
+        "order_status": "📦 Буюртма ҳолати",
+        "order_status_in_storage": "Етказиб беришга тайёрланмоқда",
+        "order_status_in_delivery": "Етказиб бериш жараёнида",
+        "order_status_done": "Етказиб берилди",
+        "storage_address_copy": "👆 Нусха олиш учун манзилни босинг",
+        "client_id_copy": "👈 Нусха олиш учун ИД ни босинг"
     }
 }

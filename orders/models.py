@@ -1,7 +1,7 @@
 from asgiref.sync import async_to_sync
 from django.db import models
 from contrib.django.queryset import QuarterQuerysetMixin
-
+from simple_history.models import HistoricalRecords
 
 PRICE_PER_KG = 5.5
 LIMIT_FOR_QUARTER = 1000
@@ -16,12 +16,17 @@ PART_STATUS = (
 )
 
 class Part(models.Model):
-    number = models.IntegerField(unique=True)
-    storage = models.ForeignKey("storages.Storage", models.CASCADE)
-    status = models.CharField(max_length=50, default=IN_STORAGE, choices=PART_STATUS)
+    number = models.IntegerField("Номер", unique=True)
+    storage = models.ForeignKey("storages.Storage", models.CASCADE, verbose_name="Склад")
+    status = models.CharField("Статус", max_length=50, default=IN_STORAGE, choices=PART_STATUS)
+    history = HistoricalRecords()
 
     def __str__(self) -> str:
         return str(self.number)
+    
+    class Meta:
+        verbose_name = 'Партия'
+        verbose_name_plural = 'Партии'
 
     def notificate_users(self):
         from bot.models import get_text as _
@@ -30,7 +35,7 @@ class Part(models.Model):
         from users.models import ClientId
 
         for order in Order.objects.select_related("client").filter(part=self):
-            client_id = ClientId.objects.filter(storage=self.storage, selected_client=order.client, clients__in=[order.client], deleted=False).select_related("user").first()
+            client_id = ClientId.objects.filter(storage=self.storage, selected_client=order.client, clients__in=[order.client], deleted=False, user__isnull=False).select_related("user").first()
             if not client_id or not client_id.user:
                 continue
             user = client_id.user
@@ -55,17 +60,22 @@ class OrderQueryset(QuarterQuerysetMixin, models.QuerySet):
 
 
 class Order(models.Model):
-    part = models.ForeignKey(Part, models.CASCADE)
-    number = models.IntegerField()
-    clientid = models.CharField(max_length=255, null=True)
-    client = models.ForeignKey("users.Client", models.CASCADE, to_field="pnfl")
-    name = models.CharField(max_length=255)
-    weight = models.FloatField()
-    facture_price = models.FloatField()
-    date = models.DateField(null=True)
+    part = models.ForeignKey(Part, models.CASCADE, verbose_name="Партия")
+    number = models.IntegerField("Номер заказа")
+    clientid = models.CharField("Клиент ИД", max_length=255, null=True)
+    client = models.ForeignKey("users.Client", models.CASCADE, to_field="pnfl", verbose_name="Клиент")
+    name = models.CharField("Название", max_length=255)
+    weight = models.FloatField("Вес")
+    facture_price = models.FloatField("Счет-актура")
+    date = models.DateField("Дата", null=True)
+    history = HistoricalRecords()
 
     @property
     def payed_price(self):
         return self.weight * PRICE_PER_KG
 
     objects: OrderQueryset = OrderQueryset.as_manager()
+
+    class Meta:
+        verbose_name = 'Заказ'
+        verbose_name_plural = 'Закази'

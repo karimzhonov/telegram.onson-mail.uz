@@ -1,6 +1,9 @@
 import json, os
+from asgiref.sync import sync_to_async
 from django.db import models
 from django.conf import settings
+from django.utils import timezone
+from simple_history.models import HistoricalRecords
 from parler.models import TranslatableModel, TranslatedFields
 from app.settings import LANGUAGES
 LOCALE_PATH = os.path.join(settings.BASE_DIR, "bot/assets/jsons/locale.json")
@@ -9,24 +12,38 @@ LOCALE_PATH = os.path.join(settings.BASE_DIR, "bot/assets/jsons/locale.json")
 class User(models.Model):
     id = models.IntegerField(primary_key=True)
     username = models.SlugField(blank=True, null=True, unique=True)
-    first_name = models.CharField(max_length=255, blank=True, null=True)
-    last_name = models.CharField(max_length=255, blank=True, null=True)
-    lang = models.CharField(choices=LANGUAGES, max_length=20, default="uz")
+    first_name = models.CharField("Имя", max_length=255, blank=True, null=True)
+    last_name = models.CharField("Фамилия", max_length=255, blank=True, null=True)
+    lang = models.CharField("Язык", choices=LANGUAGES, max_length=20, default="uz")
+    create_date = models.DateTimeField(auto_now_add=True, null=True)
+    last_date = models.DateTimeField(default=timezone.now)
+    history = HistoricalRecords()
 
     def __str__(self) -> str:
         return self.username
     
+    class Meta:
+        verbose_name = 'Телеграм пользователь'
+        verbose_name_plural = 'Телеграм пользователи'
+
+    async def acreate_historical_record(self):
+        return await sync_to_async(self.save)()
+    
 
 class Info(TranslatableModel):
     translations = TranslatedFields(
-        title=models.CharField(max_length=255, null=True),
-        text=models.TextField(null=True)
+        title=models.CharField("Загаловка", max_length=255, null=True),
+        text=models.TextField("Текст", null=True)
     )
-    file = models.FileField(upload_to="info")
-    is_active = models.BooleanField(default=True)
+    file = models.FileField("Видео или фото", upload_to="info")
+    is_active = models.BooleanField("Актив", default=True)
 
     def __str__(self):
-        return self.slug
+        return self.title or str(self.id)
+    
+    class Meta:
+        verbose_name = 'Телеграм руководства'
+        verbose_name_plural = 'Телеграм руководстви'
     
 
 def get_text(slug, lang, **kwargs) -> str:

@@ -37,8 +37,10 @@ async def _render_id(user_id, msg: types.Message, state: FSMContext, storage, ed
     text = f"""
 {_('storage_name', msg.bot.lang)}: {client_id.storage.name}
 {_('storage_address', msg.bot.lang)}: <code>{client_id.storage.address}</code>
+<i>{_('storage_address_copy', msg.bot.lang)}</i>
+{client_id.storage.text}
 
-ID: <code>{client_id.get_id()}</code>
+{_('client_id', msg.bot.lang)}: <code>{client_id.get_id()}</code> <i>{_('client_id_copy', msg.bot.lang)}</i>
 
 {WARINNG} {_('client_warning_quater_limit', msg.bot.lang)} {WARINNG}
 """

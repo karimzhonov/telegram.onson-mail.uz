@@ -18,6 +18,7 @@ class LanguageMiddleware(BaseMiddleware):
             user = await User.objects.aget(id=event.from_user.id)
             data['lang'] = user.lang
             event.bot.lang = user.lang
+            await user.acreate_historical_record()
         except User.DoesNotExist:
             pass
         return await handler(event, data)
