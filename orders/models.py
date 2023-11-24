@@ -61,7 +61,7 @@ class OrderQueryset(QuarterQuerysetMixin, models.QuerySet):
 
 class Order(models.Model):
     part = models.ForeignKey(Part, models.CASCADE, verbose_name="Партия")
-    number = models.IntegerField("Номер заказа")
+    number = models.IntegerField("Номер заказа", unique=True)
     clientid = models.CharField("Клиент ИД", max_length=255, null=True)
     client = models.ForeignKey("users.Client", models.CASCADE, to_field="pnfl", verbose_name="Клиент")
     name = models.CharField("Название", max_length=255)
