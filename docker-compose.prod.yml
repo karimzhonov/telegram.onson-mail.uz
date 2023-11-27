@@ -32,14 +32,6 @@ services:
       - db
     env_file: .env
 
-  db:
-    image: postgis/postgis:latest
-    volumes:
-      - './postgres_data:/var/lib/postgresql/data'
-    restart: always
-    container_name: onson-db
-    env_file: .env
-
   redis:
     container_name: onson-redis
     image: redis:7.2-rc3-alpine
