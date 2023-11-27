@@ -14,7 +14,7 @@
         "enter_passport_text": "📄 Введите серия и номер паспорта (Пример: AB1234567)",
         "passport_already_exists": "⚠️ Этот паспорт уже добавлено, проверте вводи ли провилни ПИНФЛ. (Если нет начните занова получения ИД) ⚠️",
         "enter_passport_image_text": "📷 Загрузите фото паспорта (Убедитесь, что на фотографии указаны серийный номер паспорта и ПНФЛ, иначе возникнут проблемы с поиском владельца багажа)",
-        "enter_phone_text": "📱 Введите номер телефона",
+        "enter_phone_text": "📱 Введите номер телефона (Пример: +998001234567)",
         "accept-creating": "📖 Прочтите и примите партнерское соглашение",
         "accept_creating": "✅ Принятие партнерского соглашения",
         "client_created": "Клиент создан ✅",
@@ -63,7 +63,7 @@
         "price_for_kg": "💸 Цена за кг",
         "enter_kg_for_calc": "⚖️ Введите весь:",
         "invalid_storage": "⚠️ Неверный филиал ⚠️",
-        "invalid_phone_number": "invalid_phone_number",
+        "invalid_phone_number": "⚠️ Неверный номер телефона (Пример: +998001234567) ⚠️",
         "storage_price": "💸 Цена в складе за кг"
     },
     "uz": {
@@ -81,7 +81,7 @@
         "enter_passport_text": "📄 Seriya va pasport raqamini kiriting (masalan: AB1234567)",
         "passport_already_exists": "⚠️ Ushbu pasport oldin qo'shilgan, PINFL to'g'ri kiritilganini tekshiring. (Agar notog'ri bo'lsa, ID olishni qaytadan boshlang) ⚠️",
         "enter_passport_image_text": "📷 Pasport rasmini yuklang (Rasmda passport seriya raqami va pnfl toliq tushishini taminlang, agar toliq tushmasa olip kelingan yukni egasini topishda muommoga duch kelinadi)",
-        "enter_phone_text": "📱 Telefon raqamingizni kiriting",
+        "enter_phone_text": "📱 Telefon raqamingizni kiriting (Namuna: +998001234567)",
         "accept-creating": "📖 Hamkorlik shartnomasini o'qing va qabul qiling",
         "accept_creating": "✅ Hamkorlik shartnomasini qabul qilish",
         "client_created": "Mijoz yaratildi ✅",
@@ -130,7 +130,7 @@
         "price_for_kg": "💸 Kg narxi",
         "enter_kg_for_calc": "⚖️ Vaznni kiriting",
         "invalid_storage": "⚠️ Noto'g'ri filial ⚠️",
-        "invalid_phone_number": "invalid_phone_number",
+        "invalid_phone_number": "⚠️ Notog'ri telefon raqami (Namuna: +998001234567) ⚠️",
         "storage_price": "💸 Kg narxi omborda"
     },
     "uz-cl": {
@@ -148,7 +148,7 @@
         "enter_passport_text": "📄 Серия ва паспорт рақамини киритинг (масалан: AB1234567)",
         "passport_already_exists": "⚠️ Ушбу паспорт олдин қўшилган, ПИНФЛ тўғри киритилганини текширинг. (Агар нотоғри бўлса, ИД олишни қайтадан бошланг) ⚠️",
         "enter_passport_image_text": "📷 Паспорт расмини юкланг (Расмда пасспорт серия рақами ва пнфл толиқ тушишини таминланг, агар толиқ тушмаса олип келинган юкни эгасини топишда муоммога дуч келинади)",
-        "enter_phone_text": "📱 Телефон рақамингизни киритинг",
+        "enter_phone_text": "📱 Телефон рақамингизни киритинг (Намуна: +998001234567)",
         "accept-creating": "📖 Ҳамкорлик шартномасини ўқинг ва қабул қилинг",
         "accept_creating": "✅ Ҳамкорлик шартномасини қабул қилиш",
         "client_created": "Мижоз яратилди ✅",
@@ -197,7 +197,7 @@
         "price_for_kg": "💸 Кг нархи",
         "enter_kg_for_calc": "⚖️ Вазнни киритинг",
         "invalid_storage": "⚠️ Нотўғри филиал ⚠️",
-        "invalid_phone_number": "invalid_phone_number",
+        "invalid_phone_number": "⚠️ Нотоғри телефон раками (Намуна: +998001234567) ⚠️",
         "storage_price": "💸 Кг нархи омборда"
     }
 }

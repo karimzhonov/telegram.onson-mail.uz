@@ -14,7 +14,7 @@ class Storage(TranslatableModel):
     per_price = models.FloatField(default=5.5)
 
     def __str__(self) -> str:
-        return self.slug
+        return self.name
     
     class Meta:
         verbose_name = 'Склад'

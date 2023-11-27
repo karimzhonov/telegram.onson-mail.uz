@@ -35,6 +35,6 @@ class ClientIdAdmin(SimpleHistoryAdmin, ImportExportActionModelAdmin):
     resource_classes = [ClientIdResource]
     skip_admin_log = True
     list_filter = ["deleted", "storage"]
-    search_fields = ["get_id"]
+    search_fields = ["id", "id_str", "selected_client__fio", "clients__fio", "selected_client__passport", "clients__passport"]
     fields = ["get_id", "storage", "selected_client", "user", "clients", "deleted"]
-    
+    ordering = ["-id"]

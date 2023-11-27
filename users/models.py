@@ -11,6 +11,7 @@ class Client(models.Model):
     phone = models.CharField('Номер телефона', max_length=255, null=True)
     passport_image = models.ImageField('Паспорт фото', upload_to="passport-image", null=True)
     address = models.CharField('Адрес', max_length=255, null=True)
+    create_date = models.DateField(auto_now_add=True)
 
     def __str__(self) -> str:
         return self.fio
@@ -45,6 +46,8 @@ class ClientId(models.Model):
     clients = models.ManyToManyField(Client, verbose_name="Поспорта клиентов")
     id_str = models.CharField(verbose_name="ИД", max_length=255, unique=True, blank=True, null=True)
     deleted = models.BooleanField(verbose_name="Не автивный", default=False)
+    create_date = models.DateField(auto_now_add=True)
+    
     history = HistoricalRecords()
 
     def get_id(self):
