@@ -62,7 +62,7 @@ def check_text(slug, text, lang) -> str:
     with open(LOCALE_PATH, encoding="utf-8") as file:
         locale: dict[str, dict[str, str]] = json.load(file)
     locale[lang].setdefault(slug, slug)
-    test = locale[lang][slug] == text or locale[lang][slug] == slug
+    test = locale[lang][slug] == text
     if test:
         return True
     texts = []

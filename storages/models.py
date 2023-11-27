@@ -1,6 +1,7 @@
 from django.contrib.gis.db import models
 from parler.models import TranslatableModel, TranslatedFields
 
+
 class Storage(TranslatableModel):
     translations = TranslatedFields(
         name=models.CharField("Название", max_length=255, null=True),
@@ -10,6 +11,7 @@ class Storage(TranslatableModel):
     slug = models.SlugField("Ключовая слова", unique=True)
     phone = models.CharField("Номер телефона", max_length=255, null=True)
     is_active = models.BooleanField("Актив", default=True)
+    per_price = models.FloatField(default=5.5)
 
     def __str__(self) -> str:
         return self.slug

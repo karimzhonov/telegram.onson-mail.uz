@@ -17,9 +17,15 @@ class RegisterState(StatesGroup):
     region = State()
 
 
-class ListId(StatesGroup):
-    id = State()
-    passport = State()
-
 class ListPassport(StatesGroup):
     passport = State()
+
+
+class IDStorage(StatesGroup):
+    storage = State()
+    passport = State()
+
+
+class CalculatorState(StatesGroup):
+    storage = State()
+    kg = State()

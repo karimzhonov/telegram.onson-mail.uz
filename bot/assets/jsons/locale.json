@@ -53,7 +53,18 @@
         "order_status_in_delivery": "В процессе доставки",
         "order_status_done": "Доставлено",
         "storage_address_copy": "👆 Нажатие на адрес чтобы скопировать",
-        "client_id_copy": "👈 Нажатие на ID чтобы скопировать"
+        "client_id_copy": "👈 Нажатие на ID чтобы скопировать",
+        "about": "ℹ️ О нас",
+        "storages_list": "📍Филиали",
+        "online_buy": "🛒 Онлайн покупка",
+        "calculator": "⚖️ Калькулятор",
+        "storage_list_text": "Выберите один из филиалов",
+        "about_text": "👋 Добро пожаловать в кампанию по доставке 'Onson-mail'.",
+        "price_for_kg": "💸 Цена за кг",
+        "enter_kg_for_calc": "⚖️ Введите весь:",
+        "invalid_storage": "⚠️ Неверный филиал ⚠️",
+        "invalid_phone_number": "invalid_phone_number",
+        "storage_price": "💸 Цена в складе за кг"
     },
     "uz": {
         "add_passport": "➕ Pasport qo'shish",
@@ -109,7 +120,18 @@
         "order_status_in_delivery": "Yetkazib berish jarayonida",
         "order_status_done": "Yetkazib berildi",
         "storage_address_copy": "👆 Nusxa olish uchun manzilni bosing",
-        "client_id_copy": "👈 Nusxa olish uchun ID ni bosing"
+        "client_id_copy": "👈 Nusxa olish uchun ID ni bosing",
+        "about": "ℹ️ Biz haqimizda",
+        "storages_list": "📍Filiallar",
+        "online_buy": "🛒 Onlayn savdo",
+        "calculator": "⚖️ Kalkulyator",
+        "storage_list_text": "Filiallardan birini tanalng",
+        "about_text": "👋 'Onson-mail' yetkazib berish kampaniyasiga xush kelibsiz. ",
+        "price_for_kg": "💸 Kg narxi",
+        "enter_kg_for_calc": "⚖️ Vaznni kiriting",
+        "invalid_storage": "⚠️ Noto'g'ri filial ⚠️",
+        "invalid_phone_number": "invalid_phone_number",
+        "storage_price": "💸 Kg narxi omborda"
     },
     "uz-cl": {
         "add_passport": "➕ Паспорт қўшиш",
@@ -165,6 +187,17 @@
         "order_status_in_delivery": "Етказиб бериш жараёнида",
         "order_status_done": "Етказиб берилди",
         "storage_address_copy": "👆 Нусха олиш учун манзилни босинг",
-        "client_id_copy": "👈 Нусха олиш учун ИД ни босинг"
+        "client_id_copy": "👈 Нусха олиш учун ИД ни босинг",
+        "about": "ℹ️ BizБиз ҳақимизда haqimizda",
+        "storages_list": "📍Филиаллар",
+        "online_buy": "🛒 Онлайн савдо",
+        "calculator": "⚖️ Калкулятор",
+        "storage_list_text": "Филиаллардан бирини таналнг",
+        "about_text": "👋 'Onson-mail' етказиб бериш кампаниясига хуш келибсиз.",
+        "price_for_kg": "💸 Кг нархи",
+        "enter_kg_for_calc": "⚖️ Вазнни киритинг",
+        "invalid_storage": "⚠️ Нотўғри филиал ⚠️",
+        "invalid_phone_number": "invalid_phone_number",
+        "storage_price": "💸 Кг нархи омборда"
     }
 }

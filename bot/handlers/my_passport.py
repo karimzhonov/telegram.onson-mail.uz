@@ -1,11 +1,16 @@
-from aiogram import types
+from aiogram import types, Dispatcher
 from aiogram.fsm.context import FSMContext
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 from users.models import Client
-from bot.text_keywords import WARINNG
+from bot.text_keywords import WARINNG, LISTPASSPORT
 from bot.models import get_text as _
 from bot.states import ListPassport
-from storages.models import Storage
+from bot.filters.db_filter import DbSearchFilter
+
+
+def setup(dp: Dispatcher):
+    dp.message(DbSearchFilter(LISTPASSPORT))(my_passports)
+    dp.callback_query(ListPassport.passport)(select_passport)
 
 
 async def my_passports(msg: types.Message, state: FSMContext):

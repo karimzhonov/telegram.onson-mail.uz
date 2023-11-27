@@ -1,18 +1,32 @@
 import os, io
-from aiogram import types
+from aiogram import Dispatcher, F
+from aiogram.types import ContentType as CT
+from aiogram import types, Dispatcher
 from aiogram.fsm.context import FSMContext
 from aiogram.utils.keyboard import ReplyKeyboardBuilder
 from bot.filters.db_filter import DbSearchFilter
 from bot.models import get_text as _
 from bot.states import RegisterState
-from bot.text_keywords import MENU, ACCEPT
+from bot.text_keywords import TAKE_ID, ACCEPT
 from users.validators import validate_pnfl, validate_passport, validate_phone
 from users.models import Client, ClientId
 from storages.models import Storage
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.files.base import ContentFile
-from django.db.models import Q
+
+
+def setup(dp: Dispatcher): 
+    dp.message(DbSearchFilter(TAKE_ID))(take_id)
+    dp.message(RegisterState.pnfl)(entered_pnfl)
+    dp.message(RegisterState.fio)(entered_fio)
+    dp.message(RegisterState.passport)(entered_passport)
+    dp.message(RegisterState.passport_image, F.content_type.in_([CT.PHOTO]))(entered_passport_image)
+    dp.message(RegisterState.city)(entered_city)
+    dp.message(RegisterState.region)(entered_region)
+    dp.message(RegisterState.phone)(entered_phone)
+    dp.message(RegisterState.accept)(accepted_creating)
+
 
 async def take_id(msg: types.Message, state: FSMContext):
     text = _("enter_pnfl_text", msg.bot.lang)
@@ -130,6 +144,13 @@ async def client_created(msg: types.Message, state: FSMContext):
         address=", ".join([data["city"], data['region']])
     )
     await client.save_passport_image(ContentFile(file.getvalue()))
+    await _client_to_clientid(msg, state, client)
+    await msg.answer(_('client_created', msg.bot.lang))
+    await client_render(msg, state)    
+
+
+async def _client_to_clientid(msg: types.Message, state: FSMContext, client: Client):
+    data = await state.get_data()
     if data.get("client_id"):
         client_id = await ClientId.objects.select_related("storage", "selected_client").aget(id=data.get("client_id"))
         await client_id.aadd_client(client)
@@ -144,66 +165,11 @@ async def client_created(msg: types.Message, state: FSMContext):
                 await ClientId.objects.filter(id=client_id.id).aupdate(user_id=msg.from_user.id)
             if not await client_id.clients.filter(id=client.id).aexists():
                 await client_id.aadd_client(client)
-    await msg.answer(_('client_created', msg.bot.lang))
-    await client_render(msg, state)    
-
-
-async def entered_storage(msg: types.Message, state: FSMContext):
-    if (await DbSearchFilter(MENU)(msg, msg.bot)):
-        from .start import start
-        return await start(msg, state)
-    try:
-        data = await state.get_data()
-        storage = await Storage.objects.prefetch_related("translations").aget(translations__name=msg.text, translations__language_code=msg.bot.lang)
-        client = await Client.objects.aget(pnfl=data['pnfl'])
-        if data.get("client_id"):
-            if await ClientId.objects.filter(~Q(id=data.get("client_id")) & ~Q(user_id=msg.from_user.id), selected_client=client, deleted=False, storage=storage).aexists():
-                client_id = await ClientId.objects.filter(~Q(id=data.get("client_id")), selected_client=client, deleted=False, storage=storage).afirst()
-                if await client_id.clients.acount() > 1:
-                    await client_id.aremove_client(client)
-                    await ClientId.objects.filter(~Q(id=data.get("client_id")), selected_client=client, deleted=False, storage=storage).aupdate(selected_client=await client_id.clients.afirst())
-                else:
-                    await ClientId.objects.filter(~Q(id=data.get("client_id")), selected_client=client, deleted=False, storage=storage).aupdate(deleted=True, selected_client=None)
-                    await client_id.aremove_client(client)
-            client_id = await ClientId.objects.select_related("storage", "selected_client").aget(id=data.get("client_id"))
-            await client_id.aadd_client(client)
-            await ClientId.objects.filter(id=data.get("client_id")).aupdate(selected_client=client)
-        else:
-            try:
-                if await ClientId.objects.filter(~Q(user_id=msg.from_user.id), clients__in=[client], deleted=False, storage=storage).aexists():
-                    client_id = await ClientId.objects.filter(selected_client=client, deleted=False, storage=storage).afirst()
-                    if await client_id.clients.acount() > 1:
-                        await client_id.aremove_client(client)
-                        await ClientId.objects.filter(selected_client=client, deleted=False, storage=storage).aupdate(selected_client=await client_id.clients.afirst())
-                    else:
-                        await ClientId.objects.filter(selected_client=client, deleted=False, storage=storage).aupdate(deleted=True, selected_client=None)
-                        await client_id.aremove_client(client)
-                client_id = await ClientId.objects.select_related("storage", "selected_client").aget(clients__in=[client], storage=storage, deleted=False)              
-            except ClientId.DoesNotExist:
-                client_id, created = await ClientId.objects.aget_or_create({"storage": storage, "selected_client": client}, 
-                                                                           storage=storage, selected_client=client)
-            if not client_id.user_id == msg.from_user.id:
-                await ClientId.objects.filter(id=client_id.id).aupdate(user_id=msg.from_user.id)
-            if client_id.deleted:
-                await ClientId.objects.filter(id=client_id.id).aupdate(deleted=False)
-            if not await client_id.clients.filter(id=client.id).aexists():
-                await client_id.aadd_client(client)
-    except (Storage.DoesNotExist, Client.DoesNotExist):
-        await msg.answer(_("invalid_storage", msg.bot.lang))
-    else:
-        id = client_id.get_id()
-        text = f"""
-{_('storage_name', msg.bot.lang)}: {storage.name}
-{_('storage_phone', msg.bot.lang)}: {storage.phone}
-{_('storage_address', msg.bot.lang)}: <code>{storage.address}</code>
-{storage.text}
-{_('client', msg.bot.lang)}: {client.fio}
-ID: <code>{id}</code>
-"""
-        await msg.answer(text)
 
 
 async def client_render(msg: types.Message, state: FSMContext):
+    from .storages import storage_list
+
     data = await state.get_data()
     client = await Client.objects.aget(pnfl=data['pnfl'])
     text = f"""
@@ -213,13 +179,8 @@ async def client_render(msg: types.Message, state: FSMContext):
 {_('pnfl', msg.bot.lang)}: {client.pnfl}
 {_('phone', msg.bot.lang)}: {client.phone}
 {_('address', msg.bot.lang)}: {client.address}
-
-{_('select_storage_for_id', msg.bot.lang)}
 """
-    keyboard = ReplyKeyboardBuilder(
-        [[types.KeyboardButton(text=storage.name)] async for storage in Storage.objects.translated(msg.bot.lang).filter(is_active=True)]
-    )
-    keyboard.row(types.KeyboardButton(text=_(MENU, msg.bot.lang)))
+    await _client_to_clientid(msg, state, client)
 
-    await msg.answer(text, reply_markup=keyboard.as_markup(resize_keyboard=True))
-    await state.set_state(RegisterState.storage)
+    await msg.answer(text)
+    await storage_list(msg, state)

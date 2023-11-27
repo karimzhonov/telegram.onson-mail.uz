@@ -3,7 +3,7 @@ from django.db import models
 from contrib.django.queryset import QuarterQuerysetMixin
 from simple_history.models import HistoricalRecords
 
-PRICE_PER_KG = 5.5
+
 LIMIT_FOR_QUARTER = 1000
 
 IN_STORAGE = "in_storage"
@@ -72,7 +72,7 @@ class Order(models.Model):
 
     @property
     def payed_price(self):
-        return self.weight * PRICE_PER_KG
+        return self.weight * self.part.storage.per_price
 
     objects: OrderQueryset = OrderQueryset.as_manager()
 
