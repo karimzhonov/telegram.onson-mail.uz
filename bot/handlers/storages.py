@@ -42,9 +42,11 @@ async def _render_storage(user_id, msg: types.Message, state: FSMContext, storag
 {_('storage_name', msg.bot.lang)}: {storage.name}
 {_('storage_phone', msg.bot.lang)}: {storage.phone}
 {_('storage_price', msg.bot.lang)}: {storage.per_price} $
+{storage.text}
+"""
+    storage_address_text = f"""
 {_('storage_address', msg.bot.lang)}: <code>{storage.address}</code>
 <i>{_('storage_address_copy', msg.bot.lang)}</i>
-{storage.text}
 """
     client_text = ""
     keyboard = InlineKeyboardBuilder()
@@ -68,7 +70,11 @@ async def _render_storage(user_id, msg: types.Message, state: FSMContext, storag
 
 {WARINNG} {_('client_warning_quater_limit', msg.bot.lang)} {WARINNG}
 """
-        main_text = f"{main_text}\n{client_text}"
+        storage_address_text = f"""
+{_('storage_address', msg.bot.lang)}: <code>{storage.address}, {client_id.get_id()}</code>
+<i>{_('storage_address_copy', msg.bot.lang)}</i>
+"""
+        main_text = f"{main_text}\n{storage_address_text}\n{client_text}"
     if not edit:
         await msg.answer(main_text, reply_markup=keyboard.as_markup(resize_keyboard=True))
     else:
