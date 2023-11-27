@@ -1,4 +1,4 @@
-version: '3.9'
+version: '3.3'
 
 services:
   bot:
@@ -12,7 +12,6 @@ services:
     command: python manage.py runbot
     restart: always
     depends_on:
-      - db
       - web
     env_file: .env
 
@@ -26,18 +25,8 @@ services:
       - .:/app/
     command: python manage.py runserver 0.0.0.0:8000
     expose:
-      - 8000:8000
+      - "8000"
     restart: always
-    depends_on:
-      - db
-    env_file: .env
-
-  db:
-    image: postgis/postgis:latest
-    volumes:
-      - './postgres_data:/var/lib/postgresql/data'
-    restart: always
-    container_name: onson-db
     env_file: .env
 
   redis:

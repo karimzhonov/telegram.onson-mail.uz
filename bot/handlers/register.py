@@ -181,6 +181,5 @@ async def client_render(msg: types.Message, state: FSMContext):
 {_('address', msg.bot.lang)}: {client.address}
 """
     await _client_to_clientid(msg, state, client)
-
     await msg.answer(text)
     await storage_list(msg, state)
