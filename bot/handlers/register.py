@@ -217,7 +217,7 @@ async def client_render(msg: types.Message, state: FSMContext):
 {_('select_storage_for_id', msg.bot.lang)}
 """
     keyboard = ReplyKeyboardBuilder(
-        [[types.KeyboardButton(text=storage.name)] async for storage in Storage.objects.translated(msg.bot.lang).filter(is_active=True)]
+        [[types.KeyboardButton(text=storage.name)] async for storage in Storage.objects.prefetch_related("translations").translated(msg.bot.lang).filter(is_active=True)]
     )
     keyboard.row(types.KeyboardButton(text=_(MENU, msg.bot.lang)))
 
