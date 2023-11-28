@@ -52,24 +52,29 @@ async def _render_storage(user_id, msg: types.Message, state: FSMContext, storag
     keyboard = InlineKeyboardBuilder()
     if await ClientId.objects.filter(user_id=user_id).aexists():
         client_id, created = await ClientId.objects.select_related("storage", "selected_client").prefetch_related("clients", "storage__translations").aget_or_create(user_id=user_id, deleted=False, storage=storage)
-        async for client in client_id.clients.all():
-            text = []
-            if client.id == client_id.selected_client_id:
-                text.append(CHECK)
-            is_warning = await client.ais_warning()
-            if is_warning:
-                text.append(WARINNG)
-            text.append(str(client.fio))
-            text.append(f"({client.passport})")
-            if is_warning:
-                text.append(WARINNG)
-            keyboard.row(types.InlineKeyboardButton(text= " ".join(text), callback_data=f"{client_id.id}:{client.id}"))
-        keyboard.row(types.InlineKeyboardButton(text=_("add_passport", msg.bot.lang), callback_data=f"{client_id.id}:add_passport"))
+        if passport:
+            async for client in client_id.clients.all():
+                text = []
+                if client.id == client_id.selected_client_id:
+                    text.append(CHECK)
+                is_warning = await client.ais_warning()
+                if is_warning:
+                    text.append(WARINNG)
+                text.append(str(client.fio))
+                text.append(f"({client.passport})")
+                if is_warning:
+                    text.append(WARINNG)
+                keyboard.row(types.InlineKeyboardButton(text= " ".join(text), callback_data=f"{client_id.id}:{client.id}"))
+            keyboard.row(types.InlineKeyboardButton(text=_("add_passport", msg.bot.lang), callback_data=f"{client_id.id}:add_passport"))
         client_text = f"""
-{_('client_id', msg.bot.lang)}: <code>{client_id.get_id()}</code> <i>{_('client_id_copy', msg.bot.lang)}</i>
+{_('client_id', msg.bot.lang)}: <code>{client_id.get_id()}</code>
+"""
+        if passport:
+            client_text = f"""
+{client_text}
 
 {WARINNG} {_('client_warning_quater_limit', msg.bot.lang)} {WARINNG}
-"""
+            """
         storage_address_text = f"""
 {_('storage_address', msg.bot.lang)}: <code>{storage.address}, {client_id.get_id()}</code>
 <i>{_('storage_address_copy', msg.bot.lang)}</i>
