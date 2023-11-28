@@ -1,6 +1,7 @@
 import os
 from aiogram import Dispatcher, Bot, enums
 from aiogram.fsm.storage.redis import RedisStorage
+from PIL import Image
 from .settings import REDIS_URL
 
 
@@ -17,3 +18,16 @@ def create_dispatcher():
 
 def create_bot(token):
     return Bot(token, parse_mode=enums.ParseMode.HTML)
+
+
+def concat_images(images: list[Image.Image]):
+    if len(images) == 1:
+        return images[0]
+    new_width = max(*[image.size[0] for image in images])
+    new_height = sum([image.size[1] for image in images])
+    dst = Image.new('RGB', (new_width, new_height))
+    height = 0
+    for image in images:
+        dst.paste(image, (0, height))
+        height += image.size[1]
+    return dst

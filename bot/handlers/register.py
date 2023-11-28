@@ -7,20 +7,22 @@ from aiogram.utils.keyboard import ReplyKeyboardBuilder
 from bot.filters.db_filter import DbSearchFilter
 from bot.models import get_text as _
 from bot.states import RegisterState
-from bot.text_keywords import TAKE_ID, ACCEPT
+from bot.text_keywords import TAKE_ID, ACCEPT, ID_PASSPORT, BIO_PASSPORT
+from bot.utils import concat_images
 from users.validators import validate_pnfl, validate_passport, validate_phone
 from users.models import Client, ClientId
 from storages.models import Storage
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.files.base import ContentFile
-
+from PIL import Image
 
 def setup(dp: Dispatcher): 
     dp.message(DbSearchFilter(TAKE_ID))(take_id)
     dp.message(RegisterState.pnfl)(entered_pnfl)
     dp.message(RegisterState.fio)(entered_fio)
     dp.message(RegisterState.passport)(entered_passport)
+    dp.message(RegisterState.is_id_passport)(entered_passport_type)
     dp.message(RegisterState.passport_image, F.content_type.in_([CT.PHOTO]))(entered_passport_image)
     dp.message(RegisterState.city)(entered_city)
     dp.message(RegisterState.region)(entered_region)
@@ -72,18 +74,54 @@ async def entered_passport(msg: types.Message, state: FSMContext):
         await msg.answer(_(_exp.message, msg.bot.lang, pnfl=msg.text))
     else:
         await state.update_data(passport=value)
-        await enter_passport_image(msg, state)
+        await enter_passport_type(msg, state)
+
+
+async def enter_passport_type(msg: types.Message, state: FSMContext):
+    text = _("enter_passport_type_text", msg.bot.lang)
+    keyboard = ReplyKeyboardBuilder([[types.KeyboardButton(text= _(ID_PASSPORT, msg.bot.lang))], [types.KeyboardButton(text= _(BIO_PASSPORT, msg.bot.lang))]])
+    await msg.answer(text, reply_markup=keyboard.as_markup(resize_keyboard=True))
+    await state.set_state(RegisterState.is_id_passport)
+
+
+async def entered_passport_type(msg: types.Message, state: FSMContext):
+    if await DbSearchFilter(ID_PASSPORT)(msg, msg.bot):
+        await state.update_data(is_id_passport=True, passport_image=[])
+    elif await DbSearchFilter(BIO_PASSPORT)(msg, msg.bot):
+        await state.update_data(is_id_passport=False, passport_image=[])
+    else:
+        return await msg.answer(_("error_passport_type", msg.bot.lang))
+    await enter_passport_image(msg, state)
 
 
 async def enter_passport_image(msg: types.Message, state: FSMContext):
-    text = _("enter_passport_image_text", msg.bot.lang)
-    await msg.answer(text)
-    await state.set_state(RegisterState.passport_image)
+    data = await state.get_data()
+    if data["is_id_passport"] and len(data["passport_image"]) == 0:
+        await msg.answer_photo(
+            types.BufferedInputFile.from_file(os.path.join(settings.BASE_DIR, "bot/assets/images/id_passport_front.jpg")), 
+            _("enter_id_passport_image_front", msg.bot.lang), reply_markup=types.ReplyKeyboardRemove())
+        await state.set_state(RegisterState.passport_image)
+    elif data["is_id_passport"] and len(data["passport_image"]) == 1:
+        await msg.answer_photo(
+            types.BufferedInputFile.from_file(os.path.join(settings.BASE_DIR, "bot/assets/images/id_passport_back.jpg")), 
+            _("enter_id_passport_image_back", msg.bot.lang), reply_markup=types.ReplyKeyboardRemove())
+        await state.set_state(RegisterState.passport_image)
+    elif data["is_id_passport"] and len(data["passport_image"]) == 2:
+        await enter_city(msg, state)
+    elif not data["is_id_passport"] and len(data["passport_image"]) == 0:
+        await msg.answer_photo(
+            types.BufferedInputFile.from_file(os.path.join(settings.BASE_DIR, "bot/assets/images/bio_passport.png")), 
+            _("enter_bio_passport_image", msg.bot.lang), reply_markup=types.ReplyKeyboardRemove())
+        await state.set_state(RegisterState.passport_image)
+    elif not data["is_id_passport"] and len(data["passport_image"]) == 1:
+        await enter_city(msg, state)
 
 
 async def entered_passport_image(msg: types.Message, state: FSMContext):
-    await state.update_data(passport_image=msg.photo[-1].file_id)
-    await enter_city(msg, state)
+    data = await state.get_data()
+    data["passport_image"].append(msg.photo[-1].file_id)
+    await state.update_data(passport_image=data["passport_image"])
+    await enter_passport_image(msg, state)
 
 
 async def enter_city(msg: types.Message, state: FSMContext):
@@ -134,19 +172,27 @@ async def accepted_creating(msg: types.Message, state: FSMContext):
 
 async def client_created(msg: types.Message, state: FSMContext):
     data = await state.get_data()
-    file: io.BytesIO = await msg.bot.download(data["passport_image"])
+    images = []
+    for image_id in data["passport_image"]:
+        file: io.BytesIO = await msg.bot.download(image_id)
+        image = Image.open(file)
+        images.append(image)
+    
+    image = concat_images(images)
+    with io.BytesIO() as file:
+        image.save(file, "PNG")
 
-    client = await Client.objects.acreate(
-        pnfl=data["pnfl"],
-        fio=data['fio'],
-        phone=data['phone'],
-        passport=data['passport'],
-        address=", ".join([data["city"], data['region']])
-    )
-    await client.save_passport_image(ContentFile(file.getvalue()))
-    await _client_to_clientid(msg, state, client)
-    await msg.answer(_('client_created', msg.bot.lang))
-    await client_render(msg, state)    
+        client = await Client.objects.acreate(
+            pnfl=data["pnfl"],
+            fio=data['fio'],
+            phone=data['phone'],
+            passport=data['passport'],
+            address=", ".join([data["city"], data['region']])
+        )
+        await client.save_passport_image(ContentFile(file.getvalue()))
+        await _client_to_clientid(msg, state, client)
+        await msg.answer(_('client_created', msg.bot.lang))
+        await client_render(msg, state)    
 
 
 async def _client_to_clientid(msg: types.Message, state: FSMContext, client: Client):

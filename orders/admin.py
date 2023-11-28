@@ -28,5 +28,4 @@ class OrderAdmin(ImportExportActionModelAdmin, SimpleHistoryAdmin):
 
     def get_import_data_kwargs(self, request, *args, **kwargs):
         kwargs.update(form_data=kwargs.get("form").cleaned_data)
-        self.get_urls
         return super().get_import_data_kwargs(request, *args, **kwargs)

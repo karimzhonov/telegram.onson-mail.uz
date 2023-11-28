@@ -15,6 +15,7 @@ class RegisterState(StatesGroup):
     storage = State()
     city = State()
     region = State()
+    is_id_passport = State()
 
 
 class ListPassport(StatesGroup):
