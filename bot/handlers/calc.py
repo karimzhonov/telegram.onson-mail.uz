@@ -40,9 +40,11 @@ async def _render_storage(msg: types.Message, storage: Storage):
 {_('price_for_kg', msg.bot.lang)}: {storage.per_price} $
 """
     text = [text]
-    if str(msg.text).isdigit():
-        text.append(f"{msg.text}{_('kg', msg.bot.lang)} = {storage.per_price * float(msg.text)} $")
-    text.append("\n")
+    try:
+        weight = float(msg.text.replace(",", "."))
+        text.append(f"{msg.text}{_('kg', msg.bot.lang)} = {storage.per_price * weight} $")
+    except ValueError:
+        pass
     text.append(_("enter_kg_for_calc", msg.bot.lang))
     await msg.answer("\n".join(text))
 
