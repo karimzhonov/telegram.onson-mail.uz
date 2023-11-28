@@ -53,7 +53,7 @@ class ClientId(models.Model):
     def get_id(self):
         if self.id_str:
             return self.id_str
-        return f"{self.storage}-{self.id}"
+        return f"{self.storage.slug}-{self.id}"
     get_id.short_description = "ID"
     
     class Meta:
