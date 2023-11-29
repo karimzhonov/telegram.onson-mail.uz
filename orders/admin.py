@@ -1,8 +1,9 @@
+from typing import Any
 from django.contrib import admin
 from simple_history.admin import SimpleHistoryAdmin
 from import_export.admin import ImportExportActionModelAdmin
 from storages.models import ProductToCart
-from .models import Part, Order, Cart
+from .models import Part, Order, Cart, Report
 from .resources import OrderResource
 from .forms import OrderImportForm, OrderConfirmImportForm
 
@@ -41,4 +42,12 @@ class OrderAdmin(ImportExportActionModelAdmin, SimpleHistoryAdmin):
 @admin.register(Cart)
 class CartAdmin(admin.ModelAdmin):
     inlines = [ProductToCartInline]
-    
+
+
+@admin.register(Report)
+class ReportAdmin(admin.ModelAdmin):
+    list_display = ["clientid", "create_date"]
+
+    def save_model(self, request: Any, obj: Report, form: Any, change: Any) -> None:
+        super().save_model(request, obj, form, change)
+        obj.send_notification()

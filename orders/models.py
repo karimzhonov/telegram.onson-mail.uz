@@ -93,3 +93,22 @@ class Cart(models.Model):
 
     async def aproducts(self):
         return self.producttocart_set.select_related("product").all()
+    
+
+class Report(models.Model):
+    clientid = models.ForeignKey("users.ClientId", models.CASCADE)
+    image = models.ImageField(upload_to="report")
+    create_date = models.DateTimeField(auto_now_add=True)
+
+    def send_notification(self):
+        from bot.models import get_text as _
+        from bot.utils import create_bot
+        from bot.settings import TOKEN
+        from bot.handlers.reports import _render_report
+
+        user = self.clientid.user
+        if not user:
+            return
+        text, photo = _render_report(self)
+        bot = create_bot(TOKEN)
+        async_to_sync(bot.send_photo)(chat_id=user.id, photo=photo, caption=text)

@@ -50,6 +50,9 @@ class ClientId(models.Model):
     
     history = HistoricalRecords()
 
+    def __str__(self) -> str:
+        return self.get_id()
+
     def get_id(self):
         if self.id_str:
             return self.id_str

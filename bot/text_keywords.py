@@ -26,3 +26,4 @@ REMOVE_PRODUCT_TO_CHOSEN = "remove_product_to_chosen"
 PLUS = "+"
 MINUS = '-'
 ONLINE_BUY_MENU = "online_buy_menu"
+FOTO_REPORTS = "foto_reports"

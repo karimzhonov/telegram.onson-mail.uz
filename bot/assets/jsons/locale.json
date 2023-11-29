@@ -113,7 +113,12 @@
         "online_buy_chosen_clear": "🧹 Очистит избренный",
         "online_buy_chosen_text": "❤️ Список избренных",
         "showed_offset_products_in_count": "Показано {offset} продуктов из {count}",
-        "storage_list_empty": "⚠️ Нет филиали который разместили свои продукты ⚠️"
+        "storage_list_empty": "⚠️ Нет филиали который разместили свои продукты ⚠️",
+        "foto_report": "🌠 Фото отчет",
+        "foto_reports": "🌠 Фото отчеты",
+        "showed_offset_reports_in_count": "Показано {offset} отчетов из {count}",
+        "report_list_empty": "⚠️ Отчетов нет ⚠️",
+        "datetime": "📅 Дата и время"
     },
     "uz": {
         "add_passport": "➕ Pasport qo'shish",
@@ -228,8 +233,13 @@
         "online_buy_product_list": "📄 Maxsulotlar ro'yxati",
         "online_buy_chosen_clear": "🧹 Sevimlilarni tozalash",
         "online_buy_chosen_text": "❤️ Sevimlilar ro'yxati",
-        "showed_offset_products_in_count": "{count} maxsulotdan {offset} ko'rsatildi",
-        "storage_list_empty": "⚠️ O'z mahsulotlarini joylashtirgan filiallar yo'q ⚠️"
+        "showed_offset_products_in_count": "{count} maxsulotdan {offset} ta ko'rsatildi",
+        "storage_list_empty": "⚠️ O'z mahsulotlarini joylashtirgan filiallar yo'q ⚠️",
+        "foto_report": "🌠 Foto xisobot",
+        "foto_reports": "🌠 Foto xisobotlar",
+        "showed_offset_reports_in_count": "{count} hisobotlardan {offset} ta ko'rsatildi",
+        "report_list_empty": "⚠️ Hisobotlar yoq ⚠️",
+        "datetime": "📅 Sana va vaqt"
     },
     "uz-cl": {
         "add_passport": "➕ Паспорт қўшиш",
@@ -345,6 +355,11 @@
         "online_buy_chosen_clear": "🧹 Севимлиларни тозалаш",
         "online_buy_chosen_text": "❤️ Севимлилар рўйхати",
         "showed_offset_products_in_count": "{count} махсулотдан {offset} кўрсатилди",
-        "storage_list_empty": "⚠️ Ўз маҳсулотларини жойлаштирган филиаллар йоқ ⚠️"
+        "storage_list_empty": "⚠️ Ўз маҳсулотларини жойлаштирган филиаллар йоқ ⚠️",
+        "foto_report": "🌠 Фото хисобот",
+        "foto_reports": "🌠 Фото хисоботлар",
+        "showed_offset_reports_in_count": "{count} хисоботдан {offset} та кўрсатилди",
+        "report_list_empty": "⚠️ Хисоботлар йок ⚠️",
+        "datetime": "📅 Сана ва вақти"
     }
 }
