@@ -33,26 +33,34 @@ class Image(models.Model):
 
 class Category(TranslatableModel):
     translations = TranslatedFields(
-        name=models.CharField(max_length=255)
+        name=models.CharField(max_length=255, verbose_name="Название")
     )
-    storage = models.ForeignKey(Storage, models.CASCADE)
-    is_active = models.BooleanField(default=True)
+    storage = models.ForeignKey(Storage, models.CASCADE, verbose_name="Склад")
+    is_active = models.BooleanField(default=True, verbose_name="Актив")
 
     def __str__(self) -> str:
         return self.name
+    
+    class Meta:
+        verbose_name = 'Категория'
+        verbose_name_plural = 'Категории'
 
 
 class Product(TranslatableModel):
     translations = TranslatedFields(
-        name=models.CharField(max_length=255),
-        desc=models.TextField(null=True)
+        name=models.CharField(max_length=255, verbose_name="Название"),
+        desc=models.TextField(null=True, verbose_name="Описание")
     )
-    currency = models.CharField(max_length=20, default="$")
-    price = models.FloatField()
-    category = models.ForeignKey(Category, models.CASCADE)
-    is_active = models.BooleanField(default=True)
-    weight = models.FloatField()
-    created_date = models.DateTimeField(auto_now_add=True)
+    currency = models.CharField(max_length=20, default="$", verbose_name="Валюта")
+    price = models.FloatField(verbose_name="Цена")
+    category = models.ForeignKey(Category, models.CASCADE, verbose_name="Категория")
+    is_active = models.BooleanField(default=True, verbose_name="Актив")
+    weight = models.FloatField(verbose_name="Вес")
+    created_date = models.DateTimeField(auto_now_add=True, verbose_name="Дата создание")
+
+    class Meta:
+        verbose_name = 'Продукт'
+        verbose_name_plural = 'Продукты'
 
     def __str__(self) -> str:
         return self.name
@@ -63,14 +71,14 @@ class Product(TranslatableModel):
 
 
 class ProductImage(models.Model):
-    image = models.ImageField(upload_to="product")
-    product = models.ForeignKey(Product, models.CASCADE)
+    image = models.ImageField(upload_to="product", verbose_name="Фото")
+    product = models.ForeignKey(Product, models.CASCADE, verbose_name="Продукт")
 
 
 class ProductToCart(models.Model):
-    product = models.ForeignKey(Product, models.CASCADE)
-    cart = models.ForeignKey("orders.Cart", models.CASCADE)
-    count = models.PositiveIntegerField(default=1)
+    product = models.ForeignKey(Product, models.CASCADE, verbose_name="Продукт")
+    cart = models.ForeignKey("orders.Cart", models.CASCADE, verbose_name="Карзина")
+    count = models.PositiveIntegerField(default=1, verbose_name="Кол-во")
 
     @property
     def price(self):
@@ -81,6 +89,6 @@ class ProductToCart(models.Model):
 
 
 class ProductToChosen(models.Model):
-    product = models.ForeignKey(Product, models.CASCADE)
-    clientid = models.ForeignKey("users.ClientId", models.CASCADE)
+    product = models.ForeignKey(Product, models.CASCADE, verbose_name="Продукт")
+    clientid = models.ForeignKey("users.ClientId", models.CASCADE, verbose_name="Клиент ИД")
     

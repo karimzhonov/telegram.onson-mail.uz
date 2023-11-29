@@ -82,7 +82,7 @@ class Order(models.Model):
 
 
 class Cart(models.Model):
-    clientid = models.OneToOneField("users.ClientId", models.CASCADE)
+    clientid = models.OneToOneField("users.ClientId", models.CASCADE, verbose_name="Клиент ИД")
 
     @property
     def price(self):
@@ -94,13 +94,22 @@ class Cart(models.Model):
     async def aproducts(self):
         return self.producttocart_set.select_related("product").all()
     
+    class Meta:
+        verbose_name = 'Карзина клиента'
+        verbose_name_plural = 'Карзина клиента'
+    
 
 class Report(models.Model):
-    clientid = models.ForeignKey("users.ClientId", models.CASCADE)
-    image = models.ImageField(upload_to="report")
-    create_date = models.DateTimeField(auto_now_add=True)
+    clientid = models.ForeignKey("users.ClientId", models.CASCADE, verbose_name="Клиент ИД")
+    image = models.ImageField(upload_to="report", verbose_name="Фото")
+    create_date = models.DateTimeField(auto_now_add=True, verbose_name="Дата и время")
+
+    class Meta:
+        verbose_name = 'Фото отчет'
+        verbose_name_plural = 'Фото отчеты'
 
     def send_notification(self):
+        from threading import Thread
         from bot.models import get_text as _
         from bot.utils import create_bot
         from bot.settings import TOKEN
@@ -111,4 +120,7 @@ class Report(models.Model):
             return
         text, photo = _render_report(self)
         bot = create_bot(TOKEN)
-        async_to_sync(bot.send_photo)(chat_id=user.id, photo=photo, caption=text)
+        
+        def main():
+            async_to_sync(bot.send_photo)(chat_id=user.id, photo=photo, caption=text)
+        Thread(target=main).start()
