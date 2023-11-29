@@ -34,7 +34,8 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
-    # 'jazzmin',
+    'bot',
+    'jazzmin',
     'admincharts',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -46,7 +47,6 @@ INSTALLED_APPS = [
     'simple_history',
     'import_export',
     'parler',
-    'bot',
     'storages',
     'users',
     'orders',

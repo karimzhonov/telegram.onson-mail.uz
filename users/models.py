@@ -14,7 +14,7 @@ class Client(models.Model):
     create_date = models.DateField(auto_now_add=True)
 
     def __str__(self) -> str:
-        return self.fio
+        return f"{self.fio} {self.passport}"
     
     class Meta:
         verbose_name = 'Паспорт клиента'
