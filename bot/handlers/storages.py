@@ -36,7 +36,6 @@ async def storage_info(msg: types.Message, state: FSMContext):
         await msg.answer(_("invalid_storage", msg.bot.lang))
 
 
-
 async def _render_storage(user_id, msg: types.Message, state: FSMContext, storage, edit=False, passport=True):
     main_text = f"""
 {_('storage_name', msg.bot.lang)}: {storage.name}

@@ -1,4 +1,3 @@
-from django.utils import timezone
 from aiogram.types import Message
 from aiogram import Bot
 from aiogram.filters.base import Filter

@@ -1,4 +1,4 @@
-import json, os
+import json, os, re
 from asgiref.sync import sync_to_async
 from django.db import models
 from django.conf import settings
@@ -62,7 +62,7 @@ def check_text(slug, text, lang) -> str:
     with open(LOCALE_PATH, encoding="utf-8") as file:
         locale: dict[str, dict[str, str]] = json.load(file)
     locale[lang].setdefault(slug, slug)
-    test = locale[lang][slug] == text
+    test = locale[lang][slug] == text or locale[lang][slug] in re.sub(r'\([^()]*\)', '', text)[:-1]
     if test:
         return True
     texts = []

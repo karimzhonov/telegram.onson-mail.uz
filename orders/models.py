@@ -79,3 +79,17 @@ class Order(models.Model):
     class Meta:
         verbose_name = 'Заказ'
         verbose_name_plural = 'Закази'
+
+
+class Cart(models.Model):
+    clientid = models.OneToOneField("users.ClientId", models.CASCADE)
+
+    @property
+    def price(self):
+        return sum([ptc.price for ptc in self.producttocart_set.select_related("product").all()])
+    
+    async def aprice(self):
+        return sum([ptc.price async for ptc in self.producttocart_set.select_related("product").all()])
+
+    async def aproducts(self):
+        return self.producttocart_set.select_related("product").all()

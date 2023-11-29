@@ -30,3 +30,10 @@ class IDStorage(StatesGroup):
 class CalculatorState(StatesGroup):
     storage = State()
     kg = State()
+
+class OnlineBuy(StatesGroup):
+    storage = State()
+    menu = State()
+    category = State()
+    product = State()
+    chosen = State()

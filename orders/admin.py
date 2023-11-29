@@ -1,9 +1,16 @@
 from django.contrib import admin
 from simple_history.admin import SimpleHistoryAdmin
 from import_export.admin import ImportExportActionModelAdmin
-from .models import Part, Order
+from storages.models import ProductToCart
+from .models import Part, Order, Cart
 from .resources import OrderResource
 from .forms import OrderImportForm, OrderConfirmImportForm
+
+
+class ProductToCartInline(admin.TabularInline):
+    model = ProductToCart
+    extra = 0
+
 
 @admin.register(Part)
 class PartAdmin(SimpleHistoryAdmin, admin.ModelAdmin):
@@ -29,3 +36,9 @@ class OrderAdmin(ImportExportActionModelAdmin, SimpleHistoryAdmin):
     def get_import_data_kwargs(self, request, *args, **kwargs):
         kwargs.update(form_data=kwargs.get("form").cleaned_data)
         return super().get_import_data_kwargs(request, *args, **kwargs)
+
+
+@admin.register(Cart)
+class CartAdmin(admin.ModelAdmin):
+    inlines = [ProductToCartInline]
+    
