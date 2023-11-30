@@ -3,6 +3,7 @@ from django.db.models import Count
 from django.db.models.functions import TruncDate
 from admincharts.admin import AdminChartMixin
 from contrib.parler.admin import TranslatableAdmin
+from users.models import get_storages
 from .models import User, Info
 
 
@@ -12,6 +13,12 @@ class UserAdmin(AdminChartMixin, admin.ModelAdmin):
     list_chart_options = {"responsive": True, "scales": {
         "y": {"min": 0}
     }}
+
+    def get_queryset(self, request):
+        if request.user.is_superuser:
+            return super().get_queryset(request)
+        storages = get_storages(request.user)
+        return super().get_queryset(request).filter(clientid__storage__in=storages)
 
     def get_list_chart_data(self, queryset):
         datasets = {

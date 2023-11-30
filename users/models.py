@@ -1,7 +1,11 @@
 from django.db import models
+from django.contrib.auth import get_user_model
 from bot.models import get_text as _
 from asgiref.sync import sync_to_async, async_to_sync
 from simple_history.models import HistoricalRecords
+
+
+User = get_user_model()
 
 
 class Client(models.Model):
@@ -82,3 +86,16 @@ class ClientId(models.Model):
     async def aremove_client(self, *args: list[Client]):
         return await sync_to_async(self.clients.remove)(*args)
     
+
+
+class UserSettings(models.Model):
+    storages = models.ManyToManyField("storages.Storage")
+    user = models.OneToOneField(User, models.CASCADE, null=True)
+
+    class Meta:
+        verbose_name = 'Настройка'
+        verbose_name_plural = 'Настройки'
+
+
+def get_storages(user: User):
+    return user.usersettings.storages.all() if user.usersettings else []

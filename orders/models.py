@@ -16,7 +16,7 @@ PART_STATUS = (
 )
 
 class Part(models.Model):
-    number = models.IntegerField("Номер", unique=True)
+    number = models.IntegerField("Номер")
     storage = models.ForeignKey("storages.Storage", models.CASCADE, verbose_name="Склад")
     status = models.CharField("Статус", max_length=50, default=IN_STORAGE, choices=PART_STATUS)
     history = HistoricalRecords()
@@ -25,6 +25,7 @@ class Part(models.Model):
         return str(self.number)
     
     class Meta:
+        unique_together = (("storage", "number"),)
         verbose_name = 'Партия'
         verbose_name_plural = 'Партии'
 
@@ -84,6 +85,9 @@ class Order(models.Model):
 class Cart(models.Model):
     clientid = models.OneToOneField("users.ClientId", models.CASCADE, verbose_name="Клиент ИД")
 
+    def __str__(self) -> str:
+        return str(self.clientid)
+
     @property
     def price(self):
         return round(sum([ptc.price for ptc in self.producttocart_set.select_related("product").all()]), 2)
@@ -103,6 +107,9 @@ class Report(models.Model):
     clientid = models.ForeignKey("users.ClientId", models.CASCADE, verbose_name="Клиент ИД")
     image = models.ImageField(upload_to="report", verbose_name="Фото")
     create_date = models.DateTimeField(auto_now_add=True, verbose_name="Дата и время")
+
+    def __str__(self) -> str:
+        return str(self.clientid)
 
     class Meta:
         verbose_name = 'Фото отчет'
