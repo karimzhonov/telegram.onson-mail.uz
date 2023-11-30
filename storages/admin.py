@@ -1,5 +1,7 @@
 from django.contrib.gis import admin
+from admincharts.admin import AdminChartMixin
 from contrib.parler.admin import TranslatableAdmin
+from orders.models import Order
 from .models import Storage, Image, Category, Product, ProductImage
 
 
@@ -14,7 +16,7 @@ class ImageInline(admin.TabularInline):
 
 
 @admin.register(Storage)
-class StorageAdmin(TranslatableAdmin):
+class StorageAdmin(AdminChartMixin, TranslatableAdmin):
     inlines = [ImageInline]
     non_editable_fields = ['slug']
     
@@ -29,6 +31,21 @@ class StorageAdmin(TranslatableAdmin):
         if obj: # if we are updating an object
             defaults = tuple(f for f in defaults if f not in self.non_editable_fields)
         return defaults
+
+    list_chart_type = "bar"
+    list_chart_options = {"responsive": True, "indexAxis": 'y',}
+
+    def get_list_chart_data(self, queryset):
+        datasets = {
+            "datasets": [],
+        }
+        totals = []
+        create_qs = Storage.objects.translated("ru").all()
+        
+        for data in create_qs:
+            totals.append({"y": data.name, "x": Order.objects.filter(part__storage=data).count()})
+        datasets["datasets"].append({"label": "Кол-во заказов", "data": totals, "backgroundColor": "red", "borderColor": "red"})
+        return datasets
 
 
 @admin.register(Category)

@@ -9,9 +9,9 @@ from .models import User, Info
 @admin.register(User)
 class UserAdmin(AdminChartMixin, admin.ModelAdmin):
     list_chart_type = "line"
-    list_chart_options = {"aspectRatio": 6, "responsive": True, "scales": {
+    list_chart_options = {"responsive": True, "scales": {
         "y": {"min": 0}
-    },}
+    }}
 
     def get_list_chart_data(self, queryset):
         datasets = {
@@ -24,7 +24,7 @@ class UserAdmin(AdminChartMixin, admin.ModelAdmin):
         
         for data in create_qs:
             totals.append({"x": data[0], "y": data[1]})
-        datasets["datasets"].append({"label": "Созданный пользователи", "data": totals, "backgroundColor": "red"})
+        datasets["datasets"].append({"label": "Созданный пользователи", "data": totals, "backgroundColor": "red", "borderColor": "red"})
 
         totals = []
         last_qs = User.history.annotate(
@@ -33,7 +33,7 @@ class UserAdmin(AdminChartMixin, admin.ModelAdmin):
 
         for data in last_qs:
             totals.append({"x": data[0], "y": data[1]})
-        datasets["datasets"].append({"label": "Активный пользователи", "data": totals, "backgroundColor": "green"})
+        datasets["datasets"].append({"label": "Активный пользователи", "data": totals, "backgroundColor": "green", "borderColor": "green"})
         return datasets
 
 

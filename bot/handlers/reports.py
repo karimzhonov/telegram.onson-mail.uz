@@ -9,7 +9,7 @@ from bot.models import get_text as _
 from bot.text_keywords import FOTO_REPORTS
 from orders.models import Report
 
-LIMIT = 1
+LIMIT = 5
 
 def setup(dp: Dispatcher):
     dp.message(DbSearchFilter(FOTO_REPORTS))(my_reports)

@@ -20,7 +20,7 @@ class User(models.Model):
     history = HistoricalRecords()
 
     def __str__(self) -> str:
-        return self.username
+        return f"{self.username} ({self.id})"
     
     class Meta:
         verbose_name = 'Телеграм пользователь'
