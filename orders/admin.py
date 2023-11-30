@@ -3,6 +3,7 @@ from django.contrib import admin
 from simple_history.admin import SimpleHistoryAdmin
 from import_export.admin import ImportExportActionModelAdmin
 from storages.models import ProductToCart
+from users.models import ClientId
 from .models import Part, Order, Cart, Report
 from .resources import OrderResource
 from .forms import OrderImportForm, OrderConfirmImportForm
@@ -23,7 +24,11 @@ class PartAdmin(SimpleHistoryAdmin, admin.ModelAdmin):
     def send_notification(self, request, queryset):
         for part in queryset:
             part.notificate_users()
-        
+        clients = Order.objects.filter(part__in=queryset).values_list("client__id", flat=True)
+        storages = queryset.values_list("storage__id", flat=True)
+        for clientid in ClientId.objects.filter(storage__id__in=storages, selected_client__id__in=clients).distinct("id"):
+            clientid.send_notification()
+
 
 @admin.register(Order)
 class OrderAdmin(ImportExportActionModelAdmin, SimpleHistoryAdmin):

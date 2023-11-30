@@ -1,6 +1,6 @@
 from django.db import models
 from bot.models import get_text as _
-from asgiref.sync import sync_to_async
+from asgiref.sync import sync_to_async, async_to_sync
 from simple_history.models import HistoricalRecords
 
 
@@ -63,7 +63,18 @@ class ClientId(models.Model):
         unique_together = (("storage", "selected_client", "user"),)
         verbose_name = 'ИД клиента'
         verbose_name_plural = 'ИД клиентов'
-
+    
+    def send_notification(self):
+        from bot.utils import create_bot
+        from bot.settings import TOKEN
+        from bot.handlers.my_passport import _render_passport
+        if not self.user:
+            return
+        if not self.selected_client.is_warning():
+            return
+        text = async_to_sync(_render_passport)(self.selected_client, self.user.lang)
+        bot = create_bot(TOKEN)
+        async_to_sync(bot.send_message)(self.user.id, text)
 
     async def aadd_client(self, *args: list[Client]):
         return await sync_to_async(self.clients.add)(*args)

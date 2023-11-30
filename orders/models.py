@@ -4,7 +4,7 @@ from contrib.django.queryset import QuarterQuerysetMixin
 from simple_history.models import HistoricalRecords
 
 
-LIMIT_FOR_QUARTER = 1000
+LIMIT_FOR_QUARTER = 950
 
 IN_STORAGE = "in_storage"
 IN_DELIVERY = "in_delivery"
@@ -72,7 +72,7 @@ class Order(models.Model):
 
     @property
     def payed_price(self):
-        return self.weight * self.part.storage.per_price
+        return round(self.weight * self.part.storage.per_price, 2)
 
     objects: OrderQueryset = OrderQueryset.as_manager()
 
@@ -86,10 +86,10 @@ class Cart(models.Model):
 
     @property
     def price(self):
-        return sum([ptc.price for ptc in self.producttocart_set.select_related("product").all()])
+        return round(sum([ptc.price for ptc in self.producttocart_set.select_related("product").all()]), 2)
     
     async def aprice(self):
-        return sum([ptc.price async for ptc in self.producttocart_set.select_related("product").all()])
+        return round(sum([ptc.price async for ptc in self.producttocart_set.select_related("product").all()]), 2)
 
     async def aproducts(self):
         return self.producttocart_set.select_related("product").all()

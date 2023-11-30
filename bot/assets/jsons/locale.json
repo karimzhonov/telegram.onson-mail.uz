@@ -119,7 +119,8 @@
         "showed_offset_reports_in_count": "Показано {offset} отчетов из {count}",
         "report_list_empty": "⚠️ Отчетов нет ⚠️",
         "datetime": "📅 Дата и время",
-        "accept_button": "📖 Партнерское соглашение"
+        "accept_button": "📖 Партнерское соглашение",
+        "client_passport_warning_quater_limit": "Паспорт превысил лимит"
     },
     "uz": {
         "add_passport": "➕ Pasport qo'shish",
@@ -241,7 +242,8 @@
         "showed_offset_reports_in_count": "{count} hisobotlardan {offset} ta ko'rsatildi",
         "report_list_empty": "⚠️ Hisobotlar yoq ⚠️",
         "datetime": "📅 Sana va vaqt",
-        "accept_button": "📖 Hamkorlik shartnomasi"
+        "accept_button": "📖 Hamkorlik shartnomasi",
+        "client_passport_warning_quater_limit": "Pasport limitdan oshib ketgan"
     },
     "uz-cl": {
         "add_passport": "➕ Паспорт қўшиш",
@@ -363,6 +365,7 @@
         "showed_offset_reports_in_count": "{count} хисоботдан {offset} та кўрсатилди",
         "report_list_empty": "⚠️ Хисоботлар йок ⚠️",
         "datetime": "📅 Сана ва вақти",
-        "accept_button": "📖 Ҳамкорлик шартномаси"
+        "accept_button": "📖 Ҳамкорлик шартномаси",
+        "client_passport_warning_quater_limit": "Паспорт лимитдан отип кетган"
     }
 }

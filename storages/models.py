@@ -67,7 +67,7 @@ class Product(TranslatableModel):
     
     @property
     def delivery_price(self):
-        return self.category.storage.per_price * self.weight
+        return round(self.category.storage.per_price * self.weight, 2)
 
 
 class ProductImage(models.Model):
@@ -82,7 +82,7 @@ class ProductToCart(models.Model):
 
     @property
     def price(self):
-        return self.product.price * self.count
+        return round(self.product.price * self.count, 2)
     
     class Meta:
         unique_together = ["product", "cart"]

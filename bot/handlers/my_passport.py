@@ -39,10 +39,15 @@ async def select_passport(cq: types.CallbackQuery, state: FSMContext):
     msg = cq.message
     client = int(cq.data)
     client = await Client.objects.aget(id=client)
+    text = await _render_passport(client, msg.bot.lang)
+    await msg.answer(text)
+
+
+async def _render_passport(client: Client, lang):
     current_quarter = await client.order_quarters().order_by("quarter").alast()
     current_quarter = 0 if not current_quarter else current_quarter['value']
     
-    table = ["|------------------|------------------|", f"|{_('quarter', msg.bot.lang).center(18)}|{_('limit', msg.bot.lang).center(18)}|", "|------------------|------------------|"]
+    table = ["|------------------|------------------|", f"|{_('quarter', lang).center(18)}|{_('limit', lang).center(18)}|", "|------------------|------------------|"]
     summa = 0
     async for quarter in client.order_quarters().order_by("-quarter"):
         summa += quarter["value"]
@@ -50,20 +55,23 @@ async def select_passport(cq: types.CallbackQuery, state: FSMContext):
         limit = str(quarter["value"]).center(18)
         table.append(f"|{date}|{limit}|")
     table.append("|------------------|------------------|")
-    table.append(f"|{_('summa', msg.bot.lang).center(18)}|{str(summa).center(18)}|")
+    table.append(f"|{_('summa', lang).center(18)}|{str(summa).center(18)}|")
     table.append("|------------------|------------------|")
     table = "\n".join(table)
     text = f"""
-{_('client_info', msg.bot.lang)}
-{_('fio', msg.bot.lang)}: {client.fio}
-{_('passport', msg.bot.lang)}: {client.passport}
-{_('pnfl', msg.bot.lang)}: {client.pnfl}
-{_('phone', msg.bot.lang)}: {client.phone}
-{_('address', msg.bot.lang)}: {client.address}
-{_('current_quarter', msg.bot.lang)}: {current_quarter} $
+{_('client_info', lang)}
+{_('fio', lang)}: {client.fio}
+{_('passport', lang)}: {client.passport}
+{_('pnfl', lang)}: {client.pnfl}
+{_('phone', lang)}: {client.phone}
+{_('address', lang)}: {client.address}
+{_('current_quarter', lang)}: {current_quarter} $
 
 <pre>
 {table}
 </pre>
 """
-    await msg.answer(text)
+    if await client.ais_warning():
+        warnign_text = f'{WARINNG} {_("client_passport_warning_quater_limit", lang)} {WARINNG}'    
+        text = f"{text}\n{warnign_text}"
+    return text
