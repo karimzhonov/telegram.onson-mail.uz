@@ -27,5 +27,5 @@ PLUS = "+"
 MINUS = '-'
 ONLINE_BUY_MENU = "online_buy_menu"
 FOTO_REPORTS = "foto_reports"
-ACCEPT_URL = 'https://teletype.in/@khtkarimzhonov/shartnoma'
+ACCEPT_URL = 'https://teletype.in/@khtkarimzhonov/shartnoma2.0'
 ACCPET_BUTTON = "accept_button"
