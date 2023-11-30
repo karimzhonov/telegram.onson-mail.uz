@@ -1,4 +1,4 @@
-from typing import Any, Sequence
+from typing import Any, Optional, Sequence
 from django.contrib import admin
 from django.http.request import HttpRequest
 from django.utils.html import format_html
@@ -8,7 +8,7 @@ from storages.models import ProductToCart
 from users.models import ClientId, get_storages
 from .models import Part, Order, Cart, Report
 from .resources import OrderResource
-from .forms import OrderImportForm, OrderConfirmImportForm
+from .forms import OrderImportForm, OrderConfirmImportForm, PartForm, OrderForm, ReportForm
 
 
 class ProductToCartInline(admin.TabularInline):
@@ -21,6 +21,7 @@ class PartAdmin(SimpleHistoryAdmin, admin.ModelAdmin):
     list_filter = ["storage"]
     list_display = ["number", "storage"]
     actions = ['send_notification']
+    form = PartForm
 
     def get_list_filter(self, request: HttpRequest) -> Sequence[str]:
         if request.user.is_superuser:
@@ -52,6 +53,7 @@ class OrderAdmin(ImportExportActionModelAdmin, SimpleHistoryAdmin):
     import_form_class = OrderImportForm
     confirm_form_class = OrderConfirmImportForm
     resource_classes = [OrderResource]
+    form = OrderForm
 
     def get_list_filter(self, request: HttpRequest) -> Sequence[str]:
         if request.user.is_superuser:
@@ -87,6 +89,7 @@ class ReportAdmin(admin.ModelAdmin):
     fields = ["clientid", "image", "get_image"]
     readonly_fields = ["get_image"]
     search_fields = ["clientid__id_str"]
+    form = ReportForm
 
     def get_queryset(self, request):
         if request.user.is_superuser:

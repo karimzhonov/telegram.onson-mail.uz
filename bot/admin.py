@@ -19,13 +19,16 @@ class UserAdmin(AdminChartMixin, admin.ModelAdmin):
             return super().get_queryset(request)
         storages = get_storages(request.user)
         return super().get_queryset(request).filter(clientid__storage__in=storages)
+    
+    def get_list_chart_queryset(self, changelist):
+        return changelist.queryset
 
     def get_list_chart_data(self, queryset):
         datasets = {
             "datasets": [],
         }
         totals = []
-        create_qs = User.objects.annotate(
+        create_qs = queryset.annotate(
             date=TruncDate("create_date")
         ).values("date").annotate(value=Count("id")).values_list('date', 'value').order_by('date')
         
@@ -35,6 +38,7 @@ class UserAdmin(AdminChartMixin, admin.ModelAdmin):
 
         totals = []
         last_qs = User.history.annotate(
+            id__in=queryset.values_list("id"),
             date=TruncDate("history_date")
         ).values("date").annotate(value=Count("id", distinct=True)).values_list('date', 'value').order_by('date')
 
