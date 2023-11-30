@@ -7,7 +7,7 @@ from aiogram.utils.keyboard import ReplyKeyboardBuilder
 from bot.filters.db_filter import DbSearchFilter
 from bot.models import get_text as _
 from bot.states import RegisterState
-from bot.text_keywords import TAKE_ID, ACCEPT, ID_PASSPORT, BIO_PASSPORT
+from bot.text_keywords import TAKE_ID, ACCEPT, ID_PASSPORT, BIO_PASSPORT, ACCEPT_URL
 from bot.utils import concat_images
 from users.validators import validate_pnfl, validate_passport, validate_phone
 from users.models import Client, ClientId
@@ -161,7 +161,7 @@ async def entered_phone(msg: types.Message, state: FSMContext):
         await state.update_data(phone=value)
         # await client_created(msg, state)
         await msg.answer(_("accept-creating", msg.bot.lang))
-        await msg.answer('https://teletype.in/@khtkarimzhonov/shartnoma', reply_markup=ReplyKeyboardBuilder([[types.KeyboardButton(text= _(ACCEPT, msg.bot.lang))]]).as_markup(resize_keyboard=True))
+        await msg.answer(ACCEPT_URL, reply_markup=ReplyKeyboardBuilder([[types.KeyboardButton(text= _(ACCEPT, msg.bot.lang))]]).as_markup(resize_keyboard=True))
         await state.set_state(RegisterState.accept)
 
 async def accepted_creating(msg: types.Message, state: FSMContext):

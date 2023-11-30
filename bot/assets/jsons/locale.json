@@ -75,7 +75,7 @@
         "online_buy_storage_list_text": "🛒 Введите филиал, из которого вы котите сделать покупки",
         "online_buy_category": "📄 Категории",
         "online_buy_cart": "🛒 Карзина",
-        "online_buy_about": "ℹ️ О нас",
+        "online_buy_about": "ℹ️ О маркета",
         "online_by_menu": "📄 Меню",
         "online_buy_category_list_text": "📄 Выберите категорию",
         "online_buy_product_list_empty": "⚠️ Нет товары в этой категории ⚠️",
@@ -118,7 +118,8 @@
         "foto_reports": "🌠 Фото отчеты",
         "showed_offset_reports_in_count": "Показано {offset} отчетов из {count}",
         "report_list_empty": "⚠️ Отчетов нет ⚠️",
-        "datetime": "📅 Дата и время"
+        "datetime": "📅 Дата и время",
+        "accept_button": "📖 Партнерское соглашение"
     },
     "uz": {
         "add_passport": "➕ Pasport qo'shish",
@@ -196,7 +197,7 @@
         "online_buy_storage_list_text": "🛒 Xarid qilmoqchi bo'lgan filialni kiriting",
         "online_buy_category": "📄 Kategoriyalar",
         "online_buy_cart": "🛒 Savat",
-        "online_buy_about": "ℹ️ Biz haqimizda",
+        "online_buy_about": "ℹ️ Market haqida",
         "online_by_menu": "📄 Menyu",
         "online_buy_category_list_text": "📄 Kategoriyani tanlang",
         "online_buy_product_list_empty": "⚠️ Ushbu kategoriyada mahsulotlar mavjud emas ⚠️",
@@ -239,7 +240,8 @@
         "foto_reports": "🌠 Foto xisobotlar",
         "showed_offset_reports_in_count": "{count} hisobotlardan {offset} ta ko'rsatildi",
         "report_list_empty": "⚠️ Hisobotlar yoq ⚠️",
-        "datetime": "📅 Sana va vaqt"
+        "datetime": "📅 Sana va vaqt",
+        "accept_button": "📖 Hamkorlik shartnomasi"
     },
     "uz-cl": {
         "add_passport": "➕ Паспорт қўшиш",
@@ -317,7 +319,7 @@
         "online_buy_storage_list_text": "🛒 Харид қилмоқчи бўлган филиални киритинг",
         "online_buy_category": "📄 Категориялар",
         "online_buy_cart": "🛒 Сават",
-        "online_buy_about": "ℹ️ Биз ҳақимизда",
+        "online_buy_about": "ℹ️ Маркет хақида",
         "online_by_menu": "📄 Меню",
         "online_buy_category_list_text": "📄 Категорияни танланг",
         "online_buy_product_list_empty": "⚠️ Ушбу категорияда маҳсулотлар мавжуд эмас ⚠️",
@@ -360,6 +362,7 @@
         "foto_reports": "🌠 Фото хисоботлар",
         "showed_offset_reports_in_count": "{count} хисоботдан {offset} та кўрсатилди",
         "report_list_empty": "⚠️ Хисоботлар йок ⚠️",
-        "datetime": "📅 Сана ва вақти"
+        "datetime": "📅 Сана ва вақти",
+        "accept_button": "📖 Ҳамкорлик шартномаси"
     }
 }

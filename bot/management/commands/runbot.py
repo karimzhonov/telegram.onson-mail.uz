@@ -25,7 +25,6 @@ async def main():
         await dp.start_polling(create_bot(TOKEN))
     finally:
         await dp.storage.close()
-        await dp.storage.wait_closed()
         session = await dp.bot.get_session()
         await session.close()
 

@@ -18,7 +18,7 @@ def setup(dp: Dispatcher):
 
 async def my_reports(msg: types.Message, state: FSMContext, offset=0, user_id=None):
     user_id = msg.from_user.id if not user_id else user_id
-    reports = Report.objects.select_related("clientid", "clientid__user").filter(clientid__user_id=user_id).order_by("-create_date")
+    reports = Report.objects.select_related("clientid", "clientid__user", "clientid__storage").filter(clientid__user_id=user_id).order_by("-create_date")
     if not await reports.aexists():
         return await msg.answer(_("report_list_empty", msg.bot.lang))
     async for report in reports[offset:offset + LIMIT]:

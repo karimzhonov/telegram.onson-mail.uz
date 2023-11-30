@@ -7,7 +7,7 @@ from aiogram.utils.keyboard import ReplyKeyboardBuilder
 from bot.filters.db_filter import DbSearchFilter
 from bot.models import User, Info, LANGUAGES, get_text as _
 from bot.states import LanguageChooseState
-from bot.text_keywords import TAKE_ID, SETTINGS, INFO, MENU, CHECK, LISTPASSPORT, ONLINE_BUY, CALCULATOR, ABOUT, STORAGES, FOTO_REPORTS
+from bot.text_keywords import TAKE_ID, SETTINGS, INFO, MENU, CHECK, LISTPASSPORT, ONLINE_BUY, CALCULATOR, ABOUT, STORAGES, FOTO_REPORTS, ACCPET_BUTTON, ACCEPT_URL
 from users.models import ClientId
 
 
@@ -16,6 +16,7 @@ def setup(dp: Dispatcher):
     dp.message(DbSearchFilter(MENU))(start)
     dp.message(DbSearchFilter(SETTINGS))(choose_lang)
     dp.message(DbSearchFilter(INFO))(info)
+    dp.message(DbSearchFilter(ACCPET_BUTTON))(accept_url)
     dp.message(LanguageChooseState.lang)(choosed_lang)
     
 
@@ -34,6 +35,7 @@ async def menu(msg: types.Message, state: FSMContext):
         keyboard.row(types.KeyboardButton(text=_(LISTPASSPORT, msg.bot.lang)))
     else:
         keyboard.row(types.KeyboardButton(text=_(TAKE_ID, msg.bot.lang)))
+    keyboard.row(types.KeyboardButton(text=_(ACCPET_BUTTON, msg.bot.lang)))
     keyboard.row(types.KeyboardButton(text=_(ABOUT, msg.bot.lang)), types.KeyboardButton(text=_(STORAGES, msg.bot.lang)))
     keyboard.row(types.KeyboardButton(text=_(ONLINE_BUY, msg.bot.lang)), types.KeyboardButton(text=_(CALCULATOR, msg.bot.lang)))
     keyboard.row(types.KeyboardButton(text=_(SETTINGS, msg.bot.lang)), types.KeyboardButton(text=_(INFO, msg.bot.lang)))
@@ -91,3 +93,7 @@ async def info(msg: types.Message, state: FSMContext):
         else:
             await msg.answer_video(file, caption=text)
         # await msg.answer_photo(types.BufferedInputFile())
+
+
+async def accept_url(msg: types.Message):
+    await msg.answer(ACCEPT_URL)
