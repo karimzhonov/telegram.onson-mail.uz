@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth import get_user_model
 from bot.models import get_text as _
 from asgiref.sync import sync_to_async, async_to_sync
@@ -98,8 +99,11 @@ class UserSettings(models.Model):
 
 
 def get_storages(user: User):
+    from storages.models import Storage
+    if user.is_superuser:
+        return Storage.objects.all()
     try:
-        return user.usersettings.storages.all() if user.usersettings else []
-    except Exception as _exp:
+        return user.usersettings.storages.all() if user.usersettings else Storage.objects.filter(id=0)
+    except Storage.DoesNotExist as _exp:
         print(_exp)
-    return []
+    return Storage.objects.filter(id=0)
