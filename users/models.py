@@ -98,4 +98,8 @@ class UserSettings(models.Model):
 
 
 def get_storages(user: User):
-    return user.usersettings.storages.all() if user.usersettings else []
+    try:
+        return user.usersettings.storages.all() if user.usersettings else []
+    except Exception as _exp:
+        print(_exp)
+    return []
