@@ -207,8 +207,6 @@ async def _client_to_clientid(msg: types.Message, state: FSMContext, client: Cli
                 "selected_client": client
             }, storage=storage, selected_client=client
             )
-            if created:
-                await ClientId.objects.filter(id=client_id.id).aupdate(id_str=client_id.get_id())
             if not client_id.user_id == msg.from_user.id:
                 await ClientId.objects.filter(id=client_id.id).aupdate(user_id=msg.from_user.id)
             if not await client_id.clients.filter(id=client.id).aexists():

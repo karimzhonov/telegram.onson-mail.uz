@@ -13,7 +13,7 @@ def setup(dp: Dispatcher):
     dp.message(DbSearchFilter(STORAGES))(storage_list)
     dp.message(IDStorage.storage)(storage_info)
     dp.callback_query(IDStorage.passport)(selected_passport)
-
+    dp.message(IDStorage.passport)(storage_info)
 
 
 async def storage_list(msg: types.Message, state: FSMContext):
@@ -51,6 +51,13 @@ async def _render_storage(user_id, msg: types.Message, state: FSMContext, storag
     keyboard = InlineKeyboardBuilder()
     if await ClientId.objects.filter(user_id=user_id).aexists():
         client_id, created = await ClientId.objects.select_related("storage", "selected_client").prefetch_related("clients", "storage__translations").aget_or_create(user_id=user_id, deleted=False, storage=storage)
+        if created:
+            last_client_id = await ClientId.objects.select_related("selected_client").filter(user_id=user_id).exclude(id=client_id.id).afirst()
+            if last_client_id:
+                client_id.selected_client = last_client_id.selected_client
+                await ClientId.objects.filter(id=client_id.id).aupdate(selected_client_id=last_client_id.selected_client_id)
+                async for client in last_client_id.clients.all():
+                    await client_id.aadd_client(client)
         if passport:
             async for client in client_id.clients.all():
                 text = []
