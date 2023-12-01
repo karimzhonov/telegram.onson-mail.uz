@@ -2,7 +2,7 @@ from django import forms
 from django.forms.utils import ErrorList
 from import_export.forms import ImportForm, ConfirmImportForm
 from users.models import get_storages, Client, ClientId
-from .models import Part, Order, Report
+from .models import Part, Order, Report, Cart
 
 
 class OrderImportForm(ImportForm):
@@ -54,6 +54,26 @@ class OrderForm(forms.ModelForm):
 
     class Meta:
         model = Order
+        fields = "__all__"
+
+
+class CartForm(forms.ModelForm):
+    def __init__(self, data=None,
+        files=None,
+        auto_id="id_%s",
+        prefix=None,
+        initial=None,
+        error_class=ErrorList,
+        label_suffix=None,
+        empty_permitted=False,
+        instance: Cart=None,
+        use_required_attribute=None,
+        renderer=None) -> None:
+        super().__init__(data, files, auto_id, prefix, initial, error_class, label_suffix, empty_permitted, instance, use_required_attribute, renderer)
+        self.fields["part"] = forms.ModelChoiceField(Part.objects.filter(storage=instance.clientid.storage))
+
+    class Meta:
+        model = Cart
         fields = "__all__"
 
 

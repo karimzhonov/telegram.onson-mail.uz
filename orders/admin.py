@@ -1,14 +1,17 @@
-from typing import Any, Optional, Sequence
-from django.contrib import admin
+from typing import Any, Sequence
+from django.urls import path, reverse
+from django.contrib import admin, messages
 from django.http.request import HttpRequest
+from django.http import HttpResponseRedirect
 from django.utils.html import format_html
 from simple_history.admin import SimpleHistoryAdmin
 from import_export.admin import ImportExportActionModelAdmin
 from storages.models import ProductToCart
 from users.models import ClientId, get_storages
+from contrib.django.admin import table
 from .models import Part, Order, Cart, Report
 from .resources import OrderResource
-from .forms import OrderImportForm, OrderConfirmImportForm, PartForm, OrderForm, ReportForm
+from .forms import OrderImportForm, OrderConfirmImportForm, PartForm, OrderForm, ReportForm, CartForm
 
 
 class ProductToCartInline(admin.TabularInline):
@@ -49,11 +52,27 @@ class OrderAdmin(ImportExportActionModelAdmin, SimpleHistoryAdmin):
     list_display = ["number", "part", "client_id", "client", "name", "weight", "facture_price", "payed_price"]
     list_filter = ["part", "part__storage", "client"]
     search_fields = ["part__number", "part__storage__slug", "client__passport"]
+    readonly_fields = ["products_table"]
+    exclude = ["products"]
+
     resource_classes = []
     import_form_class = OrderImportForm
     confirm_form_class = OrderConfirmImportForm
     resource_classes = [OrderResource]
     form = OrderForm
+
+    @admin.display(description="Table")
+    def products_table(self, obj: Order):
+        return format_html(table(obj.products, {
+            "name": "Название",
+            "desc": "Описание",
+            "currency": "Валюта",
+            "price": "Цена",
+            "category": "Категори",
+            "weight": "Вес",
+            "all_weight": "Вес все товара",
+            "facture_price": "Счет-фактура"
+        }))
 
     def get_list_filter(self, request: HttpRequest) -> Sequence[str]:
         if request.user.is_superuser:
@@ -75,6 +94,50 @@ class OrderAdmin(ImportExportActionModelAdmin, SimpleHistoryAdmin):
 class CartAdmin(admin.ModelAdmin):
     inlines = [ProductToCartInline]
     search_fields = ["clientid__id_str"]
+    fields = ["clientid", "part", "table"]
+    readonly_fields = ["table", "clientid"]
+    form = CartForm
+
+    def has_add_permission(self, request: HttpRequest) -> bool:
+        return False
+
+    def get_urls(self):
+        urls = super().get_urls()
+        info = self.model._meta.app_label, self.model._meta.model_name
+        my_urls = [
+            path('<path:object_id>/create_order/',
+                self.admin_site.admin_view(self.create_order),
+                name='%s_%s_create_order' % info),
+        ]
+        return my_urls + urls
+    
+    def create_order(self, request, *args, **kwargs):
+        try:
+            cart = Cart.objects.get(id=kwargs.get("object_id"))
+            if not cart.part:
+                raise Exception("Выберите партию, сохраните, потом оформите заказ")
+            order = cart.create_order()
+            messages.success(request, f"Order created: {order}")
+            url = reverse('admin:%s_%s_changelist' % (self.model._meta.app_label, self.model._meta.model_name), current_app=self.admin_site.name)
+            return HttpResponseRedirect(url)
+        except Exception as _exp:
+            messages.error(request, f"Error: {_exp}")
+            url = reverse('admin:%s_%s_change' % (self.model._meta.app_label, self.model._meta.model_name), kwargs=kwargs, current_app=self.admin_site.name)
+            return HttpResponseRedirect(url)
+
+    @admin.display(description="Info")
+    def table(self, obj: Cart):
+        info = self.model._meta.app_label, self.model._meta.model_name
+        return format_html(table(obj.render_products(), {
+            "name": "Название",
+            "desc": "Описание",
+            "currency": "Валюта",
+            "price": "Цена",
+            "category": "Категори",
+            "weight": "Вес",
+            "all_weight": "Вес все товара",
+            "facture_price": "Счет-фактура"
+        }, f'<a href="{reverse("admin:%s_%s_create_order" % info, kwargs={"object_id": obj.id}, current_app=self.admin_site.name)}" class="btn btn-success">Оформить</a>'))
 
     def get_queryset(self, request):
         if request.user.is_superuser:

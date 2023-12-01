@@ -1,4 +1,4 @@
-from asgiref.sync import async_to_sync
+from asgiref.sync import async_to_sync, sync_to_async
 from django.db import models
 from contrib.django.queryset import QuarterQuerysetMixin
 from simple_history.models import HistoricalRecords
@@ -22,7 +22,7 @@ class Part(models.Model):
     history = HistoricalRecords()
 
     def __str__(self) -> str:
-        return str(self.number)
+        return f"{self.number} ({self.storage})"
     
     class Meta:
         unique_together = (("storage", "number"),)
@@ -62,13 +62,15 @@ class OrderQueryset(QuarterQuerysetMixin, models.QuerySet):
 
 class Order(models.Model):
     part = models.ForeignKey(Part, models.CASCADE, verbose_name="Партия")
-    number = models.IntegerField("Номер заказа", unique=True)
+    number = models.IntegerField("Номер заказа", null=True)
     clientid = models.CharField("Клиент ИД", max_length=255, null=True)
     client = models.ForeignKey("users.Client", models.CASCADE, to_field="pnfl", verbose_name="Клиент")
     name = models.CharField("Название", max_length=255)
     weight = models.FloatField("Вес")
     facture_price = models.FloatField("Счет-актура")
     date = models.DateField("Дата", null=True)
+    products = models.JSONField(default=list)
+    with_online_buy = models.BooleanField(default=False)
     history = HistoricalRecords()
 
     @property
@@ -84,6 +86,7 @@ class Order(models.Model):
 
 class Cart(models.Model):
     clientid = models.OneToOneField("users.ClientId", models.CASCADE, verbose_name="Клиент ИД")
+    part = models.ForeignKey(Part, models.CASCADE, null=True)
 
     def __str__(self) -> str:
         return str(self.clientid)
@@ -97,6 +100,50 @@ class Cart(models.Model):
 
     async def aproducts(self):
         return self.producttocart_set.select_related("product").all()
+    
+    def render_products(self):
+        qs = self._annotated_qs()
+        return [
+            {
+                "name": str(pc.product.name),
+                "desc": str(pc.product.name),
+                "currency": str(pc.product.currency),
+                "price": float(pc.product.price),
+                "category": str(pc.product.category),
+                "weight": float(pc.product.weight),
+                "all_weight": float(pc.weight),
+                "facture_price": float(pc.facture_price)
+            } for pc in qs
+        ]
+    
+    def _annotated_qs(self):
+        return self.producttocart_set.all().annotate(
+            weight=models.F("count") * models.F("product__weight"),
+            # price=models.F("weight") * models.F("product__category__storage__per_price"),
+            facture_price=models.F("count") * models.F("product__price"),
+        )
+    
+    def create_order(self):
+        qs = self._annotated_qs()
+        name = ", ".join([f"{pc.product} {pc.count} шт." for pc in qs])
+        products = self.render_products()
+        number = Order.objects.filter(part__storage=self.part.storage).order_by("number").last()
+        number = 1 if not number else number.number + 1
+        order = Order.objects.create(
+            number=number,
+            part=self.part,
+            clientid=str(self.clientid),
+            client=self.clientid.selected_client,
+            name=name,
+            **qs.aggregate(facture_price=models.Sum(models.F("count") * models.F("product__price")), weight=models.Sum("weight")),
+            products=products,
+            with_online_buy=True
+        )
+        self.delete()
+        return order
+    
+    async def acreate_order(self, part: Part):
+        return await sync_to_async(self.create_order)(part=part)
     
     class Meta:
         verbose_name = 'Карзина клиента'

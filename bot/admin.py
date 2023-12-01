@@ -25,7 +25,7 @@ class UserAdmin(AdminChartMixin, admin.ModelAdmin):
 
     def get_list_chart_data(self, queryset):
         datasets = {
-            "datasets": [],
+            "datasets": [], 
         }
         totals = []
         create_qs = queryset.annotate(
