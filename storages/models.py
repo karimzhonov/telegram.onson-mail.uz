@@ -48,8 +48,7 @@ class Category(TranslatableModel):
 
 class Product(TranslatableModel):
     translations = TranslatedFields(
-        name=models.CharField(max_length=255, verbose_name="Название"),
-        desc=models.TextField(null=True, verbose_name="Описание")
+        name=models.CharField(max_length=255, verbose_name="Название")
     )
     currency = models.CharField(max_length=20, default="$", verbose_name="Валюта")
     price = models.FloatField(verbose_name="Цена")
