@@ -120,7 +120,10 @@
         "report_list_empty": "⚠️ Отчетов нет ⚠️",
         "datetime": "📅 Дата и время",
         "accept_button": "📖 Партнерское соглашение",
-        "client_passport_warning_quater_limit": "Паспорт превысил лимит"
+        "client_passport_warning_quater_limit": "Паспорт превысил лимит",
+        "online_buy_orders": "📦 Закази",
+        "product_list_empty": "⚠️ Заказов нет ⚠️",
+        "showed_offset_orders_in_count": "Показано {offset} заказов из {count}"
     },
     "uz": {
         "add_passport": "➕ Pasport qo'shish",
@@ -243,7 +246,10 @@
         "report_list_empty": "⚠️ Hisobotlar yoq ⚠️",
         "datetime": "📅 Sana va vaqt",
         "accept_button": "📖 Hamkorlik shartnomasi",
-        "client_passport_warning_quater_limit": "Pasport limitdan oshib ketgan"
+        "client_passport_warning_quater_limit": "Pasport limitdan oshib ketgan",
+        "online_buy_orders": "📦 Buyurtmalar",
+        "product_list_empty": "⚠️ Buyurtmalar yoq ⚠️",
+        "showed_offset_orders_in_count": "{count} buyurtmalardan {offset} ta ko'rsatildi"
     },
     "uz-cl": {
         "add_passport": "➕ Паспорт қўшиш",
@@ -366,6 +372,9 @@
         "report_list_empty": "⚠️ Хисоботлар йок ⚠️",
         "datetime": "📅 Сана ва вақти",
         "accept_button": "📖 Ҳамкорлик шартномаси",
-        "client_passport_warning_quater_limit": "Паспорт лимитдан отип кетган"
+        "client_passport_warning_quater_limit": "Паспорт лимитдан отип кетган",
+        "online_buy_orders": "📦 Буюуртмалар",
+        "product_list_empty": "⚠️ Буюуртмалар йоқ ⚠️",
+        "showed_offset_orders_in_count": "{count} буюуртмадан {offset} та кўрсатилди"
     }
 }

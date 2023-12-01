@@ -34,24 +34,14 @@ class Part(models.Model):
         from bot.utils import create_bot
         from bot.settings import TOKEN
         from users.models import ClientId
-
+        from bot.handlers.online_buy.orders import _render_order
+        
         for order in Order.objects.select_related("client").filter(part=self):
             client_id = ClientId.objects.filter(storage=self.storage, selected_client=order.client, clients__in=[order.client], deleted=False, user__isnull=False).select_related("user").first()
             if not client_id or not client_id.user:
                 continue
             user = client_id.user
-            text = f"""
-{_('part', user.lang)}: {self.number}
-{_('order_number', user.lang)}: {order.number}
-{_('client_id', user.lang)}: {order.clientid}
-{_('client', user.lang)}: {order.client}
-{_('passport', user.lang)}: {order.client.passport}
-{_('order_name', user.lang)}: {order.name}
-{_('order_weight', user.lang)}: {order.weight} {_('kg', user.lang)}
-{_('order_facture_price', user.lang)}: {order.facture_price} $
-{_('order_price', user.lang)}: {order.payed_price} $
-{_('order_status', user.lang)}: {_(f'order_status_{self.status}', user.lang)}
-            """
+            text = _render_order(user, order)
             bot = create_bot(TOKEN)
             async_to_sync(bot.send_message)(user.id, text)
 

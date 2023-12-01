@@ -3,10 +3,12 @@ from aiogram.fsm.context import FSMContext
 from aiogram.utils.keyboard import ReplyKeyboardBuilder
 from bot.models import get_text as _
 from bot.filters.db_filter import DbSearchFilter
-from bot.text_keywords import MENU, ONLINE_BUY, ONLINE_BUY_CART, ONLINE_BUY_ABOUT, ONLINE_BUY_CATEGORY, MENU, ONLINE_BUY_CHOSEN, ONLINE_BUY_MENU
+from bot.text_keywords import MENU, ONLINE_BUY, ONLINE_BUY_CART, ONLINE_BUY_ABOUT, ONLINE_BUY_CATEGORY, MENU, ONLINE_BUY_CHOSEN, ONLINE_BUY_MENU, ONLINE_BUY_ORDERS
 from bot.states import OnlineBuy
+from orders.models import Order
 from storages.models import Storage, Product, ProductToChosen, ProductToCart
-from . import chosens, category, cart
+from users.models import ClientId
+from . import chosens, category, cart, orders
 
 def setup(dp: Dispatcher):
     dp.message(DbSearchFilter(ONLINE_BUY))(storage_list)
@@ -16,6 +18,7 @@ def setup(dp: Dispatcher):
     cart.setup(dp)
     chosens.setup(dp)
     category.setup(dp)
+    orders.setup(dp)
 
 
 async def storage_list(msg: types.Message, state: FSMContext):
@@ -52,10 +55,12 @@ async def storage_menu_back(msg: types.Message, state: FSMContext):
 
 async def _render_storage_menu(msg: types.Message, state: FSMContext):
     data = await state.get_data()
+    clientid = await ClientId.objects.filter(storage_id=data["storage"], user_id=msg.from_user.id).select_related("storage").afirst()
     keyboard = ReplyKeyboardBuilder([
         [types.KeyboardButton(text=f"{_(ONLINE_BUY_CATEGORY, msg.bot.lang)} ({await Product.objects.filter(category__storage_id=data['storage']).acount()})")],
         [types.KeyboardButton(text=f"{_(ONLINE_BUY_CHOSEN, msg.bot.lang)} ({await ProductToChosen.objects.filter(clientid__storage_id=data['storage']).acount()})")],
         [types.KeyboardButton(text=f"{_(ONLINE_BUY_CART, msg.bot.lang)} ({await ProductToCart.objects.filter(cart__clientid__storage_id=data['storage']).acount()})")],
+        [types.KeyboardButton(text=f"{_(ONLINE_BUY_ORDERS, msg.bot.lang)} ({await Order.objects.filter(part__storage_id=data['storage'], clientid=clientid.get_id(), with_online_buy=True).acount()})")],
         [types.KeyboardButton(text=_(ONLINE_BUY_ABOUT, msg.bot.lang))],
         [types.KeyboardButton(text=_(ONLINE_BUY, msg.bot.lang))]
     ])
