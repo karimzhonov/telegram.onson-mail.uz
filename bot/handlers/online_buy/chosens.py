@@ -42,8 +42,6 @@ async def _render_product(product: Product, image: ProductImage,  msg: types.Mes
 {_("product_price", msg.bot.lang)}: {product.price} {product.currency}
 {_("product_weight", msg.bot.lang)}: {product.weight}
 {_("product_delivery_price", msg.bot.lang)}: {product.delivery_price} $
-
-{_("product_desc", msg.bot.lang)}: {product.desc}
     """
     keyboard = InlineKeyboardBuilder()
     if image:
