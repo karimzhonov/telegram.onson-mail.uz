@@ -59,8 +59,8 @@ async def select_passport(cq: types.CallbackQuery, state: FSMContext):
 async def _render_passport_with_keyboard(client: Client, msg: types.Message):
     keyboard = InlineKeyboardBuilder()
     text = await _render_passport(client, msg.bot.lang)
-    keyboard.row(types.InlineKeyboardButton(text=CHANGE_PHONE, callback_data=CHANGE_PHONE))
-    keyboard.row(types.InlineKeyboardButton(text=CHANGE_ADRESS, callback_data=CHANGE_ADRESS))
+    keyboard.row(types.InlineKeyboardButton(text=_(CHANGE_PHONE, msg.bot.lang), callback_data=CHANGE_PHONE))
+    keyboard.row(types.InlineKeyboardButton(text=_(CHANGE_ADRESS, msg.bot.lang), callback_data=CHANGE_ADRESS))
     await msg.answer(text, reply_markup=keyboard.as_markup(resize_keyboard=True))
 
 

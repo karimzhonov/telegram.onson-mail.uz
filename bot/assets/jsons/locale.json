@@ -55,7 +55,7 @@
         "storage_address_copy": "👆 Нажатие на адрес чтобы скопировать",
         "client_id_copy": "👈 Нажатие на ID чтобы скопировать",
         "about": "ℹ️ О нас",
-        "storages_list": "📍Филиали",
+        "storages_list": "📍 Филиали",
         "online_buy": "🛒 Онлайн покупка",
         "calculator": "⚖️ Калькулятор",
         "storage_list_text": "Выберите один из филиалов",
@@ -126,7 +126,9 @@
         "showed_offset_orders_in_count": "Показано {offset} заказов из {count}",
         "exit_from_account": "🏃 Выйти",
         "exit_from_account_text": "⚠️ Вы уверены что хотите выйти? ⚠️",
-        "exit_from_account_confirm": "🏃 Выйти"
+        "exit_from_account_confirm": "🏃 Выйти",
+        "change_phone": "📱 Изменить номер телефона",
+        "change_adress": "📍 Изменить адрес"
     },
     "uz": {
         "add_passport": "➕ Pasport qo'shish",
@@ -255,7 +257,9 @@
         "showed_offset_orders_in_count": "{count} buyurtmalardan {offset} ta ko'rsatildi",
         "exit_from_account": "🏃 Chiqish",
         "exit_from_account_text": "⚠️ Haqiqatan ham ketmoqchimisiz? ⚠️",
-        "exit_from_account_confirm": "🏃 Chiqish"
+        "exit_from_account_confirm": "🏃 Chiqish",
+        "change_phone": "📱 Telefon raqamni o'zgartirish",
+        "change_adress": "📍 Manzilni o'zgartirish"
     },
     "uz-cl": {
         "add_passport": "➕ Паспорт қўшиш",
@@ -384,6 +388,8 @@
         "showed_offset_orders_in_count": "{count} буюуртмадан {offset} та кўрсатилди",
         "exit_from_account": "🏃 Чиқиш",
         "exit_from_account_text": "⚠️ Хақиқаттан хам чиқмоқчимисиз? ⚠️",
-        "exit_from_account_confirm": "🏃 Чиқиш"
+        "exit_from_account_confirm": "🏃 Чиқиш",
+        "change_phone": "📱 Телефон рақамни ўзгартириш",
+        "change_adress": "📍 Манзилни ўзгартириш"
     }
 }
