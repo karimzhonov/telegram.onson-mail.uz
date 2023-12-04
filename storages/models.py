@@ -20,6 +20,11 @@ class Storage(TranslatableModel):
     class Meta:
         verbose_name = 'Склад'
         verbose_name_plural = 'Склади'
+
+    def calc(self, weight: float):
+        if weight <= 1:
+            return round(self.per_price, 2)
+        return round(self.per_price * weight, 2)
     
 
 class Image(models.Model):
@@ -66,7 +71,7 @@ class Product(TranslatableModel):
     
     @property
     def delivery_price(self):
-        return round(self.category.storage.per_price * self.weight, 2)
+        return self.category.storage.calc(self.weight)
 
 
 class ProductImage(models.Model):

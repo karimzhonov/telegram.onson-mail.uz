@@ -65,7 +65,7 @@ class Order(models.Model):
 
     @property
     def payed_price(self):
-        return round(self.weight * self.part.storage.per_price, 2)
+        return self.part.storage.calc(self.weight)
 
     objects: OrderQueryset = OrderQueryset.as_manager()
 

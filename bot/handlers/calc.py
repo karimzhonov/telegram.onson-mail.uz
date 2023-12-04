@@ -42,7 +42,7 @@ async def _render_storage(msg: types.Message, storage: Storage):
     text = [text]
     try:
         weight = float(msg.text.replace(",", "."))
-        text.append(f"{msg.text}{_('kg', msg.bot.lang)} = {round(storage.per_price * weight, 2)} $\n")
+        text.append(f"{msg.text}{_('kg', msg.bot.lang)} = {storage.calc(weight)} $\n")
     except ValueError:
         pass
     text.append(_("enter_kg_for_calc", msg.bot.lang))
