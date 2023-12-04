@@ -1,16 +1,28 @@
 from aiogram import types, Dispatcher
 from aiogram.fsm.context import FSMContext
 from aiogram.utils.keyboard import InlineKeyboardBuilder
+from django.core.exceptions import ValidationError
 from users.models import Client
-from bot.text_keywords import WARINNG, LISTPASSPORT
+from users.validators import validate_phone
+from bot.text_keywords import WARINNG, LISTPASSPORT, MENU
 from bot.models import get_text as _
 from bot.states import ListPassport
 from bot.filters.db_filter import DbSearchFilter
+from bot.filters.prefix import Prefix
+
+
+CHANGE_PHONE = "change_phone"
+CHANGE_ADRESS = "change_adress"
 
 
 def setup(dp: Dispatcher):
     dp.message(DbSearchFilter(LISTPASSPORT))(my_passports)
+    dp.callback_query(ListPassport.action, Prefix(CHANGE_PHONE))(change_phone)
+    dp.callback_query(ListPassport.action, Prefix(CHANGE_ADRESS))(change_adress)
     dp.callback_query(ListPassport.passport)(select_passport)
+    dp.message(ListPassport.phone)(entered_phone)
+    dp.message(ListPassport.city)(entered_city)
+    dp.message(ListPassport.region)(entered_region)
 
 
 async def my_passports(msg: types.Message, state: FSMContext):
@@ -38,9 +50,18 @@ async def my_passports(msg: types.Message, state: FSMContext):
 async def select_passport(cq: types.CallbackQuery, state: FSMContext):
     msg = cq.message
     client = int(cq.data)
+    await state.update_data(passport=client)
     client = await Client.objects.aget(id=client)
+    await _render_passport_with_keyboard(client, msg)
+    await state.set_state(ListPassport.action)
+
+
+async def _render_passport_with_keyboard(client: Client, msg: types.Message):
+    keyboard = InlineKeyboardBuilder()
     text = await _render_passport(client, msg.bot.lang)
-    await msg.answer(text)
+    keyboard.row(types.InlineKeyboardButton(text=CHANGE_PHONE, callback_data=CHANGE_PHONE))
+    keyboard.row(types.InlineKeyboardButton(text=CHANGE_ADRESS, callback_data=CHANGE_ADRESS))
+    await msg.answer(text, reply_markup=keyboard.as_markup(resize_keyboard=True))
 
 
 async def _render_passport(client: Client, lang):
@@ -75,3 +96,65 @@ async def _render_passport(client: Client, lang):
         warnign_text = f'{WARINNG} {_("client_passport_warning_quater_limit", lang)} {WARINNG}'    
         text = f"{text}\n{warnign_text}"
     return text
+
+
+async def change_phone(cq: types.CallbackQuery, state: FSMContext):
+    await enter_phone(cq.message, state)
+
+
+async def change_adress(cq: types.CallbackQuery, state: FSMContext):
+    await enter_city(cq.message, state)
+
+
+async def enter_city(msg: types.Message, state: FSMContext):
+    text = _("enter_city_text", msg.bot.lang)
+    await msg.answer(text, reply_markup=types.ReplyKeyboardRemove())
+    await msg.delete()
+    await state.set_state(ListPassport.city)
+
+
+async def entered_city(msg: types.Message, state: FSMContext):
+    await state.update_data(city=msg.text)
+    await enter_region(msg, state)
+
+
+async def enter_region(msg: types.Message, state: FSMContext):
+    text = _("enter_region_text", msg.bot.lang)
+    await msg.answer(text)
+    await state.set_state(ListPassport.region)
+
+
+async def entered_region(msg: types.Message, state: FSMContext):
+    from .start import _menu_keyboard
+    await state.update_data(region=msg.text)
+    data = await state.get_data()
+    address = ", ".join([data["city"], data['region']])
+    await Client.objects.filter(id=data["passport"]).aupdate(address=address)
+    client = await Client.objects.aget(id=data["passport"])
+    await _render_passport_with_keyboard(client, msg)
+    await state.set_state(ListPassport.action)
+    keyboard = await _menu_keyboard(msg)
+    await msg.answer(_(MENU, msg.bot.lang), reply_markup=keyboard.as_markup(resize_keyboard=True))
+
+
+async def enter_phone(msg: types.Message, state: FSMContext):
+    text = _("enter_phone_text", msg.bot.lang)
+    await msg.answer(text, reply_markup=types.ReplyKeyboardRemove())
+    await msg.delete()
+    await state.set_state(ListPassport.phone)
+
+
+async def entered_phone(msg: types.Message, state: FSMContext):
+    from .start import _menu_keyboard
+    try:
+        value = await validate_phone(msg.text)
+    except ValidationError as _exp:
+        await msg.answer(_(_exp.message, msg.bot.lang, pnfl=msg.text))
+    else:
+        data = await state.get_data()
+        await Client.objects.filter(id=data["passport"]).aupdate(phone=value)
+        client = await Client.objects.aget(id=data["passport"])
+        await _render_passport_with_keyboard(client, msg)
+        await state.set_state(ListPassport.action)
+        keyboard = await _menu_keyboard(msg)
+        await msg.answer(_(MENU, msg.bot.lang), reply_markup=keyboard.as_markup(resize_keyboard=True))

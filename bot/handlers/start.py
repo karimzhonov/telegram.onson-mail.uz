@@ -3,11 +3,12 @@ from django.conf import settings
 from aiogram import types, Dispatcher
 from aiogram.fsm.context import FSMContext
 from aiogram.filters.command import CommandStart
-from aiogram.utils.keyboard import ReplyKeyboardBuilder
+from aiogram.utils.keyboard import ReplyKeyboardBuilder, InlineKeyboardBuilder
 from bot.filters.db_filter import DbSearchFilter
+from bot.filters.prefix import Prefix
 from bot.models import User, Info, LANGUAGES, get_text as _
 from bot.states import LanguageChooseState
-from bot.text_keywords import TAKE_ID, SETTINGS, INFO, MENU, CHECK, LISTPASSPORT, ONLINE_BUY, CALCULATOR, ABOUT, STORAGES, FOTO_REPORTS, ACCPET_BUTTON, ACCEPT_URL
+from bot.text_keywords import TAKE_ID, SETTINGS, INFO, MENU, CHECK, LISTPASSPORT, ONLINE_BUY, CALCULATOR, ABOUT, STORAGES, FOTO_REPORTS, ACCPET_BUTTON, ACCEPT_URL, EXIT, EXIT_CONFIRM
 from users.models import ClientId
 
 
@@ -18,6 +19,8 @@ def setup(dp: Dispatcher):
     dp.message(DbSearchFilter(INFO))(info)
     dp.message(DbSearchFilter(ACCPET_BUTTON))(accept_url)
     dp.message(LanguageChooseState.lang)(choosed_lang)
+    dp.message(DbSearchFilter(EXIT))(exit)
+    dp.callback_query(Prefix(EXIT_CONFIRM))(exit_confirm)
     
 
 async def start(msg: types.Message, state: FSMContext):
@@ -30,8 +33,16 @@ async def start(msg: types.Message, state: FSMContext):
 async def menu(msg: types.Message, state: FSMContext):
     await state.clear()
     text = _("menu_text", msg.bot.lang)
+    keyboard = await _menu_keyboard(msg)
+    await msg.answer_photo(
+        types.BufferedInputFile.from_file(os.path.join(settings.BASE_DIR, "bot/assets/images/onson-logo.png")), 
+        text, reply_markup=keyboard.as_markup(resize_keyboard=True))
+
+
+async def _menu_keyboard(msg: types.Message, user_id=None):
+    user_id = msg.from_user.id if not user_id else user_id
     keyboard = ReplyKeyboardBuilder()
-    if await ClientId.objects.filter(user_id=msg.from_user.id, deleted=False).aexists():
+    if await ClientId.objects.filter(user_id=user_id, deleted=False).aexists():
         keyboard.row(types.KeyboardButton(text=_(LISTPASSPORT, msg.bot.lang)))
     else:
         keyboard.row(types.KeyboardButton(text=_(TAKE_ID, msg.bot.lang)))
@@ -40,9 +51,9 @@ async def menu(msg: types.Message, state: FSMContext):
     keyboard.row(types.KeyboardButton(text=_(ONLINE_BUY, msg.bot.lang)), types.KeyboardButton(text=_(CALCULATOR, msg.bot.lang)))
     keyboard.row(types.KeyboardButton(text=_(SETTINGS, msg.bot.lang)), types.KeyboardButton(text=_(INFO, msg.bot.lang)))
     keyboard.row(types.KeyboardButton(text=_(FOTO_REPORTS, msg.bot.lang)))
-    await msg.answer_photo(
-        types.BufferedInputFile.from_file(os.path.join(settings.BASE_DIR, "bot/assets/images/onson-logo.png")), 
-        text, reply_markup=keyboard.as_markup(resize_keyboard=True))
+    if await ClientId.objects.filter(user_id=user_id).aexists():
+        keyboard.row(types.KeyboardButton(text=_(EXIT, msg.bot.lang)))
+    return keyboard
 
 
 async def choose_lang(msg: types.Message, state: FSMContext):
@@ -97,3 +108,14 @@ async def info(msg: types.Message, state: FSMContext):
 
 async def accept_url(msg: types.Message):
     await msg.answer(ACCEPT_URL)
+
+
+async def exit(msg: types.Message):
+    keyboard = InlineKeyboardBuilder()
+    keyboard.row(types.InlineKeyboardButton(text= _(EXIT_CONFIRM, msg.bot.lang), callback_data=EXIT_CONFIRM))
+    await msg.answer(_("exit_from_account_text", msg.bot.lang), reply_markup=keyboard.as_markup(resize_keyboard=True))
+
+
+async def exit_confirm(cq: types.CallbackQuery, state: FSMContext):
+    await ClientId.objects.filter(user_id=cq.from_user.id).aupdate(user=None)
+    await menu(cq.message, state)

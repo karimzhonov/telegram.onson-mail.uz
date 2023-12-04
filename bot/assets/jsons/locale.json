@@ -123,7 +123,10 @@
         "client_passport_warning_quater_limit": "Паспорт превысил лимит",
         "online_buy_orders": "📦 Закази",
         "product_list_empty": "⚠️ Заказов нет ⚠️",
-        "showed_offset_orders_in_count": "Показано {offset} заказов из {count}"
+        "showed_offset_orders_in_count": "Показано {offset} заказов из {count}",
+        "exit_from_account": "🏃 Выйти",
+        "exit_from_account_text": "⚠️ Вы уверены что хотите выйти? ⚠️",
+        "exit_from_account_confirm": "🏃 Выйти"
     },
     "uz": {
         "add_passport": "➕ Pasport qo'shish",
@@ -249,7 +252,10 @@
         "client_passport_warning_quater_limit": "Pasport limitdan oshib ketgan",
         "online_buy_orders": "📦 Buyurtmalar",
         "product_list_empty": "⚠️ Buyurtmalar yoq ⚠️",
-        "showed_offset_orders_in_count": "{count} buyurtmalardan {offset} ta ko'rsatildi"
+        "showed_offset_orders_in_count": "{count} buyurtmalardan {offset} ta ko'rsatildi",
+        "exit_from_account": "🏃 Chiqish",
+        "exit_from_account_text": "⚠️ Haqiqatan ham ketmoqchimisiz? ⚠️",
+        "exit_from_account_confirm": "🏃 Chiqish"
     },
     "uz-cl": {
         "add_passport": "➕ Паспорт қўшиш",
@@ -306,7 +312,7 @@
         "order_status_done": "Етказиб берилди",
         "storage_address_copy": "👆 Нусха олиш учун манзилни босинг",
         "client_id_copy": "👈 Нусха олиш учун ИД ни босинг",
-        "about": "ℹ️ BizБиз ҳақимизда haqimizda",
+        "about": "ℹ️ Биз ҳақимизда haqimizda",
         "storages_list": "📍Филиаллар",
         "online_buy": "🛒 Онлайн савдо",
         "calculator": "⚖️ Калкулятор",
@@ -375,6 +381,9 @@
         "client_passport_warning_quater_limit": "Паспорт лимитдан отип кетган",
         "online_buy_orders": "📦 Буюуртмалар",
         "product_list_empty": "⚠️ Буюуртмалар йоқ ⚠️",
-        "showed_offset_orders_in_count": "{count} буюуртмадан {offset} та кўрсатилди"
+        "showed_offset_orders_in_count": "{count} буюуртмадан {offset} та кўрсатилди",
+        "exit_from_account": "🏃 Чиқиш",
+        "exit_from_account_text": "⚠️ Хақиқаттан хам чиқмоқчимисиз? ⚠️",
+        "exit_from_account_confirm": "🏃 Чиқиш"
     }
 }

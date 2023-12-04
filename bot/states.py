@@ -20,6 +20,10 @@ class RegisterState(StatesGroup):
 
 class ListPassport(StatesGroup):
     passport = State()
+    phone = State()
+    city = State()
+    region = State()
+    action = State()
 
 
 class IDStorage(StatesGroup):

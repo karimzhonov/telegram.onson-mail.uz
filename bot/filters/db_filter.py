@@ -13,5 +13,7 @@ class DbSearchFilter(Filter):
             user = await User.objects.filter(id=message.from_user.id).afirst()
             bot.lang = user.lang if user else "uz"
             await user.acreate_historical_record()
+        if not message.text:
+            return False
         return check_text(self.slug, message.text, bot.lang)
     
