@@ -19,20 +19,23 @@ class ClientIdResource(resources.ModelResource):
 
     def get_or_init_instance(self, instance_loader, row):
         if row.get("passport") and row.get("pnfl"):
-            client, created = Client.objects.get_or_create({
+            client, created = Client.objects.update_or_create({
                 "pnfl": row.get("pnfl"),
                 "passport": row.get("passport"),
                 "fio": row.get("fio"),
                 "phone": row.get("phone"),
-                "address": row.get("address")
-            }, pnfl=row.get("pnfl"), passport=row.get("passport"))
+                "address": row.get("address"),
+            }, pnfl=row.get("pnfl"))
             if created:
-                client_id = ClientId.objects.create(
+                client_id, created = ClientId.objects.get_or_create(
                     storage_id=row.get("storage"),
                     id_str=row.get("id_str"),
-                    selected_client=client
                 )
-                client_id.clients.add(client)
+                if created:
+                    client_id.selected_client = client
+                    client_id.clients.add(client)
+                else:
+                    client_id.clients.add(client) if not client_id.clients.filter(id=client.id).exists() else None
                 return client_id, True
             try:
                 client_id = ClientId.objects.get(
