@@ -1,10 +1,13 @@
+from typing import Any, Optional
 from django.contrib import admin
 from django.db.models import Count
 from django.db.models.functions import TruncDate
+from django.http.request import HttpRequest
+from django.utils.html import format_html
 from admincharts.admin import AdminChartMixin
 from contrib.parler.admin import TranslatableAdmin
 from users.models import get_storages
-from .models import User, Info
+from .models import User, Info, FAQ
 
 
 @admin.register(User)
@@ -51,3 +54,35 @@ class UserAdmin(AdminChartMixin, admin.ModelAdmin):
 @admin.register(Info)
 class InfoAdmin(TranslatableAdmin):
     pass
+
+
+@admin.register(FAQ)
+class FAQAdmin(admin.ModelAdmin):
+    readonly_fields = ["faq_image", "faq_answer_image", "text", "user", "answer_user", "not_active", "image", ]
+    exclude = ["image", "message_id"]
+    list_display = ["text", "answer", "type", "not_active"]
+    list_filter = ["type", "user", "answer_user", "not_active"]
+
+    def has_add_permission(self, request: HttpRequest) -> bool:
+        return False
+    
+    def has_change_permission(self, request: HttpRequest, obj: FAQ=None) -> bool:
+        if obj and obj.not_active:
+            return False
+        return super().has_change_permission(request, obj)
+
+    @admin.display(description="Image")
+    def faq_image(self, obj: FAQ):
+        return format_html('<img src="%s" width="500"/>' % (obj.image.url))
+
+    @admin.display(description="Answer Image")
+    def faq_answer_image(self, obj: FAQ):
+        return format_html('<img src="%s" width="500"/>' % (obj.answer_image.url))
+
+    def save_model(self, request: Any, obj: Any, form: Any, change: Any) -> None:
+        if change:
+            obj.not_active = True
+            obj.answer_user = request.user
+        super().save_model(request, obj, form, change)
+        if change:
+            obj.send_message()

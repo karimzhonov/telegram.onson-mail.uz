@@ -129,7 +129,15 @@
         "exit_from_account_confirm": "🏃 Выйти",
         "change_phone": "📱 Изменить номер телефона",
         "change_adress": "📍 Изменить адрес",
-        "register_storage_list_text": "Клиентом какого филиала вы хотите быть?"
+        "register_storage_list_text": "Клиентом какого филиала вы хотите быть?",
+        "FAQ": "❓ Нужна помощь",
+        "faq_text": "Служба поддержки Onson-mail на связи",
+        "faq_type_bot": "🤖 Проблема с ботом",
+        "faq_type_delivery": "🚚 Проблема с доставкой",
+        "faq_type_text": "Выберите тип проблемы",
+        "faq_question_text": "Опишите свою проблему в виде одной сообщении (можно добавить 1 картинку) и мы будем рады помочь 💜",
+        "faq_question_text_entered": "Мы получили вашу сообщению, наши администраторы ответят вам в ближайшее время ❤️",
+        "invalid_faq_type": "⚠️ Неверный тип ⚠️"
     },
     "uz": {
         "add_passport": "➕ Pasport qo'shish",
@@ -261,7 +269,15 @@
         "exit_from_account_confirm": "🏃 Chiqish",
         "change_phone": "📱 Telefon raqamni o'zgartirish",
         "change_adress": "📍 Manzilni o'zgartirish",
-        "register_storage_list_text": "Qaysi filialni mijozi bolishni xoxloaysiz?"
+        "register_storage_list_text": "Qaysi filialni mijozi bolishni xoxloaysiz?",
+        "FAQ": "❓ Yordam kerakmi",
+        "faq_text": "'Onson-mail' jamoasini qo‘llab-quvvatlash xizmati aloqada",
+        "faq_type_bot": "🤖 Botda muammo",
+        "faq_type_delivery": "🚚 Yetkazib berishda muammo",
+        "faq_type_text": "Muammoni turini tanlang",
+        "faq_question_text": "Savolingizni bitta xabarda ko'rinishida (1 ta rasm qo'shsangiz ham bo'ladi) yozing va biz yordam berishdan xursand bo'lamiz 💜",
+        "faq_question_text_entered": "Biz sizni xabaringizni qabul qildik, bizni adminlarimiz sizga ilojo boricha tezroq jovob berishadi ❤️",
+        "invalid_faq_type": "⚠️ Noto'g'ri muammo turi ⚠️"
     },
     "uz-cl": {
         "add_passport": "➕ Паспорт қўшиш",
@@ -393,6 +409,14 @@
         "exit_from_account_confirm": "🏃 Чиқиш",
         "change_phone": "📱 Телефон рақамни ўзгартириш",
         "change_adress": "📍 Манзилни ўзгартириш",
-        "register_storage_list_text": "Қайси филиални мижози болишни хохлайсиз?"
+        "register_storage_list_text": "Қайси филиални мижози болишни хохлайсиз?",
+        "FAQ": "❓ Ёрдам керакми",
+        "faq_text": "'Onson-mail' жамоасини қўллаб-қувватлаш хизмати алоқада",
+        "faq_type_bot": "🤖 Ботда муаммо",
+        "faq_type_delivery": "🚚 Етказиб беришда муаммо",
+        "faq_type_text": "Муаммони турини танланг",
+        "faq_question_text": "Саволингизни битта хабарда кўринишида (1 та расм қўшсангиз ҳам бўлади) ёзинг ва биз ёрдам беришдан хурсанд бўламиз 💜",
+        "faq_question_text_entered": "Биз сизни хабарингизни қабул қилдик, бизни админларимиз сизга иложо борича тезроқ жовоб беришади ❤️",
+        "invalid_faq_type": "⚠️ Нотоғри муаммо тури⚠️"
     }
 }

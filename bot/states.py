@@ -41,3 +41,8 @@ class OnlineBuy(StatesGroup):
     category = State()
     product = State()
     chosen = State()
+
+
+class FAQState(StatesGroup):
+    type = State()
+    text = State()
