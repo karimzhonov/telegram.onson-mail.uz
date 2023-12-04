@@ -1,18 +1,18 @@
 from import_export import resources
-from import_export.widgets import ForeignKeyWidget
 from django.core.exceptions import ValidationError
 from users.models import Client
 from .models import Order
 
 
 class OrderResource(resources.ModelResource):
+    part = resources.Field("part__number")
+    client = resources.Field("client__fio")
+    passport = resources.Field("client__passport", readonly=True)
 
     class Meta:
         model = Order
+        exclude = ["products", "id", "with_online_buy"]
         import_id_fields = ["number"]
-
-    def get_import_fields(self):
-        return super().get_import_fields()
 
     def before_import_row(self, row, row_number=None, **kwargs):
         row.update(part=kwargs.get("form_data").get("part"))

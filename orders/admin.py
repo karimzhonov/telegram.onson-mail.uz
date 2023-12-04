@@ -2,6 +2,7 @@ from typing import Any, Sequence
 from django.urls import path, reverse
 from django.contrib import admin, messages
 from django.http.request import HttpRequest
+from django.http.response import HttpResponse
 from django.http import HttpResponseRedirect
 from django.utils.html import format_html
 from simple_history.admin import SimpleHistoryAdmin
@@ -61,6 +62,14 @@ class OrderAdmin(ImportExportActionModelAdmin, SimpleHistoryAdmin):
     resource_classes = [OrderResource]
     form = OrderForm
 
+    def get_confirm_form_initial(self, request, import_form):
+        initial = super().get_confirm_form_initial(request, import_form)
+        if import_form is None:
+            return initial
+        initial["part"] = request.POST.get("part")
+        initial["date"] = request.POST.get("date")
+        return initial
+
     @admin.display(description="Table")
     def products_table(self, obj: Order):
         return format_html(table(obj.products, {
@@ -88,6 +97,26 @@ class OrderAdmin(ImportExportActionModelAdmin, SimpleHistoryAdmin):
     def get_import_data_kwargs(self, request, *args, **kwargs):
         kwargs.update(form_data=kwargs.get("form").cleaned_data)
         return super().get_import_data_kwargs(request, *args, **kwargs)
+    
+    def export_admin_action(self, request, queryset):
+        """
+        Exports the selected rows using file_format.
+        """
+        export_format = 2
+
+        if not export_format:
+            messages.warning(request, _('You must select an export format.'))
+        else:
+            formats = self.get_export_formats()
+            file_format = formats[int(export_format)]()
+
+            export_data = self.get_export_data(file_format, queryset, request=request, encoding=self.to_encoding)
+            content_type = file_format.get_content_type()
+            response = HttpResponse(export_data, content_type=content_type)
+            response['Content-Disposition'] = 'attachment; filename="%s"' % (
+                self.get_export_filename(request, queryset, file_format),
+            )
+            return response
 
 
 @admin.register(Cart)

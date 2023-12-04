@@ -16,14 +16,14 @@ def setup(dp: Dispatcher):
     dp.message(IDStorage.passport)(storage_info)
 
 
-async def storage_list(msg: types.Message, state: FSMContext):
+async def storage_list(msg: types.Message, state: FSMContext, text="storage_list_text"):
     keyboard = ReplyKeyboardBuilder()
     if not await Storage.objects.translated(msg.bot.lang).filter(is_active=True).aexists():
         return await msg.answer(_("storage_list_empty", msg.bot.lang), reply_markup=keyboard.as_markup(resize_keyboard=True))
     async for storage in Storage.objects.prefetch_related("translations").translated(msg.bot.lang).filter(is_active=True):
         keyboard.row(types.KeyboardButton(text=storage.name))
     keyboard.row(types.KeyboardButton(text=_(MENU, msg.bot.lang)))
-    await msg.answer(_("storage_list_text", msg.bot.lang), reply_markup=keyboard.as_markup(resize_keyboard=True))
+    await msg.answer(_(text, msg.bot.lang), reply_markup=keyboard.as_markup(resize_keyboard=True))
     await state.set_state(IDStorage.storage)
 
 

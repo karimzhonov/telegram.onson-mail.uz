@@ -228,4 +228,4 @@ async def client_render(msg: types.Message, state: FSMContext):
 """
     await _client_to_clientid(msg, state, client)
     await msg.answer(text)
-    await storage_list(msg, state)
+    await storage_list(msg, state, text="register_storage_list_text")

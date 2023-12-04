@@ -128,7 +128,8 @@
         "exit_from_account_text": "⚠️ Вы уверены что хотите выйти? ⚠️",
         "exit_from_account_confirm": "🏃 Выйти",
         "change_phone": "📱 Изменить номер телефона",
-        "change_adress": "📍 Изменить адрес"
+        "change_adress": "📍 Изменить адрес",
+        "register_storage_list_text": "Клиентом какого филиала вы хотите быть?"
     },
     "uz": {
         "add_passport": "➕ Pasport qo'shish",
@@ -259,7 +260,8 @@
         "exit_from_account_text": "⚠️ Haqiqatan ham ketmoqchimisiz? ⚠️",
         "exit_from_account_confirm": "🏃 Chiqish",
         "change_phone": "📱 Telefon raqamni o'zgartirish",
-        "change_adress": "📍 Manzilni o'zgartirish"
+        "change_adress": "📍 Manzilni o'zgartirish",
+        "register_storage_list_text": "Qaysi filialni mijozi bolishni xoxloaysiz?"
     },
     "uz-cl": {
         "add_passport": "➕ Паспорт қўшиш",
@@ -390,6 +392,7 @@
         "exit_from_account_text": "⚠️ Хақиқаттан хам чиқмоқчимисиз? ⚠️",
         "exit_from_account_confirm": "🏃 Чиқиш",
         "change_phone": "📱 Телефон рақамни ўзгартириш",
-        "change_adress": "📍 Манзилни ўзгартириш"
+        "change_adress": "📍 Манзилни ўзгартириш",
+        "register_storage_list_text": "Қайси филиални мижози болишни хохлайсиз?"
     }
 }

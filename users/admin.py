@@ -1,6 +1,7 @@
 from typing import Sequence
-from django.contrib import admin
+from django.contrib import admin, messages
 from django.http.request import HttpRequest
+from django.http.response import HttpResponse
 from django.utils.translation import gettext_lazy as _
 from simple_history.admin import SimpleHistoryAdmin
 from django.contrib.auth.models import User
@@ -10,7 +11,7 @@ from import_export.admin import ImportExportActionModelAdmin
 from contrib.django.admin import table
 from .models import ClientId, Client, UserSettings, get_storages
 from .resources import ClientIdResource
-
+from .forms import UserConfirmImportForm, UserImportForm
 
 admin.site.unregister(User)
 
@@ -61,10 +62,12 @@ class ClientAdmin(admin.ModelAdmin):
 
 
 @admin.register(ClientId)
-class ClientIdAdmin(SimpleHistoryAdmin, ImportExportActionModelAdmin):
+class ClientIdAdmin(ImportExportActionModelAdmin, SimpleHistoryAdmin):
     list_display = ["get_id", "storage", "selected_client", "user"]
     readonly_fields = ["get_id", "storage"]
     resource_classes = [ClientIdResource]
+    import_form_class = UserImportForm
+    confirm_form_class = UserConfirmImportForm
     skip_admin_log = True
     list_filter = ["deleted", "storage"]
     search_fields = ["id", "id_str", "selected_client__fio", "clients__fio", "selected_client__passport", "clients__passport"]
@@ -81,3 +84,35 @@ class ClientIdAdmin(SimpleHistoryAdmin, ImportExportActionModelAdmin):
             return super().get_queryset(request)
         storages = get_storages(request.user)
         return super().get_queryset(request).filter(storage__in=storages)
+    
+    def get_import_data_kwargs(self, request, *args, **kwargs):
+        kwargs.update(form_data=kwargs.get("form").cleaned_data)
+        return super().get_import_data_kwargs(request, *args, **kwargs)
+    
+    def get_confirm_form_initial(self, request, import_form):
+        initial = super().get_confirm_form_initial(request, import_form)
+        if import_form is None:
+            return initial
+        initial["storage"] = request.POST.get("storage")
+        return initial
+    
+
+    def export_admin_action(self, request, queryset):
+        """
+        Exports the selected rows using file_format.
+        """
+        export_format = 2
+
+        if not export_format:
+            messages.warning(request, _('You must select an export format.'))
+        else:
+            formats = self.get_export_formats()
+            file_format = formats[int(export_format)]()
+
+            export_data = self.get_export_data(file_format, queryset, request=request, encoding=self.to_encoding)
+            content_type = file_format.get_content_type()
+            response = HttpResponse(export_data, content_type=content_type)
+            response['Content-Disposition'] = 'attachment; filename="%s"' % (
+                self.get_export_filename(request, queryset, file_format),
+            )
+            return response
