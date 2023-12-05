@@ -20,9 +20,16 @@ class OrderResource(resources.ModelResource):
         if not row.get("number"):
             raise ValidationError()
         if not Client.objects.filter(pnfl=row.get("client")).exists():
-            raise ValidationError()
+            raise ValidationError(message=f"{row.get('client')} - not found")
         client = Client.objects.filter(pnfl=row.get("client")).first()
         row.update(client=client)
+        try:
+            weight = row.get("weight")    
+            weight = float(weight.replace(",", "."))
+            row.update(weight=weight)
+        except ValueError:
+            raise ValidationError(message=f"{row.get('weight')} - invalid weight")
+
 
     def get_or_init_instance(self, instance_loader, row):
         instance = Order.objects.create(
