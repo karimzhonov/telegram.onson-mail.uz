@@ -60,7 +60,7 @@ class OrderAdmin(ImportExportActionModelAdmin, SimpleHistoryAdmin):
     import_form_class = OrderImportForm
     confirm_form_class = OrderConfirmImportForm
     resource_classes = [OrderResource]
-    form = OrderForm
+    # form = OrderForm
 
     def get_confirm_form_initial(self, request, import_form):
         initial = super().get_confirm_form_initial(request, import_form)
