@@ -49,5 +49,13 @@ class OrderResource(resources.ModelResource):
         row.update(client=row.get("client").id)
         return instance, True
         
-    def before_save_instance(self, instance, using_transactions, dry_run):
-        print(instance)
+    def import_obj(self, obj, data, dry_run, **kwargs):
+        if not obj:
+            return
+        return super().import_obj(obj, data, dry_run, **kwargs)
+    
+    def save_instance(self, instance, is_create, using_transactions=True, dry_run=False):
+        if not instance:
+            return
+        return super().save_instance(instance, is_create, using_transactions, dry_run)
+    
