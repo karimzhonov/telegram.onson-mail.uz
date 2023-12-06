@@ -37,13 +37,14 @@ class Part(models.Model):
         from bot.handlers.online_buy.orders import _render_order
         
         for order in Order.objects.select_related("client").filter(part=self):
-            client_id = ClientId.objects.filter(storage=self.storage, selected_client=order.client, clients__in=[order.client], deleted=False, user__isnull=False).select_related("user").first()
-            if not client_id or not client_id.user:
-                continue
-            user = client_id.user
-            text = _render_order(user, order)
-            bot = create_bot(TOKEN)
-            async_to_sync(bot.send_message)(user.id, text)
+            client_ids = ClientId.objects.filter(storage=self.storage, selected_client=order.client, clients__in=[order.client], deleted=False, user__isnull=False).select_related("user").first()
+            for client_id in client_ids:
+                if not client_id.user:
+                    continue
+                user = client_id.user
+                text = _render_order(user, order)
+                bot = create_bot(TOKEN)
+                async_to_sync(bot.send_message)(user.id, text)
 
 
 class OrderQueryset(QuarterQuerysetMixin, models.QuerySet):

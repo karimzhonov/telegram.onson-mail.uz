@@ -50,7 +50,7 @@ class PartAdmin(SimpleHistoryAdmin, admin.ModelAdmin):
 
 @admin.register(Order)
 class OrderAdmin(ImportExportActionModelAdmin, SimpleHistoryAdmin):
-    list_display = ["number", "part", "client_id", "client", "name", "weight", "facture_price", "payed_price"]
+    list_display = ["number", "part", "clientid", "client", "name", "weight", "facture_price", "payed_price"]
     list_filter = ["part", "part__storage", "client"]
     search_fields = ["part__number", "part__storage__slug", "client__passport"]
     readonly_fields = ["products_table"]

@@ -50,7 +50,7 @@ class OrderForm(forms.ModelForm):
         renderer=None) -> None:
         super().__init__(data, files, auto_id, prefix, initial, error_class, label_suffix, empty_permitted, instance, use_required_attribute, renderer)
         self.fields["part"] = forms.ModelChoiceField(Part.objects.filter(storage__in=get_storages(self.request.user)))
-        self.fields["client"] = forms.ModelChoiceField(Client.objects.filter(selected_client__storage__in=get_storages(self.request.user)))
+        self.fields["client"] = forms.ModelChoiceField(Client.objects.filter(clientid__storage__in=get_storages(self.request.user)))
 
     class Meta:
         model = Order
