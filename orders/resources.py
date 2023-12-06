@@ -1,7 +1,7 @@
 from import_export import resources
 from django.core.exceptions import ValidationError
 
-from users.models import Client
+from users.models import Client, ClientId
 from .models import Order
 
 
@@ -21,6 +21,8 @@ class OrderResource(resources.ModelResource):
         if not row.get("number"):
             raise ValidationError()
         if not Client.objects.filter(pnfl=row.get("client")).exists():
+            if ClientId.objects.filter(id_str=row.get("clientid")).exists():
+                raise ValidationError(f"{row.get('client')} - not found")
             return row.update(client=None)
         client = Client.objects.filter(pnfl=row.get("client")).first()
         row.update(client=client)
