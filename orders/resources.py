@@ -19,7 +19,7 @@ class OrderResource(resources.ModelResource):
         row.update(part=kwargs.get("form_data").get("part"))
         row.update(date=kwargs.get("form_data").get("date"))
         if not row.get("number"):
-            raise ValidationError()
+            raise ValidationError(message=f"{row} - number invalid")
         if not Client.objects.filter(pnfl=row.get("client")).exists():
             if ClientId.objects.filter(id_str=row.get("clientid")).exists():
                 raise ValidationError(f"{row.get('client')} - not found")
