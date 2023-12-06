@@ -21,7 +21,7 @@ class OrderResource(resources.ModelResource):
         if not row.get("number"):
             raise ValidationError()
         if not Client.objects.filter(pnfl=row.get("client")).exists():
-            row.update(client=None)
+            return row.update(client=None)
         client = Client.objects.filter(pnfl=row.get("client")).first()
         row.update(client=client)
         try:
