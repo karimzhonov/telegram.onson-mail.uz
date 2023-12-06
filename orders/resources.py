@@ -34,6 +34,7 @@ class OrderResource(resources.ModelResource):
 
     def get_or_init_instance(self, instance_loader, row):
         if not row.get("client"):
+            row.import_type = resources.RowResult.IMPORT_TYPE_SKIP
             return None, False
         instance = Order.objects.create(
             part=row.get("part"),
@@ -47,6 +48,7 @@ class OrderResource(resources.ModelResource):
         )
         row.update(part=row.get("part").id)
         row.update(client=row.get("client").id)
+        row.import_type = resources.RowResult.IMPORT_TYPE_SKIP
         return instance, True
         
     def import_obj(self, obj, data, dry_run, **kwargs):

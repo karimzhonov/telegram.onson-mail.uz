@@ -95,7 +95,6 @@ class ClientIdAdmin(ImportExportActionModelAdmin, SimpleHistoryAdmin):
             return initial
         initial["storage"] = request.POST.get("storage")
         return initial
-    
 
     def export_admin_action(self, request, queryset):
         """
