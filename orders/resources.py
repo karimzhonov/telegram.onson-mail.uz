@@ -1,5 +1,6 @@
 from import_export import resources
 from django.core.exceptions import ValidationError
+
 from users.models import Client
 from .models import Order
 
@@ -20,7 +21,7 @@ class OrderResource(resources.ModelResource):
         if not row.get("number"):
             raise ValidationError()
         if not Client.objects.filter(pnfl=row.get("client")).exists():
-            raise ValidationError(message=f"{row.get('client')} - not found")
+            row.update(client=None)
         client = Client.objects.filter(pnfl=row.get("client")).first()
         row.update(client=client)
         try:
@@ -32,6 +33,8 @@ class OrderResource(resources.ModelResource):
 
 
     def get_or_init_instance(self, instance_loader, row):
+        if not row.get("client"):
+            return None, False
         instance = Order.objects.create(
             part=row.get("part"),
             number=row.get("number"),
