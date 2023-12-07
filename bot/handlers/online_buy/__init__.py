@@ -56,6 +56,8 @@ async def storage_menu_back(msg: types.Message, state: FSMContext):
 async def _render_storage_menu(msg: types.Message, state: FSMContext):
     data = await state.get_data()
     clientid = await ClientId.objects.filter(storage_id=data["storage"], user_id=msg.from_user.id).select_related("storage").afirst()
+    keyboard = []
+    
     keyboard = ReplyKeyboardBuilder([
         [types.KeyboardButton(text=f"{_(ONLINE_BUY_CATEGORY, msg.bot.lang)} ({await Product.objects.filter(category__storage_id=data['storage']).acount()})")],
         [types.KeyboardButton(text=f"{_(ONLINE_BUY_CHOSEN, msg.bot.lang)} ({await ProductToChosen.objects.filter(clientid__storage_id=data['storage']).acount()})")],

@@ -61,6 +61,8 @@ class Product(TranslatableModel):
     is_active = models.BooleanField(default=True, verbose_name="Актив")
     weight = models.FloatField(verbose_name="Вес")
     created_date = models.DateTimeField(auto_now_add=True, verbose_name="Дата создание")
+    transfer_fee = models.FloatField("Комиссия за перевод", null=True)
+    buyer_price = models.FloatField("Услуга баера", null=True)
 
     class Meta:
         verbose_name = 'Продукт'
