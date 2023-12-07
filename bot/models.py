@@ -12,7 +12,7 @@ LOCALE_PATH = os.path.join(settings.BASE_DIR, "bot/assets/jsons/locale.json")
 
 
 class User(models.Model):
-    id = models.BigIntegerField(primary_key=True)
+    id = models.CharField(primary_key=True, max_length=255)
     username = models.SlugField(blank=True, null=True, unique=True, max_length=255)
     first_name = models.CharField("Имя", max_length=255, blank=True, null=True)
     last_name = models.CharField("Фамилия", max_length=255, blank=True, null=True)
