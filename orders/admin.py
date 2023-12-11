@@ -63,7 +63,7 @@ class OrderAdmin(ImportExportActionModelAdmin, SimpleHistoryAdmin):
     # form = OrderForm
 
     def has_import_permission(self, request):
-        return request.is_superuser
+        return request.user.is_superuser
 
     def get_confirm_form_initial(self, request, import_form):
         initial = super().get_confirm_form_initial(request, import_form)
