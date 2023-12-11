@@ -22,12 +22,28 @@ def setup(dp: Dispatcher):
     dp.callback_query(Prefix("category"))(product_action)
 
 
+async def _alert_clientid(cq: types.CallbackQuery, clientid: ClientId):
+    if not clientid:
+        await cq.answer(_("need_clientid_to_use_this_operation", cq.message.bot.lang), True)
+        return True
+    return False
+
+
 async def my_category(msg: types.Message, state: FSMContext):
     keyboard = ReplyKeyboardBuilder()
-    if not await Category.objects.translated(msg.bot.lang).filter(is_active=True).aexists():
+    data = await state.get_data()
+    if not data.get("category"):
+        categories = Category.objects.prefetch_related("translations").translated(msg.bot.lang).filter(is_active=True, parent__isnull=True)
+    else:
+        categories = Category.objects.prefetch_related("translations").translated(msg.bot.lang).filter(is_active=True, parent_id=data.get("category"))
+        if not await categories.aexists():
+            cat = await Category.objects.aget(id=data.get("category"))
+            categories = Category.objects.prefetch_related("translations").translated(msg.bot.lang).filter(is_active=True, parent_id=cat.parent_id)
+    if not await categories.aexists():
         return await msg.answer(_("category_list_empty", msg.bot.lang), reply_markup=keyboard.as_markup(resize_keyboard=True))
-    async for category in Category.objects.prefetch_related("translations").translated(msg.bot.lang).filter(is_active=True):
-        keyboard.row(types.KeyboardButton(text=f"{category.name} ({await Product.objects.filter(category=category).acount()})"))
+    async for category in categories:
+        all_cats = [c.id async for c in Category.objects.filter_recursive(id=category.id)]
+        keyboard.row(types.KeyboardButton(text=f"{category.name} ({await Product.objects.filter(category_id__in=all_cats).acount()})"))
     keyboard.row(types.KeyboardButton(text=_(ONLINE_BUY_MENU, msg.bot.lang)))
     await msg.answer(_("online_buy_category_list_text", msg.bot.lang), reply_markup=keyboard.as_markup(resize_keyboard=True))
     await state.set_state(OnlineBuy.category)
@@ -41,6 +57,8 @@ async def entered_category(msg: types.Message, state: FSMContext):
             category=category.id,
             offset=0
         )
+        if await Category.objects.prefetch_related("translations").translated(msg.bot.lang).filter(is_active=True, parent_id=category.id).aexists():
+            return await my_category(msg, state)
         await my_products(msg, state)
     except Category.DoesNotExist:
         await msg.answer(_("invalid_category", msg.bot.lang))
@@ -48,7 +66,7 @@ async def entered_category(msg: types.Message, state: FSMContext):
 
 async def my_products(msg: types.Message, state: FSMContext, offset=0):
     data = await state.get_data()
-    products = Product.objects.select_related("category", "category__storage").prefetch_related("translations", "category__translations").filter(category_id=data["category"], translations__language_code=msg.bot.lang, category__translations__language_code=msg.bot.lang).order_by("-created_date")
+    products = Product.objects.select_related("category").prefetch_related("category__translations").filter(category_id=data["category"], category__translations__language_code=msg.bot.lang).order_by("-created_date")
     if not await products.aexists():
         return await msg.answer(_("online_buy_product_list_empty", msg.bot.lang))
     if offset == 0:
@@ -69,13 +87,7 @@ async def my_products(msg: types.Message, state: FSMContext, offset=0):
 
 async def _render_product(product: Product, image: ProductImage,  msg: types.Message, state: FSMContext, edit=False, user_id=None, delete=False):
     data = await state.get_data()
-    text = f"""
-{_("product_name", msg.bot.lang)}: {product.name}
-{_("product_category", msg.bot.lang)}: {product.category.name}
-{_("product_price", msg.bot.lang)}: {product.price} {product.currency}
-{_("product_weight", msg.bot.lang)}: {product.weight}
-{_("product_delivery_price", msg.bot.lang)}: {product.delivery_price} $
-    """
+    text = product.product_to_text(msg.bot.lang)
     keyboard = InlineKeyboardBuilder()
     if image:
         paginator = []
@@ -135,39 +147,56 @@ async def product_action(cq: types.CallbackQuery, state: FSMContext):
         await msg.delete()
         await my_products(msg, state, int(cq_data_list[1]))
     elif cq_data_list[0] == ADD_PRODUCT_TO_CHOSEN:
+        clientid = await ClientId.objects.filter(user_id=cq.from_user.id, storage=data["storage"]).afirst()
+        alerted = await _alert_clientid(cq, clientid)
+        if alerted:
+            return
         await ProductToChosen.objects.acreate(
-            product_id=cq_data_list[1], clientid=await ClientId.objects.filter(user_id=cq.from_user.id, storage=data["storage"]).afirst()
+            product_id=cq_data_list[1], clientid=clientid
         )
         image = await ProductImage.objects.filter(id=cq_data_list[2]).afirst()
-        product = await Product.objects.select_related("category", "category__storage").prefetch_related("translations", "category__translations").aget(id=cq_data_list[1])
+        product = await Product.objects.select_related("category").prefetch_related("category__translations").aget(id=cq_data_list[1])
         return await _render_product(product, image, msg, state, True, cq.from_user.id)
     elif cq_data_list[0] == REMOVE_PRODUCT_TO_CHOSEN:
+        clientid = await ClientId.objects.filter(user_id=cq.from_user.id, storage=data["storage"]).afirst()
+        alerted = await _alert_clientid(cq, clientid)
+        if alerted:
+            return
         await ProductToChosen.objects.filter(
-            product_id=cq_data_list[1], clientid=await ClientId.objects.filter(user_id=cq.from_user.id, storage=data["storage"]).afirst()
+            product_id=cq_data_list[1], clientid=clientid
         ).adelete()
         image = await ProductImage.objects.filter(id=cq_data_list[2]).afirst()
-        product = await Product.objects.select_related("category", "category__storage").prefetch_related("translations", "category__translations").aget(id=cq_data_list[1])
+        product = await Product.objects.select_related("category").prefetch_related("category__translations").aget(id=cq_data_list[1])
         return await _render_product(product, image, msg, state, True, cq.from_user.id)
     elif cq_data_list[0] == ADD_PRODUCT_TO_CART:
         clientid = await ClientId.objects.filter(user_id=cq.from_user.id, storage=data["storage"]).afirst()
+        alerted = await _alert_clientid(cq, clientid)
+        if alerted:
+            return
         my_cart, created = await Cart.objects.aget_or_create(clientid=clientid)
         await ProductToCart.objects.acreate(
             product_id=cq_data_list[1], cart=my_cart
         )
         image = await ProductImage.objects.filter(id=cq_data_list[2]).afirst()
-        product = await Product.objects.select_related("category", "category__storage").prefetch_related("translations", "category__translations").aget(id=cq_data_list[1])
+        product = await Product.objects.select_related("category").prefetch_related("category__translations").aget(id=cq_data_list[1])
         return await _render_product(product, image, msg, state, True, cq.from_user.id)
     elif cq_data_list[0] == PLUS:
         clientid = await ClientId.objects.filter(user_id=cq.from_user.id, storage=data["storage"]).afirst()
+        alerted = await _alert_clientid(cq, clientid)
+        if alerted:
+            return
         my_cart, created = await Cart.objects.aget_or_create(clientid=clientid)
         await ProductToCart.objects.filter(
             product_id=cq_data_list[1], cart=my_cart).aupdate(count=F("count") + Value(1)
         )
         image = await ProductImage.objects.filter(id=cq_data_list[2]).afirst()
-        product = await Product.objects.select_related("category", "category__storage").prefetch_related("translations", "category__translations").aget(id=cq_data_list[1])
+        product = await Product.objects.select_related("category").prefetch_related("category__translations").aget(id=cq_data_list[1])
         return await _render_product(product, image, msg, state, True, cq.from_user.id)
     elif cq_data_list[0] == MINUS:
         clientid = await ClientId.objects.filter(user_id=cq.from_user.id, storage=data["storage"]).afirst()
+        alerted = await _alert_clientid(cq, clientid)
+        if alerted:
+            return
         my_cart, created = await Cart.objects.aget_or_create(clientid=clientid)
         pc = await ProductToCart.objects.filter(
             product_id=cq_data_list[1], cart=my_cart
@@ -178,6 +207,6 @@ async def product_action(cq: types.CallbackQuery, state: FSMContext):
             product_id=cq_data_list[1], cart=my_cart
         ).adelete()
         image = await ProductImage.objects.filter(id=cq_data_list[2]).afirst()
-        product = await Product.objects.select_related("category", "category__storage").prefetch_related("translations", "category__translations").aget(id=cq_data_list[1])
+        product = await Product.objects.select_related("category").prefetch_related("category__translations").aget(id=cq_data_list[1])
         return await _render_product(product, image, msg, state, True, cq.from_user.id)
     

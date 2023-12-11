@@ -2,7 +2,7 @@ from asgiref.sync import async_to_sync, sync_to_async
 from django.db import models
 from contrib.django.queryset import QuarterQuerysetMixin
 from simple_history.models import HistoricalRecords
-
+from collections import defaultdict
 
 LIMIT_FOR_QUARTER = 950
 
@@ -106,6 +106,25 @@ class Cart(models.Model):
                 "facture_price": float(pc.facture_price)
             } for pc in qs
         ]
+    
+    def render_cart(self, lang):
+        from bot.models import get_text as _
+        text = [f"{_('client_id', lang)}: <code>{self.clientid.get_id()}</code>"]
+        summa = defaultdict(int)
+        for pc in self._annotated_qs():
+            pc_summa = (pc.product.price * pc.count + pc.product.buyer_price) * (1 + pc.product.transfer_fee * 0.01)
+            summa[pc.product.currency] += round(pc_summa, 2)
+            text.append(pc.product.product_to_text(lang, pc.count))
+        cart_itog = [f"{_('cart_itog', lang)}: "]
+        for sc, s in summa.items():
+            cart_itog.append(f"{round(s, 2)} {sc}")
+        cart_itog = "\n".join(cart_itog)
+        text.append("\n")
+        text.append(cart_itog)
+        return "\n".join(text)
+    
+    async def arender_cart(self, lang):
+        return await sync_to_async(self.render_cart)(lang=lang)
     
     def _annotated_qs(self):
         return self.producttocart_set.all().annotate(

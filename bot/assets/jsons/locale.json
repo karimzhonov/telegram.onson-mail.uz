@@ -7,7 +7,7 @@
         "menu_text": "👋 Добро пожаловать в кампанию по доставке 'Onson-mail'. Выберите один из меню ниже",
         "my_ids": "🆔 Мои идентификаторы (ID)",
         "menu_settings": "⚙️ Настройки",
-        "menu_info": "ℹ️ Руководства",
+        "menu_info": "ℹ️ Руководство",
         "info_not_upload_yeat": "⚠️ Руководства еще не добавлены ⚠️",
         "enter_pnfl_text": "📃Введите пинфл",
         "enter_fio_text": "👤 Введите ФИО (с латинскими буквими)",
@@ -107,7 +107,7 @@
         "online_buy_cart_order_start_text": "🛒Хотете продолжить оформления заказа",
         "online_buy_cart_clear": "🧹 Очистит карзину",
         "online_buy_cart_order_start": "🛒 Оформит заказ",
-        "online_buy_cart_ordering_connect_text": "⚠️ Для оформление заказа обратитес к контактом ниже ⚠️",
+        "online_buy_cart_ordering_connect_text": "⚠️ Для оформление заказа отправьте сообщение 👆 сверху к контактом 👇 ниже ⚠️",
         "invalid_menu": "⚠️ Нет такого меню ⚠️",
         "online_buy_product_list": "📄 Список продуктов",
         "online_buy_chosen_clear": "🧹 Очистит избренный",
@@ -137,7 +137,12 @@
         "faq_type_text": "Выберите тип проблемы",
         "faq_question_text": "Опишите свою проблему в виде одной сообщении (можно добавить 1 картинку) и мы будем рады помочь 💜",
         "faq_question_text_entered": "Мы получили вашу сообщению, наши администраторы ответят вам в ближайшее время ❤️",
-        "invalid_faq_type": "⚠️ Неверный тип ⚠️"
+        "invalid_faq_type": "⚠️ Неверный тип ⚠️",
+        "need_clientid_to_use_this_operation": "Для выполнения эту действию сначала получите ИД",
+        "product_transfer_fee": "💯 Комиссии за перевод",
+        "product_buyer_price": "💸 Услуга баера",
+        "category_list_empty": "⚠️ Категории нет ⚠️",
+        "cart_itog": "💸 Итого"
     },
     "uz": {
         "add_passport": "➕ Pasport qo'shish",
@@ -247,7 +252,7 @@
         "online_buy_cart_order_start_text": "🛒 Buyurtma berishni davom ettirmoqchimisiz?",
         "online_buy_cart_clear": "🧹 Savatni bo'shatish",
         "online_buy_cart_order_start": "🛒 Buyurtma berish",
-        "online_buy_cart_ordering_connect_text": "⚠️ Buyurtma berish uchun quyidagi kantaktga murojaat qiling ⚠️",
+        "online_buy_cart_ordering_connect_text": "⚠️ Buyurtma berish uchun pastdagi 👇 kontaktga yuqoridagi 👆 xabar yuboring ⚠️",
         "invalid_menu": "⚠️ Bunday menyu yo'q ⚠️",
         "online_buy_product_list": "📄 Maxsulotlar ro'yxati",
         "online_buy_chosen_clear": "🧹 Sevimlilarni tozalash",
@@ -277,7 +282,12 @@
         "faq_type_text": "Muammoni turini tanlang",
         "faq_question_text": "Savolingizni bitta xabarda ko'rinishida (1 ta rasm qo'shsangiz ham bo'ladi) yozing va biz yordam berishdan xursand bo'lamiz 💜",
         "faq_question_text_entered": "Biz sizni xabaringizni qabul qildik, bizni adminlarimiz sizga ilojo boricha tezroq jovob berishadi ❤️",
-        "invalid_faq_type": "⚠️ Noto'g'ri muammo turi ⚠️"
+        "invalid_faq_type": "⚠️ Noto'g'ri muammo turi ⚠️",
+        "need_clientid_to_use_this_operation": "Ushbu amalni bajarish uchun avval IDni oling",
+        "product_transfer_fee": "💯 O'tkazma kamissiyasi",
+        "product_buyer_price": "💸 Bayer xizmati",
+        "category_list_empty": "⚠️ Kategoriyalar yoq ⚠️",
+        "cart_itog": "💸 Jami"
     },
     "uz-cl": {
         "add_passport": "➕ Паспорт қўшиш",
@@ -387,7 +397,7 @@
         "online_buy_cart_order_start_text": "🛒 Буюртма беришни давом эттирмоқчимисиз?",
         "online_buy_cart_clear": "🧹 Саватни бўшатиш",
         "online_buy_cart_order_start": "🛒 Буюртма бериш",
-        "online_buy_cart_ordering_connect_text": "⚠️ Буюртма бериш учун қуйидаги кантактга мурожаат қилинг ⚠️",
+        "online_buy_cart_ordering_connect_text": "⚠️ Буюртма бериш учун пастдаги 👇 контактга юқоридаги 👆 хабар юборинг ⚠️",
         "invalid_menu": "⚠️ Бундай меню йоқ ⚠️",
         "online_buy_product_list": "📄 Махсулотлар рўйхати",
         "online_buy_chosen_clear": "🧹 Севимлиларни тозалаш",
@@ -417,6 +427,11 @@
         "faq_type_text": "Муаммони турини танланг",
         "faq_question_text": "Саволингизни битта хабарда кўринишида (1 та расм қўшсангиз ҳам бўлади) ёзинг ва биз ёрдам беришдан хурсанд бўламиз 💜",
         "faq_question_text_entered": "Биз сизни хабарингизни қабул қилдик, бизни админларимиз сизга иложо борича тезроқ жовоб беришади ❤️",
-        "invalid_faq_type": "⚠️ Нотоғри муаммо тури⚠️"
+        "invalid_faq_type": "⚠️ Нотоғри муаммо тури⚠️",
+        "need_clientid_to_use_this_operation": "Ушбу амални бажариш учун аввал ИДни олинг",
+        "product_transfer_fee": "💯 Ўтказма камиссияси",
+        "product_buyer_price": "💸 Баер хизмати",
+        "category_list_empty": "⚠️ Категориялар йоқ ⚠️",
+        "cart_itog": "💸 Жами"
     }
 }

@@ -24,7 +24,7 @@ async def my_chosens(msg: types.Message, state: FSMContext):
     data = await state.get_data()
     if not await ProductToChosen.objects.filter(clientid__user_id=msg.from_user.id, clientid__storage_id=data["storage"]).aexists():
         return await msg.answer(_("online_buy_chosen_empty_text", msg.bot.lang))
-    async for pch in ProductToChosen.objects.select_related("product__category", "product__category__storage").prefetch_related("product__translations", "product__category__translations").filter(clientid__user_id=msg.from_user.id, clientid__storage_id=data["storage"]):
+    async for pch in ProductToChosen.objects.select_related("product__category").prefetch_related("product__category__translations").filter(clientid__user_id=msg.from_user.id, clientid__storage_id=data["storage"]):
         image = await ProductImage.objects.filter(product_id=pch.product_id).order_by("id").afirst()
         await _render_product(pch.product, image, msg, state, False, msg.from_user.id)
     await state.set_state(OnlineBuy.chosen)
@@ -36,13 +36,7 @@ async def my_chosens(msg: types.Message, state: FSMContext):
 
 async def _render_product(product: Product, image: ProductImage,  msg: types.Message, state: FSMContext, edit=False, user_id=None, delete=False):
     data = await state.get_data()
-    text = f"""
-{_("product_name", msg.bot.lang)}: {product.name}
-{_("product_category", msg.bot.lang)}: {product.category.name}
-{_("product_price", msg.bot.lang)}: {product.price} {product.currency}
-{_("product_weight", msg.bot.lang)}: {product.weight}
-{_("product_delivery_price", msg.bot.lang)}: {product.delivery_price} $
-    """
+    text = product.product_to_text(msg.bot.lang)
     keyboard = InlineKeyboardBuilder()
     if image:
         paginator = []
@@ -88,7 +82,7 @@ async def product_action(cq: types.CallbackQuery, state: FSMContext):
     msg = cq.message
     type, *cq_data_list = cq.data.split(":")
     if cq_data_list[0] == "paginate_product":
-        product = await Product.objects.select_related("category", "category__storage").prefetch_related("translations", "category__translations").aget(id=cq_data_list[1])
+        product = await Product.objects.select_related("category").prefetch_related("category__translations").aget(id=cq_data_list[1])
         current_image_id = cq_data_list[2]
         images = ProductImage.objects.filter(product_id=product.id)
         image = await images.exclude(id__lte=current_image_id).order_by("id").afirst() if cq_data_list[-1] == NEXT else await images.exclude(id__gte=current_image_id).order_by("id").alast()
@@ -107,7 +101,7 @@ async def product_action(cq: types.CallbackQuery, state: FSMContext):
             product_id=cq_data_list[1], cart=my_cart
         )
         image = await ProductImage.objects.filter(id=cq_data_list[2]).afirst()
-        product = await Product.objects.select_related("category", "category__storage").prefetch_related("translations", "category__translations").aget(id=cq_data_list[1])
+        product = await Product.objects.select_related("category").prefetch_related("category__translations").aget(id=cq_data_list[1])
         return await _render_product(product, image, msg, state, True, cq.from_user.id)
     elif cq_data_list[0] == PLUS:
         clientid = await ClientId.objects.filter(user_id=cq.from_user.id, storage=data["storage"]).afirst()
@@ -116,7 +110,7 @@ async def product_action(cq: types.CallbackQuery, state: FSMContext):
             product_id=cq_data_list[1], cart=my_cart).aupdate(count=F("count") + Value(1)
         )
         image = await ProductImage.objects.filter(id=cq_data_list[2]).afirst()
-        product = await Product.objects.select_related("category", "category__storage").prefetch_related("translations", "category__translations").aget(id=cq_data_list[1])
+        product = await Product.objects.select_related("category").prefetch_related("category__translations").aget(id=cq_data_list[1])
         return await _render_product(product, image, msg, state, True, cq.from_user.id)
     elif cq_data_list[0] == MINUS:
         clientid = await ClientId.objects.filter(user_id=cq.from_user.id, storage=data["storage"]).afirst()
@@ -130,7 +124,7 @@ async def product_action(cq: types.CallbackQuery, state: FSMContext):
             product_id=cq_data_list[1], cart=my_cart
         ).adelete()
         image = await ProductImage.objects.filter(id=cq_data_list[2]).afirst()
-        product = await Product.objects.select_related("category", "category__storage").prefetch_related("translations", "category__translations").aget(id=cq_data_list[1])
+        product = await Product.objects.select_related("category").prefetch_related("category__translations").aget(id=cq_data_list[1])
         return await _render_product(product, image, msg, state, True, cq.from_user.id)
 
 

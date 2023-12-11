@@ -6,6 +6,7 @@ from contrib.parler.admin import TranslatableAdmin
 from orders.models import Order
 from users.models import get_storages
 from .models import Storage, Image, Category, Product, ProductImage
+from .forms import ProductForm
 
 
 class ProductImageInline(admin.TabularInline):
@@ -63,9 +64,8 @@ class StorageAdmin(AdminChartMixin, TranslatableAdmin):
 
 @admin.register(Category)
 class CategoryAdmin(TranslatableAdmin):
-    search_fields = ["translations__name", "storage__translations__name"]
-    list_display = ["name", "storage"]
-    list_filter = ["storage"]
+    search_fields = ["translations__name"]
+    list_display = ["name", "parent"]
 
     def get_list_filter(self, request: HttpRequest) -> Sequence[str]:
         if request.user.is_superuser:
@@ -80,10 +80,11 @@ class CategoryAdmin(TranslatableAdmin):
 
 
 @admin.register(Product)
-class ProductAdmin(TranslatableAdmin):
+class ProductAdmin(admin.ModelAdmin):
     inlines = [ProductImageInline]
     list_display = ["name", "category"]
     search_fields = ["translations__name", "category__translations__name"]
+    form = ProductForm
 
     def get_queryset(self, request):
         if request.user.is_superuser:

@@ -46,7 +46,7 @@ async def storage_menu_back(msg: types.Message, state: FSMContext):
     try:
         data = await state.get_data()
         storage = await Storage.objects.prefetch_related("translations").aget(id=data.get("storage"))
-        await state.update_data(storage=storage.id)
+        await state.update_data(storage=storage.id, category=None)
         await _render_storage_menu(msg, state)
         await state.set_state(OnlineBuy.menu)
     except Storage.DoesNotExist:
@@ -56,16 +56,37 @@ async def storage_menu_back(msg: types.Message, state: FSMContext):
 async def _render_storage_menu(msg: types.Message, state: FSMContext):
     data = await state.get_data()
     clientid = await ClientId.objects.filter(storage_id=data["storage"], user_id=msg.from_user.id).select_related("storage").afirst()
-    keyboard = []
-    
-    keyboard = ReplyKeyboardBuilder([
-        [types.KeyboardButton(text=f"{_(ONLINE_BUY_CATEGORY, msg.bot.lang)} ({await Product.objects.filter(category__storage_id=data['storage']).acount()})")],
-        [types.KeyboardButton(text=f"{_(ONLINE_BUY_CHOSEN, msg.bot.lang)} ({await ProductToChosen.objects.filter(clientid__storage_id=data['storage']).acount()})")],
-        [types.KeyboardButton(text=f"{_(ONLINE_BUY_CART, msg.bot.lang)} ({await ProductToCart.objects.filter(cart__clientid__storage_id=data['storage']).acount()})")],
-        [types.KeyboardButton(text=f"{_(ONLINE_BUY_ORDERS, msg.bot.lang)} ({await Order.objects.filter(part__storage_id=data['storage'], clientid=clientid.get_id(), with_online_buy=True).acount()})")],
-        [types.KeyboardButton(text=_(ONLINE_BUY_ABOUT, msg.bot.lang))],
+    keyboard = [
+        [types.KeyboardButton(text=f"{_(ONLINE_BUY_CATEGORY, msg.bot.lang)} ({await Product.objects.filter(storage_id=data['storage']).acount()})")],        
+    ]
+    if clientid:
+        keyboard.append(
+            [types.KeyboardButton(text=f"{_(ONLINE_BUY_CHOSEN, msg.bot.lang)} ({await ProductToChosen.objects.filter(clientid=clientid).acount()})")],
+        )
+        keyboard.append(
+            [types.KeyboardButton(text=f"{_(ONLINE_BUY_CART, msg.bot.lang)} ({await ProductToCart.objects.filter(cart__clientid=clientid).acount()})")],
+        )
+        keyboard.append(
+            [types.KeyboardButton(text=f"{_(ONLINE_BUY_ORDERS, msg.bot.lang)} ({await Order.objects.filter(part__storage_id=data['storage'], clientid=clientid.get_id(), with_online_buy=True).acount()})")],
+        )
+    else:
+        keyboard.append(
+            [types.KeyboardButton(text=f"{_(ONLINE_BUY_CHOSEN, msg.bot.lang)}")],
+        )
+        keyboard.append(
+            [types.KeyboardButton(text=f"{_(ONLINE_BUY_CART, msg.bot.lang)}")],
+        )
+        keyboard.append(
+            [types.KeyboardButton(text=f"{_(ONLINE_BUY_ORDERS, msg.bot.lang)}")],
+        )
+       
+    keyboard.append(
+        [types.KeyboardButton(text=_(ONLINE_BUY_ABOUT, msg.bot.lang))]
+    )
+    keyboard.append(
         [types.KeyboardButton(text=_(ONLINE_BUY, msg.bot.lang))]
-    ])
+    )
+    keyboard = ReplyKeyboardBuilder(keyboard)
     await msg.answer(_("online_by_menu", msg.bot.lang), reply_markup=keyboard.as_markup(resize_keyboard=True))
 
 
