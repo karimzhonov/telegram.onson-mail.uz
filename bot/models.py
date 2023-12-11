@@ -1,4 +1,5 @@
 import json, os, re
+from time import sleep
 from threading import Thread
 from asgiref.sync import sync_to_async, async_to_sync
 from django.db import models
@@ -46,7 +47,28 @@ class Info(TranslatableModel):
     class Meta:
         verbose_name = 'Телеграм руководства'
         verbose_name_plural = 'Телеграм руководстви'
-    
+
+    def send_notification(self):
+        from bot.handlers.start import _render_info
+        from bot.utils import create_bot
+        from bot.settings import TOKEN
+        
+        bot = create_bot(TOKEN)
+        
+        for user in User.objects.all():
+            self.set_current_language(user.lang)
+            def main():
+                text, file, method = _render_info(self)
+                if method == "answer_photo":
+                    async_to_sync(bot.send_photo)(user.id, photo=file, caption=text)
+                elif method == "answer":
+                    async_to_sync(bot.send_message)(user.id, text)
+                elif method == "answer_video":
+                    async_to_sync(bot.send_video)(user.id, file, caption=text)
+            Thread(target=main).start()
+        sleep(5)
+        async_to_sync(bot.session.close)()
+
 
 def get_text(slug, lang, **kwargs) -> str:
     with open(LOCALE_PATH, encoding="utf-8") as file:

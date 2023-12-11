@@ -54,7 +54,12 @@ class UserAdmin(AdminChartMixin, admin.ModelAdmin):
 
 @admin.register(Info)
 class InfoAdmin(TranslatableAdmin):
-    pass
+    actions = ["send_notification"]
+
+    @admin.action(description="Send Notification")
+    def send_notification(self, request, queryset):
+        for info in queryset:
+            info.send_notification()
 
 
 @admin.register(FAQ)

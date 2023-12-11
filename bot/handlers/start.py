@@ -91,19 +91,31 @@ async def info(msg: types.Message, state: FSMContext):
     if not await Info.objects.translated(msg.bot.lang).filter(is_active=True).aexists():
         return await msg.answer(_("info_not_upload_yeat", msg.bot.lang))
     async for info in Info.objects.translated(msg.bot.lang).prefetch_related("translations").filter(is_active=True):
-        text = f"""
-{info.title}
+        text, file, method = _render_info(info)
+        if method == "answer_photo":
+            await msg.answer_photo(file, caption=text)
+        elif method == "answer":
+            await msg.answer(text)
+        elif method == "answer_video":
+            await msg.answer_video(file, caption=text)
+
+
+def _render_info(info: Info):
+    text = f"""
+<strong>{info.title}</strong>
 
 {info.text}
 """
+    if info.file:
         file_path = os.path.join(settings.BASE_DIR, "media", str(info.file))
         file = types.BufferedInputFile.from_file(file_path)
         file_suffix = file_path.split(".")[-1].lower()
         if file_suffix in ['jpg', 'jpeg', 'png']:
-            await msg.answer_photo(file, text)
+            return text, file, "answer_photo"
         else:
-            await msg.answer_video(file, caption=text)
-        # await msg.answer_photo(types.BufferedInputFile())
+            return text, file, "answer_video"
+    return text, None, "answer"
+
 
 
 async def accept_url(msg: types.Message):
