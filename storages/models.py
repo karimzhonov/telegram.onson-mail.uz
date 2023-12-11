@@ -15,7 +15,7 @@ class Storage(TranslatableModel):
     phone = models.CharField("Номер телефона", max_length=255, null=True)
     is_active = models.BooleanField("Актив", default=True)
     per_price = models.FloatField(default=5.5)
-    has_online_buy = models.BooleanField(default=False)
+    has_online_buy = models.BooleanField(default=False, verbose_name="Есть онлайн магазин")
 
     def __str__(self) -> str:
         return self.slug
@@ -89,7 +89,7 @@ class Category(TranslatableModel):
     translations = TranslatedFields(
         name=models.CharField(max_length=255, verbose_name="Название")
     )
-    parent = models.ForeignKey("self", models.CASCADE, null=True, blank=True)
+    parent = models.ForeignKey("self", models.CASCADE, null=True, blank=True, verbose_name="Радительская категория")
     is_active = models.BooleanField(default=True, verbose_name="Актив")
 
     def __str__(self) -> str:
@@ -103,7 +103,7 @@ class Category(TranslatableModel):
 
 
 class Product(models.Model):
-    storage = models.ForeignKey(Storage, models.CASCADE, null=True)
+    storage = models.ForeignKey(Storage, models.CASCADE, null=True, verbose_name="Склад")
     name=models.CharField(max_length=255, verbose_name="Название", null=True)
     currency = models.CharField(max_length=20, default="$", verbose_name="Валюта")
     price = models.FloatField(verbose_name="Цена")

@@ -158,9 +158,8 @@ class CartAdmin(admin.ModelAdmin):
             url = reverse('admin:%s_%s_change' % (self.model._meta.app_label, self.model._meta.model_name), kwargs=kwargs, current_app=self.admin_site.name)
             return HttpResponseRedirect(url)
 
-    @admin.display(description="Info")
+    @admin.display(description="Продукти")
     def table(self, obj: Cart):
-        info = self.model._meta.app_label, self.model._meta.model_name
         return format_html(table(obj.render_products(), {
             "name": "Название",
             "desc": "Описание",
@@ -197,7 +196,7 @@ class ReportAdmin(admin.ModelAdmin):
         super().save_model(request, obj, form, change)
         obj.send_notification()
 
-    @admin.display(description="Passport Image")
+    @admin.display(description="Фото отчета")
     def get_image(self, obj: Report):
         return format_html('<img src="%s" width="500" />' % (obj.image.url))
     

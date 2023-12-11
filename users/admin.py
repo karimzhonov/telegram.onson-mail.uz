@@ -47,16 +47,16 @@ class ClientAdmin(admin.ModelAdmin):
         storages = get_storages(request.user)
         return super().get_queryset(request).filter(selected_client__storage__in=storages)
 
-    @admin.display(description="Passport Image")
+    @admin.display(description="Фото паспорта")
     def preview_passport(self, obj: Client):
         return format_html('<img src="%s" width="500"/>' % (obj.passport_image.url))
     
-    @admin.display(description="Last quarter")
+    @admin.display(description="Последный квартал")
     def last_quarter(self, obj: Client):
         last_quarter = obj.order_quarters().order_by("quarter").last()
         return 0 if not last_quarter else last_quarter["value"]
     
-    @admin.display(description="Quarter table")
+    @admin.display(description="Таблица кварталов")
     def quarter_table(self, obj: Client):
         return format_html(table(list(obj.order_quarters()), {"quarter": "Квартал", "value": "Значения"}))
 

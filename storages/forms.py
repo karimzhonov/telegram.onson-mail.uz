@@ -18,10 +18,10 @@ class ProductForm(forms.ModelForm):
         use_required_attribute=None,
         renderer=None) -> None:
         super().__init__(data, files, auto_id, prefix, initial, error_class, label_suffix, empty_permitted, instance, use_required_attribute, renderer)
-        self.fields["storage"] = forms.ModelChoiceField(get_storages(self.request.user))
+        self.fields["storage"] = forms.ModelChoiceField(get_storages(self.request.user), label="Склад")
         self.fields["category"] = forms.ModelChoiceField(Category.objects.exclude(
             models.Q(category__isnull=False)
-        ))
+        ), label="Категория")
 
     class Meta:
         model = Product

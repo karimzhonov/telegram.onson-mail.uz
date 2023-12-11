@@ -2,12 +2,13 @@ from typing import Any, Optional
 from django.contrib import admin
 from django.db.models import Count
 from django.db.models.functions import TruncDate
+from django.db.models.query import QuerySet
 from django.http.request import HttpRequest
 from django.utils.html import format_html
 from admincharts.admin import AdminChartMixin
 from contrib.parler.admin import TranslatableAdmin
 from users.models import get_storages
-from .models import User, Info, FAQ
+from .models import User, Info, FAQ, FAQ_TYPE_BOT
 
 
 @admin.register(User)
@@ -77,13 +78,18 @@ class FAQAdmin(admin.ModelAdmin):
             return False
         return super().has_change_permission(request, obj)
 
-    @admin.display(description="Image")
+    @admin.display(description="Фото вапроса")
     def faq_image(self, obj: FAQ):
         return format_html('<img src="%s" width="500"/>' % (obj.image.url))
 
-    @admin.display(description="Answer Image")
+    @admin.display(description="Фото ответа")
     def faq_answer_image(self, obj: FAQ):
         return format_html('<img src="%s" width="500"/>' % (obj.answer_image.url))
+    
+    def get_queryset(self, request: HttpRequest) -> QuerySet[Any]:
+        if request.user.is_superuser:
+            return super().get_queryset(request)
+        return super().get_queryset(request).exclude(type=FAQ_TYPE_BOT)
 
     def save_model(self, request: Any, obj: Any, form: Any, change: Any) -> None:
         if change:

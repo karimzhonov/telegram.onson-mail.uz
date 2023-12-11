@@ -116,15 +116,19 @@ FAQ_TYPES = (
 
 
 class FAQ(models.Model):
-    text = models.TextField()
-    type = models.CharField(max_length=255, choices=FAQ_TYPES)
-    user = models.ForeignKey(User, models.CASCADE)
-    answer = models.TextField(null=True)
-    answer_user = models.ForeignKey(get_user_model(), models.CASCADE, null=True)
-    not_active = models.BooleanField(default=False)
-    image = models.ImageField(null=True, blank=True, upload_to="faq")
-    answer_image = models.ImageField(upload_to="faq_answer", blank=True, null=True)
+    text = models.TextField(verbose_name="Вапрос")
+    type = models.CharField(verbose_name="Тип", max_length=255, choices=FAQ_TYPES)
+    user = models.ForeignKey(User, models.CASCADE, verbose_name="Владелец вопроса")
+    answer = models.TextField(null=True, verbose_name="Ответ")
+    answer_user = models.ForeignKey(get_user_model(), models.CASCADE, null=True, verbose_name="Ответил")
+    not_active = models.BooleanField(default=False, verbose_name="Ответено")
+    image = models.ImageField(null=True, blank=True, upload_to="faq", verbose_name="Фото вапроса")
+    answer_image = models.ImageField(upload_to="faq_answer", blank=True, null=True, verbose_name="Фото ответа")
     message_id = models.IntegerField(null=True)
+
+    class Meta:
+        verbose_name = 'Вопрос'
+        verbose_name_plural = 'Вопросы'
 
     def __str__(self) -> str:
         return self.text

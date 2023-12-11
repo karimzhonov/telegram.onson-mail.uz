@@ -61,7 +61,7 @@ class Order(models.Model):
     facture_price = models.FloatField("Счет-актура")
     date = models.DateField("Дата", null=True)
     products = models.JSONField(default=list)
-    with_online_buy = models.BooleanField(default=False)
+    with_online_buy = models.BooleanField(default=False, verbose_name="С онлайн магазина")
     history = HistoricalRecords()
 
     @property

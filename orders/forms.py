@@ -29,7 +29,7 @@ class PartForm(forms.ModelForm):
         use_required_attribute=None,
         renderer=None) -> None:
         super().__init__(data, files, auto_id, prefix, initial, error_class, label_suffix, empty_permitted, instance, use_required_attribute, renderer)
-        self.fields["storage"] = forms.ModelChoiceField(get_storages(self.request.user))
+        self.fields["storage"] = forms.ModelChoiceField(get_storages(self.request.user), label="Склад")
 
     class Meta:
         model = Part
@@ -49,8 +49,8 @@ class OrderForm(forms.ModelForm):
         use_required_attribute=None,
         renderer=None) -> None:
         super().__init__(data, files, auto_id, prefix, initial, error_class, label_suffix, empty_permitted, instance, use_required_attribute, renderer)
-        self.fields["part"] = forms.ModelChoiceField(Part.objects.filter(storage__in=get_storages(self.request.user)))
-        self.fields["client"] = forms.ModelChoiceField(Client.objects.filter(clientid__storage__in=get_storages(self.request.user)))
+        self.fields["part"] = forms.ModelChoiceField(Part.objects.filter(storage__in=get_storages(self.request.user)), label="Партия")
+        self.fields["client"] = forms.ModelChoiceField(Client.objects.filter(clientid__storage__in=get_storages(self.request.user)), label="Клиент")
 
     class Meta:
         model = Order
@@ -70,7 +70,7 @@ class CartForm(forms.ModelForm):
         use_required_attribute=None,
         renderer=None) -> None:
         super().__init__(data, files, auto_id, prefix, initial, error_class, label_suffix, empty_permitted, instance, use_required_attribute, renderer)
-        self.fields["part"] = forms.ModelChoiceField(Part.objects.filter(storage=instance.clientid.storage))
+        self.fields["part"] = forms.ModelChoiceField(Part.objects.filter(storage=instance.clientid.storage), label="Партия")
 
     class Meta:
         model = Cart
