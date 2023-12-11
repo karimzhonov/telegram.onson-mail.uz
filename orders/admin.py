@@ -62,6 +62,9 @@ class OrderAdmin(ImportExportActionModelAdmin, SimpleHistoryAdmin):
     resource_classes = [OrderResource]
     # form = OrderForm
 
+    def has_import_permission(self, request):
+        return request.is_superuser
+
     def get_confirm_form_initial(self, request, import_form):
         initial = super().get_confirm_form_initial(request, import_form)
         if import_form is None:
@@ -166,7 +169,7 @@ class CartAdmin(admin.ModelAdmin):
             "weight": "Вес",
             "all_weight": "Вес все товара",
             "facture_price": "Счет-фактура"
-        }, f'<a href="{reverse("admin:%s_%s_create_order" % info, kwargs={"object_id": obj.id}, current_app=self.admin_site.name)}" class="btn btn-success">Оформить</a>'))
+        }))
 
     def get_queryset(self, request):
         if request.user.is_superuser:

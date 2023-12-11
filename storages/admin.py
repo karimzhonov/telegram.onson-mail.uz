@@ -72,12 +72,6 @@ class CategoryAdmin(TranslatableAdmin):
             return super().get_list_filter(request)
         return []
 
-    def get_queryset(self, request):
-        if request.user.is_superuser:
-            return super().get_queryset(request)
-        storages = get_storages(request.user)
-        return super().get_queryset(request).filter(storage__in=storages)
-
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
@@ -90,4 +84,4 @@ class ProductAdmin(admin.ModelAdmin):
         if request.user.is_superuser:
             return super().get_queryset(request)
         storages = get_storages(request.user)
-        return super().get_queryset(request).filter(category__storage__in=storages)
+        return super().get_queryset(request).filter(storage__in=storages)

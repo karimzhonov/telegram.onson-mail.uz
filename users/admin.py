@@ -74,6 +74,9 @@ class ClientIdAdmin(ImportExportActionModelAdmin, SimpleHistoryAdmin):
     fields = ["get_id", "storage", "selected_client", "user", "clients", "deleted"]
     ordering = ["-id"]
 
+    def has_import_permission(self, request):
+        return request.is_superuser
+
     def get_list_filter(self, request: HttpRequest) -> Sequence[str]:
         if request.user.is_superuser:
             return super().get_list_filter(request)
