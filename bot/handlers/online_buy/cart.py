@@ -8,7 +8,7 @@ from bot.filters.db_filter import DbSearchFilter
 from bot.filters.prefix import Prefix
 from bot.models import get_text as _
 from bot.states import OnlineBuy
-from bot.text_keywords import REMOVE_PRODUCT_TO_CHOSEN, NEXT, PREVIEW, ONLINE_BUY_MENU, ONLINE_BUY_CART, PLUS, MINUS
+from bot.text_keywords import NEXT, PREVIEW, ONLINE_BUY_MENU, ONLINE_BUY_CART, PLUS, MINUS
 from storages.models import Product, ProductImage, ProductToCart, Storage
 from users.models import ClientId
 from orders.models import Cart

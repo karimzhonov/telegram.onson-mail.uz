@@ -136,7 +136,7 @@ async def product_action(cq: types.CallbackQuery, state: FSMContext):
     msg = cq.message
     type, *cq_data_list = cq.data.split(":")
     if cq_data_list[0] == "paginate_product":
-        product = await Product.objects.select_related("category", "category__storage").prefetch_related("translations", "category__translations").aget(id=cq_data_list[1])
+        product = await Product.objects.select_related("category").prefetch_related("translations").aget(id=cq_data_list[1])
         current_image_id = cq_data_list[2]
         images = ProductImage.objects.filter(product_id=product.id)
         image = await images.exclude(id__lte=current_image_id).order_by("id").afirst() if cq_data_list[-1] == NEXT else await images.exclude(id__gte=current_image_id).order_by("id").alast()

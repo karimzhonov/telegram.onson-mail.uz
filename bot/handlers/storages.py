@@ -85,7 +85,8 @@ async def _render_storage(user_id, msg: types.Message, state: FSMContext, storag
 {_('storage_address', msg.bot.lang)}: <code>{storage.address}, {client_id.get_id()}</code>
 <i>{_('storage_address_copy', msg.bot.lang)}</i>
 """
-        main_text = f"{main_text}\n{storage_address_text}\n{client_text}"
+        if passport:
+            main_text = f"{main_text}\n{storage_address_text}\n{client_text}"
     if not edit:
         await msg.answer(main_text, reply_markup=keyboard.as_markup(resize_keyboard=True))
     else:
