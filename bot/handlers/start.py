@@ -8,6 +8,7 @@ from bot.filters.db_filter import DbSearchFilter
 from bot.filters.prefix import Prefix
 from bot.models import User, Info, LANGUAGES, get_text as _
 from bot.states import LanguageChooseState
+from bot.utils import get_file
 from bot.text_keywords import TAKE_ID, SETTINGS, INFO, MENU, CHECK, LISTPASSPORT, ONLINE_BUY, CALCULATOR, ABOUT, STORAGES, FOTO_REPORTS, ACCPET_BUTTON, ACCEPT_URL, EXIT, EXIT_CONFIRM, FAQ
 from users.models import ClientId
 
@@ -108,7 +109,7 @@ def _render_info(info: Info):
 """
     if info.file:
         file_path = os.path.join(settings.BASE_DIR, "media", str(info.file))
-        file = types.BufferedInputFile.from_file(file_path)
+        file = get_file(file_path)
         file_suffix = file_path.split(".")[-1].lower()
         if file_suffix in ['jpg', 'jpeg', 'png']:
             return text, file, "answer_photo"

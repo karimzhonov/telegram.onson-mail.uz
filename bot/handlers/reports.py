@@ -7,6 +7,7 @@ from bot.filters.db_filter import DbSearchFilter
 from bot.filters.prefix import Prefix
 from bot.models import get_text as _
 from bot.text_keywords import FOTO_REPORTS
+from bot.utils import get_file
 from orders.models import Report
 
 LIMIT = 5
@@ -49,5 +50,5 @@ def _render_report(report: Report):
 {_('datetime', user.lang)}: {report.create_date.strftime("%d-%m-%Y %H:%M")}
         """
     file_path = os.path.join(settings.BASE_DIR, "media", str(report.image))
-    file = types.BufferedInputFile.from_file(file_path)
+    file = get_file(file_path)
     return text, file

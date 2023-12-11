@@ -8,6 +8,7 @@ from bot.filters.db_filter import DbSearchFilter
 from bot.filters.prefix import Prefix
 from bot.models import get_text as _
 from bot.states import OnlineBuy
+from bot.utils import get_file
 from bot.text_keywords import ONLINE_BUY_CATEGORY, NEXT, PREVIEW, ADD_PRODUCT_TO_CART, ADD_PRODUCT_TO_CHOSEN, REMOVE_PRODUCT_TO_CHOSEN, PLUS, MINUS, ONLINE_BUY_MENU, ONLINE_BUY_CART
 from storages.models import Category, Product, ProductImage, ProductToChosen, ProductToCart
 from users.models import ClientId
@@ -120,14 +121,14 @@ async def _render_product(product: Product, image: ProductImage,  msg: types.Mes
     if edit:
         if image:
             await msg.edit_media(
-                types.InputMediaPhoto(media=types.BufferedInputFile.from_file(os.path.join(settings.BASE_DIR, "media", str(image.image))), caption=text),
+                types.InputMediaPhoto(media=get_file(os.path.join(settings.BASE_DIR, "media", str(image.image))), caption=text),
                 reply_markup=keyboard.as_markup(resize_keyboard=True)
             )
         else:
             await msg.edit_reply_markup(reply_markup=keyboard.as_markup(resize_keyboard=True))
     else:
         await msg.answer_photo(
-            types.BufferedInputFile.from_file(os.path.join(settings.BASE_DIR, "media", str(image.image))), text, reply_markup=keyboard.as_markup(resize_keyboard=True)
+            get_file(os.path.join(settings.BASE_DIR, "media", str(image.image))), text, reply_markup=keyboard.as_markup(resize_keyboard=True)
         ) if image else await msg.answer(text, reply_markup=keyboard.as_markup(resize_keyboard=True))
 
 

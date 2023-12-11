@@ -1,7 +1,8 @@
 import os
-from aiogram import Dispatcher, Bot, enums
+from aiogram import Dispatcher, Bot, enums, types
 from aiogram.fsm.storage.redis import RedisStorage
 from PIL import Image
+from django.conf import settings
 from .settings import REDIS_URL
 
 
@@ -31,3 +32,8 @@ def concat_images(images: list[Image.Image]):
         dst.paste(image, (0, height))
         height += image.size[1]
     return dst
+
+def get_file(file_path):
+    if settings.DEBUG:
+        return types.BufferedInputFile.from_file(file_path)
+    return file_path
