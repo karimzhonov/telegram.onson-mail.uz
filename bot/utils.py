@@ -21,8 +21,9 @@ def create_bot(token):
     return Bot(token, parse_mode=enums.ParseMode.HTML)
 
 
-def concat_images(images: list[Image.Image]):
+def concat_images(images: list[Image.Image], size=(800, 800)):
     if len(images) == 1:
+        images[0].thumbnail(size, Image.Resampling.LANCZOS)
         return images[0]
     new_width = max(*[image.size[0] for image in images])
     new_height = sum([image.size[1] for image in images])
@@ -31,6 +32,7 @@ def concat_images(images: list[Image.Image]):
     for image in images:
         dst.paste(image, (0, height))
         height += image.size[1]
+    dst.thumbnail(size, Image.Resampling.LANCZOS)
     return dst
 
 def get_file(file_path):
