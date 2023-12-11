@@ -61,6 +61,7 @@ class OrderAdmin(ImportExportActionModelAdmin, SimpleHistoryAdmin):
     confirm_form_class = OrderConfirmImportForm
     resource_classes = [OrderResource]
     # form = OrderForm
+    skip_admin_log = True
 
     def has_import_permission(self, request):
         return request.user.is_superuser
