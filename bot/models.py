@@ -156,8 +156,7 @@ class FAQ(models.Model):
         """
         def main():
             if self.answer_image:
-                file_path = os.path.join(settings.BASE_DIR, "media", str(self.answer_image))
-                media = get_file(file_path)
+                media = get_file(str(self.answer_image))
                 return async_to_sync(bot.send_photo)(self.user_id, media, caption=text, reply_to_message_id=self.message_id)
             else:
                 return async_to_sync(bot.send_message)(self.user_id, text=text, reply_to_message_id=self.message_id)

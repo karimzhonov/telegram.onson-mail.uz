@@ -121,14 +121,14 @@ async def _render_product(product: Product, image: ProductImage,  msg: types.Mes
     if edit:
         if image:
             await msg.edit_media(
-                types.InputMediaPhoto(media=get_file(os.path.join(settings.BASE_DIR, "media", str(image.image))), caption=text),
+                types.InputMediaPhoto(media=get_file(str(image.image)), caption=text),
                 reply_markup=keyboard.as_markup(resize_keyboard=True)
             )
         else:
             await msg.edit_reply_markup(reply_markup=keyboard.as_markup(resize_keyboard=True))
     else:
         await msg.answer_photo(
-            get_file(os.path.join(settings.BASE_DIR, "media", str(image.image))), text, reply_markup=keyboard.as_markup(resize_keyboard=True)
+            get_file(str(image.image)), text, reply_markup=keyboard.as_markup(resize_keyboard=True)
         ) if image else await msg.answer(text, reply_markup=keyboard.as_markup(resize_keyboard=True))
 
 

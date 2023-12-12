@@ -49,6 +49,5 @@ def _render_report(report: Report):
 {_('client_id', user.lang)}: {report.clientid}
 {_('datetime', user.lang)}: {report.create_date.strftime("%d-%m-%Y %H:%M")}
         """
-    file_path = os.path.join(settings.BASE_DIR, "media", str(report.image))
-    file = get_file(file_path)
+    file = get_file(str(report.image))
     return text, file

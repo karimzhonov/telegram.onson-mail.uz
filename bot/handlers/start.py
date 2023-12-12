@@ -108,9 +108,8 @@ def _render_info(info: Info):
 {info.text}
 """
     if info.file:
-        file_path = os.path.join(settings.BASE_DIR, "media", str(info.file))
-        file = get_file(file_path)
-        file_suffix = file_path.split(".")[-1].lower()
+        file = get_file(str(info.file))
+        file_suffix = str(info.file).split(".")[-1].lower()
         if file_suffix in ['jpg', 'jpeg', 'png']:
             return text, file, "answer_photo"
         else:
