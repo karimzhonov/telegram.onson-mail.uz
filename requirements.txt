@@ -11,3 +11,4 @@ django-jet-reboot==1.3.3
 django-simple-history
 django-jazzmin==2.6.0
 django-admincharts
+django-multiupload

@@ -1,4 +1,4 @@
-from typing import Any, Sequence
+from typing import Any, Callable, Sequence
 from django.urls import path, reverse
 from django.contrib import admin, messages
 from django.http.request import HttpRequest
@@ -12,7 +12,7 @@ from users.models import ClientId, get_storages
 from contrib.django.admin import table
 from .models import Part, Order, Cart, Report
 from .resources import OrderResource
-from .forms import OrderImportForm, OrderConfirmImportForm, PartForm, OrderForm, ReportForm, CartForm
+from .forms import OrderImportForm, OrderConfirmImportForm, PartForm, ReportForm, CartForm
 
 
 class ProductToCartInline(admin.TabularInline):
@@ -180,11 +180,17 @@ class CartAdmin(admin.ModelAdmin):
 
 @admin.register(Report)
 class ReportAdmin(admin.ModelAdmin):
-    list_display = ["id", "clientid", "create_date"]
-    fields = ["clientid", "image", "get_image"]
+    list_display = ["clientid", "create_date"]
     readonly_fields = ["get_image"]
     search_fields = ["clientid__id_str"]
+    list_display_links = ["clientid"]
     form = ReportForm
+
+    def get_fields(self, request: HttpRequest, obj: Any | None = ...) -> Sequence[Callable[..., Any] | str]:
+        return ["clientid", "images"] if not obj else ["clientid", "get_image"]
+
+    def has_change_permission(self, request: HttpRequest, obj: Any | None = ...) -> bool:
+        return False
 
     def get_queryset(self, request):
         if request.user.is_superuser:
@@ -193,8 +199,7 @@ class ReportAdmin(admin.ModelAdmin):
         return super().get_queryset(request).filter(clientid__storage__in=storages)
 
     def save_model(self, request: Any, obj: Report, form: Any, change: Any) -> None:
-        super().save_model(request, obj, form, change)
-        obj.send_notification()
+        pass
 
     @admin.display(description="Фото отчета")
     def get_image(self, obj: Report):

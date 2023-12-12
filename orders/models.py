@@ -173,7 +173,6 @@ class Report(models.Model):
         verbose_name_plural = 'Фото отчеты'
 
     def send_notification(self):
-        from threading import Thread
         from bot.models import get_text as _
         from bot.utils import create_bot
         from bot.settings import TOKEN
@@ -184,7 +183,4 @@ class Report(models.Model):
             return
         text, photo = _render_report(self)
         bot = create_bot(TOKEN)
-        
-        def main():
-            async_to_sync(bot.send_photo)(chat_id=user.id, photo=photo, caption=text)
-        Thread(target=main).start()
+        async_to_sync(bot.send_photo)(chat_id=user.id, photo=photo, caption=text)

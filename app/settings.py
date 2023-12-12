@@ -134,7 +134,9 @@ TIME_ZONE = "Asia/Tashkent"
 
 USE_I18N = True
 
-USE_TZ = True
+# USE_TZ = True
+
+USE_L10N = True
 
 PARLER_LANGUAGES = {
     None: tuple([{'code': code[0]} for code in LANGUAGES]),
