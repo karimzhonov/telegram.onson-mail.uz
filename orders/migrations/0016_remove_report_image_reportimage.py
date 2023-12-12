@@ -4,7 +4,7 @@ from django.db import migrations, models
 import django.db.models.deletion
 from orders.models import Report, ReportImage
 
-def migrate_reports():
+def migrate_reports(apps, schema_editor):
     for report in Report.objects.all():
         ReportImage.objects.create(report=report, image=report.image)
 
