@@ -1,5 +1,4 @@
-import os
-from django.conf import settings
+from asgiref.sync import sync_to_async
 from aiogram import types, Dispatcher
 from aiogram.fsm.context import FSMContext
 from aiogram.utils.keyboard import InlineKeyboardBuilder
@@ -23,8 +22,9 @@ async def my_reports(msg: types.Message, state: FSMContext, offset=0, user_id=No
     if not await reports.aexists():
         return await msg.answer(_("report_list_empty", msg.bot.lang))
     async for report in reports[offset:offset + LIMIT]:
-        text, photo = _render_report(report)
-        await msg.answer_photo(photo, text)
+        photo = await sync_to_async(_render_report)(report)
+        if not photo:
+            await msg.answer_media_group(media=photo)
 
     products_count = await reports.acount()
     text = f"""{_("showed_offset_reports_in_count", msg.bot.lang, offset=LIMIT + offset, count=products_count)}"""
@@ -43,11 +43,20 @@ async def report_action(cq: types.CallbackQuery, state: FSMContext):
 
 
 def _render_report(report: Report):
+    text = _render_report_text(report)
+    files = []    
+    for i, ri in enumerate(report.reportimage_set.all()):
+        if i == 0:
+            files.append(types.InputMediaPhoto(media=get_file(str(ri.image)), caption=text))
+        else:
+            files.append(types.InputMediaPhoto(media=get_file(str(ri.image))))    
+    return files
+
+
+def _render_report_text(report: Report):
     user = report.clientid.user
-    text = f"""
+    return f"""
 {_('foto_report', user.lang)}
 {_('client_id', user.lang)}: {report.clientid}
 {_('datetime', user.lang)}: {report.create_date.strftime("%d-%m-%Y %H:%M")}
         """
-    file = get_file(str(report.image))
-    return text, file

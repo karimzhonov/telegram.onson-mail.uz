@@ -1,10 +1,11 @@
-from typing import Any, Callable, Sequence
+from typing import Any, Sequence
 from django.urls import path, reverse
 from django.contrib import admin, messages
 from django.http.request import HttpRequest
 from django.http.response import HttpResponse
 from django.http import HttpResponseRedirect
 from django.utils.html import format_html
+from django.forms import ModelForm
 from simple_history.admin import SimpleHistoryAdmin
 from import_export.admin import ImportExportActionModelAdmin
 from storages.models import ProductToCart
@@ -13,6 +14,7 @@ from contrib.django.admin import table
 from .models import Part, Order, Cart, Report
 from .resources import OrderResource
 from .forms import OrderImportForm, OrderConfirmImportForm, PartForm, ReportForm, CartForm
+from .inlines import ReportImageInline
 
 
 class ProductToCartInline(admin.TabularInline):
@@ -181,27 +183,18 @@ class CartAdmin(admin.ModelAdmin):
 @admin.register(Report)
 class ReportAdmin(admin.ModelAdmin):
     list_display = ["clientid", "create_date"]
-    readonly_fields = ["get_image"]
     search_fields = ["clientid__id_str"]
     list_display_links = ["clientid"]
     form = ReportForm
-
-    def get_fields(self, request: HttpRequest, obj: Any | None = ...) -> Sequence[Callable[..., Any] | str]:
-        return ["clientid", "images"] if not obj else ["clientid", "get_image"]
-
-    def has_change_permission(self, request: HttpRequest, obj: Any | None = ...) -> bool:
-        return False
+    inlines = [ReportImageInline]
 
     def get_queryset(self, request):
         if request.user.is_superuser:
             return super().get_queryset(request)
         storages = get_storages(request.user)
         return super().get_queryset(request).filter(clientid__storage__in=storages)
-
-    def save_model(self, request: Any, obj: Report, form: Any, change: Any) -> None:
-        pass
-
-    @admin.display(description="Фото отчета")
-    def get_image(self, obj: Report):
-        return format_html('<img src="%s" width="500" />' % (obj.image.url))
     
+    def save_model(self, request: Any, obj: Report, form: ModelForm, change: Any) -> None:
+        super().save_model(request, obj, form, change)
+        if obj.reportimage_set.all().exists():
+            obj.send_notification()

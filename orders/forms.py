@@ -1,7 +1,5 @@
-from typing import Any
 from django import forms
 from django.forms.utils import ErrorList
-from multiupload.fields import MultiImageField
 from import_export.forms import ImportForm, ConfirmImportForm
 from users.models import get_storages, Client, ClientId
 from .models import Part, Order, Report, Cart
@@ -79,15 +77,7 @@ class CartForm(forms.ModelForm):
         fields = "__all__"
 
 
-class CustomMultiImageField(MultiImageField):
-    def run_validators(self, value):
-        value = value or []
-        for item in value:
-            super().run_validators(item)
-
-
 class ReportForm(forms.ModelForm):
-    images = CustomMultiImageField(min_num=1, label="Фотографии")
 
     def __init__(self, data=None,
         files=None,
@@ -105,12 +95,5 @@ class ReportForm(forms.ModelForm):
 
     class Meta:
         model = Report
-        fields = ["clientid", "images"]
+        fields = "__all__"
 
-    def save(self, commit: bool = True) -> Any:
-        for image in self.cleaned_data["images"]:
-            obj = Report.objects.create(
-                clientid=self.instance.clientid, image=image
-            )
-            obj.send_notification()
-        return super().save(False)

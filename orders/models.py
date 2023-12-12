@@ -162,7 +162,6 @@ class Cart(models.Model):
 
 class Report(models.Model):
     clientid = models.ForeignKey("users.ClientId", models.CASCADE, verbose_name="Клиент ИД")
-    image = models.ImageField(upload_to="report", verbose_name="Фото")
     create_date = models.DateTimeField(auto_now_add=True, verbose_name="Дата и время")
 
     def __str__(self) -> str:
@@ -181,6 +180,11 @@ class Report(models.Model):
         user = self.clientid.user
         if not user:
             return
-        text, photo = _render_report(self)
+        photo = _render_report(self)
         bot = create_bot(TOKEN)
-        async_to_sync(bot.send_photo)(chat_id=user.id, photo=photo, caption=text)
+        async_to_sync(bot.send_media_group)(chat_id=user.id, media=photo)
+
+
+class ReportImage(models.Model):
+    report = models.ForeignKey(Report, models.CASCADE)
+    image = models.ImageField(upload_to="report")

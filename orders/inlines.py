@@ -2,8 +2,9 @@ from typing import Any
 from django import forms
 from django.contrib import admin
 from django.forms.models import BaseInlineFormSet
+from image_uploader_widget.admin import ImageUploaderInline
 from contrib.django.admin import ReadOnlyAdminModelMixin
-from .models import Order
+from .models import Order, ReportImage
 
 
 class ClientOrderQuarterFormset(ReadOnlyAdminModelMixin, BaseInlineFormSet):
@@ -22,3 +23,6 @@ class ClientOrderQuarterForm(forms.BaseModelForm):
 class ClientOrderQuarterInline(ReadOnlyAdminModelMixin, admin.TabularInline):
     model = Order
     extra = 0
+
+class ReportImageInline(ImageUploaderInline):
+    model = ReportImage

@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'django.contrib.gis',
     'simple_history',
     'import_export',
+    'image_uploader_widget',
     'parler',
     'storages',
     'users',
