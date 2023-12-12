@@ -2,11 +2,6 @@
 
 from django.db import migrations, models
 import django.db.models.deletion
-from orders.models import Report, ReportImage
-
-def migrate_reports(apps, schema_editor):
-    for report in Report.objects.all():
-        ReportImage.objects.create(report=report, image=report.image)
 
 
 class Migration(migrations.Migration):
@@ -23,9 +18,6 @@ class Migration(migrations.Migration):
                 ('image', models.ImageField(upload_to='report')),
                 ('report', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='orders.report')),
             ],
-        ),
-        migrations.RunPython(
-            migrate_reports, atomic=True
         ),
         migrations.RemoveField(
             model_name='report',
