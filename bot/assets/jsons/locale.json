@@ -142,7 +142,8 @@
         "product_transfer_fee": "💯 Комиссии за перевод",
         "product_buyer_price": "💸 Услуга баера",
         "category_list_empty": "⚠️ Категории нет ⚠️",
-        "cart_itog": "💸 Итого"
+        "cart_itog": "💸 Итого",
+        "error_accept_creating": "⚠️ Ошибка при принятии партнерского соглашение ⚠️"
     },
     "uz": {
         "add_passport": "➕ Pasport qo'shish",
@@ -287,7 +288,8 @@
         "product_transfer_fee": "💯 O'tkazma kamissiyasi",
         "product_buyer_price": "💸 Bayer xizmati",
         "category_list_empty": "⚠️ Kategoriyalar yoq ⚠️",
-        "cart_itog": "💸 Jami"
+        "cart_itog": "💸 Jami",
+        "error_accept_creating": "⚠️ Hamkorlik shartnomasini qabul qilishda xatolik yuz berdi ⚠️"
     },
     "uz-cl": {
         "add_passport": "➕ Паспорт қўшиш",
@@ -432,6 +434,7 @@
         "product_transfer_fee": "💯 Ўтказма камиссияси",
         "product_buyer_price": "💸 Баер хизмати",
         "category_list_empty": "⚠️ Категориялар йоқ ⚠️",
-        "cart_itog": "💸 Жами"
+        "cart_itog": "💸 Жами",
+        "error_accept_creating": "⚠️ Ҳамкорлик шартномасини қабул қилишда хатолик юз берди ⚠️"
     }
 }
