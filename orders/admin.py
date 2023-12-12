@@ -5,7 +5,6 @@ from django.http.request import HttpRequest
 from django.http.response import HttpResponse
 from django.http import HttpResponseRedirect
 from django.utils.html import format_html
-from django.forms import ModelForm
 from simple_history.admin import SimpleHistoryAdmin
 from import_export.admin import ImportExportActionModelAdmin
 from storages.models import ProductToCart
@@ -194,7 +193,9 @@ class ReportAdmin(admin.ModelAdmin):
         storages = get_storages(request.user)
         return super().get_queryset(request).filter(clientid__storage__in=storages)
     
-    def save_model(self, request: Any, obj: Report, form: ModelForm, change: Any) -> None:
-        super().save_model(request, obj, form, change)
-        if obj.reportimage_set.all().exists():
-            obj.send_notification()
+    def save_related(self, request: Any, form: Any, formsets: Any, change: Any) -> None:
+        super().save_related(request, form, formsets, change)
+        object = form.instance
+        if object.reportimage_set.all().exists():
+            object.send_notification()
+    
