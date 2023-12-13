@@ -144,7 +144,8 @@
         "category_list_empty": "⚠️ Категории нет ⚠️",
         "cart_itog": "💸 Итого",
         "error_accept_creating": "⚠️ Ошибка при принятии партнерского соглашение ⚠️",
-        "info_list_text": "Список руководств"
+        "info_list_text": "Список руководств",
+        "loading": "⏳ Загрузка"
     },
     "uz": {
         "add_passport": "➕ Pasport qo'shish",
@@ -291,7 +292,8 @@
         "category_list_empty": "⚠️ Kategoriyalar yoq ⚠️",
         "cart_itog": "💸 Jami",
         "error_accept_creating": "⚠️ Hamkorlik shartnomasini qabul qilishda xatolik yuz berdi ⚠️",
-        "info_list_text": "Qo'llanmalar ro'yxati"
+        "info_list_text": "Qo'llanmalar ro'yxati",
+        "loading": "⏳ Yuklanmoqda"
     },
     "uz-cl": {
         "add_passport": "➕ Паспорт қўшиш",
@@ -438,6 +440,7 @@
         "category_list_empty": "⚠️ Категориялар йоқ ⚠️",
         "cart_itog": "💸 Жами",
         "error_accept_creating": "⚠️ Ҳамкорлик шартномасини қабул қилишда хатолик юз берди ⚠️",
-        "info_list_text": "Қўлланмалар рўйхати"
+        "info_list_text": "Қўлланмалар рўйхати",
+        "loading": "⏳ Юкланмоқда"
     }
 }
