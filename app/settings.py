@@ -34,6 +34,7 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
+    'image_uploader_widget',
     'bot',
     'jazzmin',
     'admincharts',
@@ -46,7 +47,6 @@ INSTALLED_APPS = [
     'django.contrib.gis',
     'simple_history',
     'import_export',
-    'image_uploader_widget',
     'parler',
     'storages',
     'users',
