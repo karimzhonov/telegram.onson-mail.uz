@@ -24,5 +24,8 @@ class ClientOrderQuarterInline(ReadOnlyAdminModelMixin, admin.TabularInline):
     model = Order
     extra = 0
 
-class ReportImageInline(ImageUploaderInline):
+class ReportImageInline(admin.StackedInline):
     model = ReportImage
+    extra = 1
+    min_num = 1
+    
