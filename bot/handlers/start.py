@@ -8,7 +8,7 @@ from bot.filters.db_filter import DbSearchFilter
 from bot.filters.prefix import Prefix
 from bot.models import User, Info, LANGUAGES, get_text as _
 from bot.states import LanguageChooseState, InfoState
-from bot.utils import get_file
+from bot.utils import get_file, get_file_url
 from bot.text_keywords import TAKE_ID, SETTINGS, INFO, MENU, CHECK, LISTPASSPORT, ONLINE_BUY, CALCULATOR, ABOUT, STORAGES, FOTO_REPORTS, ACCPET_BUTTON, ACCEPT_URL, EXIT, EXIT_CONFIRM, FAQ
 from users.models import ClientId
 
@@ -107,9 +107,7 @@ async def info(msg: types.Message, state: FSMContext):
     if method == "answer_photo":
         await msg.answer_photo(file, caption=text)
     elif method == "answer":
-        await msg.answer(text)
-    elif method == "answer_video":
-        await msg.answer_video(file, caption=text)
+        await msg.answer(text, disable_web_page_preview=False)
     await message.delete()
 
 
@@ -119,15 +117,13 @@ def _render_info(info: Info):
 
 {info.text}
 """
+    if info.url:
+        text = f"{text}\n{info.url}"
+        return text, None, "answer"
     if info.file:
         file = get_file(str(info.file))
-        file_suffix = str(info.file).split(".")[-1].lower()
-        if file_suffix in ['jpg', 'jpeg', 'png']:
-            return text, file, "answer_photo"
-        else:
-            return text, file, "answer_video"
+        return text, file, "answer_photo"
     return text, None, "answer"
-
 
 
 async def accept_url(msg: types.Message):

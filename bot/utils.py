@@ -39,6 +39,7 @@ def get_file(file_path):
     # if settings.DEBUG:
     file_path = os.path.join(settings.BASE_DIR, "media", file_path)
     return types.BufferedInputFile.from_file(file_path)
-    # url = f"http://178.208.81.109/media/{file_path}"
-    # print(url)
-    # return url
+    
+
+def get_file_url(file_path):
+    return f"http://178.208.81.109:8000/media/{file_path}"

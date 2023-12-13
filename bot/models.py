@@ -39,8 +39,9 @@ class Info(TranslatableModel):
         title=models.CharField("Загаловка", max_length=255, null=True, unique=True),
         text=models.TextField("Текст", null=True)
     )
-    file = models.FileField("Видео или фото", upload_to="info")
+    file = models.ImageField("Фото", upload_to="info", null=True, blank=True)
     is_active = models.BooleanField("Актив", default=True)
+    url = models.URLField("Ссылка", blank=True, null=True)
 
     def __str__(self):
         return self.title or str(self.id)
@@ -63,8 +64,6 @@ class Info(TranslatableModel):
                     async_to_sync(bot.send_photo)(user.id, photo=file, caption=text)
                 elif method == "answer":
                     async_to_sync(bot.send_message)(user.id, text)
-                elif method == "answer_video":
-                    async_to_sync(bot.send_video)(user.id, file, caption=text)
             Thread(target=main).start()
         sleep(5)
         async_to_sync(bot.session.close)()
