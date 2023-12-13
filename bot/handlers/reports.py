@@ -23,7 +23,7 @@ async def my_reports(msg: types.Message, state: FSMContext, offset=0, user_id=No
         return await msg.answer(_("report_list_empty", msg.bot.lang))
     async for report in reports[offset:offset + LIMIT]:
         photo = await sync_to_async(_render_report)(report)
-        if not photo:
+        if photo:
             await msg.answer_media_group(media=photo)
 
     products_count = await reports.acount()

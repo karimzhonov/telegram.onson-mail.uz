@@ -195,6 +195,7 @@ class ReportAdmin(admin.ModelAdmin):
     
     def save_related(self, request: Any, form: Any, formsets: Any, change: Any) -> None:
         super().save_related(request, form, formsets, change)
+        print(request.POST, request.FILES)
         object = form.instance
         if object.reportimage_set.all().exists():
             object.send_notification()
