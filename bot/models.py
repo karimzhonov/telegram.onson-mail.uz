@@ -56,9 +56,9 @@ class Info(TranslatableModel):
         from bot.settings import TOKEN
         
         bot = create_bot(TOKEN)
-        text, file, method = _render_info(self)
         for user in User.objects.all():
             self.set_current_language(user.lang)
+            text, file, method = _render_info(self)
             def main():
                 if method == "answer_photo":
                     async_to_sync(bot.send_photo)(user.id, photo=file, caption=text)
@@ -135,7 +135,6 @@ class FAQ(models.Model):
         return await sync_to_async(self.image.save)(f"{self.user_id}.png", content, True)
 
     def send_message(self):
-        from aiogram import types
         from bot.models import get_text as _
         from bot.utils import create_bot
         from bot.settings import TOKEN

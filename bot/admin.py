@@ -67,7 +67,7 @@ class InfoAdmin(TranslatableAdmin):
 class FAQAdmin(admin.ModelAdmin):
     readonly_fields = ["faq_image", "faq_answer_image", "text", "user", "answer_user", "not_active", "image", ]
     exclude = ["image", "message_id"]
-    list_display = ["text", "answer", "type", "not_active"]
+    list_display = ["user", "text", "answer_user", "answer", "type", "not_active"]
     list_filter = ["type", "user", "answer_user", "not_active"]
 
     def has_add_permission(self, request: HttpRequest) -> bool:
