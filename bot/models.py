@@ -55,11 +55,10 @@ class Info(TranslatableModel):
         from bot.settings import TOKEN
         
         bot = create_bot(TOKEN)
-        
+        text, file, method = _render_info(self)
         for user in User.objects.all():
             self.set_current_language(user.lang)
             def main():
-                text, file, method = _render_info(self)
                 if method == "answer_photo":
                     async_to_sync(bot.send_photo)(user.id, photo=file, caption=text)
                 elif method == "answer":
