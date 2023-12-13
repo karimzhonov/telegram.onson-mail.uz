@@ -36,7 +36,7 @@ class User(models.Model):
 
 class Info(TranslatableModel):
     translations = TranslatedFields(
-        title=models.CharField("Загаловка", max_length=255, null=True),
+        title=models.CharField("Загаловка", max_length=255, null=True, unique=True),
         text=models.TextField("Текст", null=True)
     )
     file = models.FileField("Видео или фото", upload_to="info")

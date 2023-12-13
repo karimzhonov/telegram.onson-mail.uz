@@ -7,7 +7,7 @@ from aiogram.utils.keyboard import ReplyKeyboardBuilder, InlineKeyboardBuilder
 from bot.filters.db_filter import DbSearchFilter
 from bot.filters.prefix import Prefix
 from bot.models import User, Info, LANGUAGES, get_text as _
-from bot.states import LanguageChooseState
+from bot.states import LanguageChooseState, InfoState
 from bot.utils import get_file
 from bot.text_keywords import TAKE_ID, SETTINGS, INFO, MENU, CHECK, LISTPASSPORT, ONLINE_BUY, CALCULATOR, ABOUT, STORAGES, FOTO_REPORTS, ACCPET_BUTTON, ACCEPT_URL, EXIT, EXIT_CONFIRM, FAQ
 from users.models import ClientId
@@ -17,7 +17,8 @@ def setup(dp: Dispatcher):
     dp.message(CommandStart())(start)
     dp.message(DbSearchFilter(MENU))(start)
     dp.message(DbSearchFilter(SETTINGS))(choose_lang)
-    dp.message(DbSearchFilter(INFO))(info)
+    dp.message(DbSearchFilter(INFO))(info_list)
+    dp.message(InfoState.info)(info)
     dp.message(DbSearchFilter(ACCPET_BUTTON))(accept_url)
     dp.message(LanguageChooseState.lang)(choosed_lang)
     dp.message(DbSearchFilter(EXIT))(exit)
@@ -88,17 +89,26 @@ async def choosed_lang(msg: types.Message, state: FSMContext):
     await menu(msg, state)
     
 
-async def info(msg: types.Message, state: FSMContext):
+async def info_list(msg: types.Message, state: FSMContext):
     if not await Info.objects.translated(msg.bot.lang).filter(is_active=True).aexists():
         return await msg.answer(_("info_not_upload_yeat", msg.bot.lang))
+    keyboard = ReplyKeyboardBuilder()
     async for info in Info.objects.translated(msg.bot.lang).prefetch_related("translations").filter(is_active=True):
-        text, file, method = _render_info(info)
-        if method == "answer_photo":
-            await msg.answer_photo(file, caption=text)
-        elif method == "answer":
-            await msg.answer(text)
-        elif method == "answer_video":
-            await msg.answer_video(file, caption=text)
+        keyboard.row(types.KeyboardButton(text=info.title))
+    keyboard.row(types.KeyboardButton(text=_(MENU, msg.bot.lang)))
+    await msg.answer(_("info_list_text", msg.bot.lang), reply_markup=keyboard.as_markup(resize_keyboard=True))
+    await state.set_state(InfoState.info)
+
+
+async def info(msg: types.Message, state: FSMContext):
+    info = await Info.objects.prefetch_related("translations").aget(translations__title=msg.text, translations__language_code=msg.bot.lang)
+    text, file, method = _render_info(info)
+    if method == "answer_photo":
+        await msg.answer_photo(file, caption=text)
+    elif method == "answer":
+        await msg.answer(text)
+    elif method == "answer_video":
+        await msg.answer_video(file, caption=text)
 
 
 def _render_info(info: Info):

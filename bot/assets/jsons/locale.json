@@ -143,7 +143,8 @@
         "product_buyer_price": "💸 Услуга баера",
         "category_list_empty": "⚠️ Категории нет ⚠️",
         "cart_itog": "💸 Итого",
-        "error_accept_creating": "⚠️ Ошибка при принятии партнерского соглашение ⚠️"
+        "error_accept_creating": "⚠️ Ошибка при принятии партнерского соглашение ⚠️",
+        "info_list_text": "info_list_text"
     },
     "uz": {
         "add_passport": "➕ Pasport qo'shish",
@@ -289,7 +290,8 @@
         "product_buyer_price": "💸 Bayer xizmati",
         "category_list_empty": "⚠️ Kategoriyalar yoq ⚠️",
         "cart_itog": "💸 Jami",
-        "error_accept_creating": "⚠️ Hamkorlik shartnomasini qabul qilishda xatolik yuz berdi ⚠️"
+        "error_accept_creating": "⚠️ Hamkorlik shartnomasini qabul qilishda xatolik yuz berdi ⚠️",
+        "info_list_text": "info_list_text"
     },
     "uz-cl": {
         "add_passport": "➕ Паспорт қўшиш",
@@ -435,6 +437,7 @@
         "product_buyer_price": "💸 Баер хизмати",
         "category_list_empty": "⚠️ Категориялар йоқ ⚠️",
         "cart_itog": "💸 Жами",
-        "error_accept_creating": "⚠️ Ҳамкорлик шартномасини қабул қилишда хатолик юз берди ⚠️"
+        "error_accept_creating": "⚠️ Ҳамкорлик шартномасини қабул қилишда хатолик юз берди ⚠️",
+        "info_list_text": "info_list_text"
     }
 }
