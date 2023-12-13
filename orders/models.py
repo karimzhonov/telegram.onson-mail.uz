@@ -187,4 +187,7 @@ class Report(models.Model):
 
 class ReportImage(models.Model):
     report = models.ForeignKey(Report, models.CASCADE)
-    image = models.ImageField(upload_to="report")
+    image = models.ImageField(upload_to="report", verbose_name="Фото")
+
+    def __str__(self) -> str:
+        return str(self.report)

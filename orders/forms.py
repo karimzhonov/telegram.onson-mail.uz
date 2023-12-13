@@ -91,7 +91,7 @@ class ReportForm(forms.ModelForm):
         use_required_attribute=None,
         renderer=None) -> None:
         super().__init__(data, files, auto_id, prefix, initial, error_class, label_suffix, empty_permitted, instance, use_required_attribute, renderer)
-        self.fields["clientid"] = forms.ModelChoiceField(ClientId.objects.filter(storage__in=get_storages(self.request.user)))
+        self.fields["clientid"] = forms.ModelChoiceField(ClientId.objects.filter(storage__in=get_storages(self.request.user)), label="Клиент ИД")
 
     class Meta:
         model = Report
