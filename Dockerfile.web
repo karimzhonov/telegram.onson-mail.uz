@@ -9,6 +9,7 @@ WORKDIR /app/
 COPY /requirements.txt /app/
 RUN pip install --no-cache-dir --upgrade pip
 RUN pip install --no-cache-dir -r /app/requirements.txt
+RUN apt-get -y clean
 RUN apt-get -y update
 RUN apt-get -y install libev-dev libnss3 gdal-bin libpq5 libgdal-dev python3-gdal binutils libproj-dev
 COPY . /app/

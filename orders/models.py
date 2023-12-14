@@ -2,6 +2,7 @@ from asgiref.sync import async_to_sync, sync_to_async
 from django.db import models
 from contrib.django.queryset import QuarterQuerysetMixin
 from simple_history.models import HistoricalRecords
+from admin_async_upload.models import AsyncFileField
 from collections import defaultdict
 
 LIMIT_FOR_QUARTER = 950
@@ -187,7 +188,7 @@ class Report(models.Model):
 
 class ReportImage(models.Model):
     report = models.ForeignKey(Report, models.CASCADE)
-    image = models.ImageField(upload_to="report", verbose_name="Фото")
+    image = AsyncFileField(upload_to="report", verbose_name="Фото")
 
     def __str__(self) -> str:
         return str(self.report)
