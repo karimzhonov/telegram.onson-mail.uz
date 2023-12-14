@@ -16,6 +16,10 @@ class Storage(TranslatableModel):
     is_active = models.BooleanField("Актив", default=True)
     per_price = models.FloatField(default=5.5)
     has_online_buy = models.BooleanField(default=False, verbose_name="Есть онлайн магазин")
+    my_order = models.IntegerField(default=0,
+        blank=False,
+        null=False,
+    )
 
     def __str__(self) -> str:
         return self.slug
@@ -23,6 +27,7 @@ class Storage(TranslatableModel):
     class Meta:
         verbose_name = 'Склад'
         verbose_name_plural = 'Склади'
+        ordering = ['my_order']
 
     def calc(self, weight: float):
         if weight <= 1:

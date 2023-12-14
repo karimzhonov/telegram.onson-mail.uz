@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'simple_history',
     'import_export',
     'admin_async_upload',
+    'adminsortable2',
     'parler',
     'storages',
     'users',

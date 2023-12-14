@@ -2,6 +2,7 @@ from typing import Sequence
 from django.contrib.gis import admin
 from django.http.request import HttpRequest
 from admincharts.admin import AdminChartMixin
+from adminsortable2.admin import SortableAdminMixin
 from contrib.parler.admin import TranslatableAdmin
 from orders.models import Order
 from users.models import get_storages
@@ -20,10 +21,11 @@ class ImageInline(admin.TabularInline):
 
 
 @admin.register(Storage)
-class StorageAdmin(AdminChartMixin, TranslatableAdmin):
+class StorageAdmin(SortableAdminMixin, AdminChartMixin, TranslatableAdmin):
     inlines = [ImageInline]
     non_editable_fields = ['slug']
     list_chart_type = "bar"
+    ordering = ["my_order"]
 
     def get_queryset(self, request):
         if request.user.is_superuser:
