@@ -37,7 +37,7 @@ class Part(models.Model):
         from bot.handlers.online_buy.orders import _render_order
         
         for order in Order.objects.select_related("client").filter(part=self):
-            client_ids = ClientId.objects.filter(storage=self.storage, selected_client=order.client, clients__in=[order.client], deleted=False, user__isnull=False).select_related("user").first()
+            client_ids = ClientId.objects.filter(storage=self.storage, selected_client=order.client, clients__in=[order.client], deleted=False, user__isnull=False).select_related("user")
             for client_id in client_ids:
                 if not client_id.user:
                     continue
