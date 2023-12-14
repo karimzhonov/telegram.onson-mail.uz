@@ -59,13 +59,10 @@ class Info(TranslatableModel):
         for user in User.objects.all():
             self.set_current_language(user.lang)
             text, file, method = _render_info(self)
-            def main():
-                if method == "answer_photo":
-                    async_to_sync(bot.send_photo)(user.id, photo=file, caption=text)
-                elif method == "answer":
-                    async_to_sync(bot.send_message)(user.id, text)
-            main()
-        async_to_sync(bot.session.close)()
+            if method == "answer_photo":
+                async_to_sync(bot.send_photo)(user.id, photo=file, caption=text)
+            elif method == "answer":
+                async_to_sync(bot.send_message)(user.id, text)
 
 
 def get_text(slug, lang, **kwargs) -> str:
