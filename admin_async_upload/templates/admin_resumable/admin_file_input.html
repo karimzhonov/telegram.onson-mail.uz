@@ -99,7 +99,7 @@ if (typeof djangoAdminResumableFieldListenerSetUp=="undefined")
         // of a placeholder stored in { id } for new fields
         $(document).on('formset:added', function(event, $row, formsetName) {
             //check if there are resumable fields and set them up with their actual ids
-            $row.find('input.django-admin-resumable-file').each(
+            $(event.target).find('input.django-admin-resumable-file').each(
                 function () {
                     let el = $(this);
                     let strippedId = el.attr('id').replace('_input_file', '');
