@@ -64,8 +64,7 @@ class Info(TranslatableModel):
                     async_to_sync(bot.send_photo)(user.id, photo=file, caption=text)
                 elif method == "answer":
                     async_to_sync(bot.send_message)(user.id, text)
-            Thread(target=main).start()
-        sleep(5)
+            main()
         async_to_sync(bot.session.close)()
 
 
