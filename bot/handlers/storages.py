@@ -20,7 +20,7 @@ async def storage_list(msg: types.Message, state: FSMContext, text="storage_list
     keyboard = []
     if not await Storage.objects.translated(msg.bot.lang).filter(is_active=True).aexists():
         return await msg.answer(_("storage_list_empty", msg.bot.lang), reply_markup=keyboard.as_markup(resize_keyboard=True))
-    async for storage in Storage.objects.prefetch_related("translations").translated(msg.bot.lang).filter(is_active=True):
+    async for storage in Storage.objects.prefetch_related("translations").translated(msg.bot.lang).filter(is_active=True, translations__language_code=msg.bot.lang):
         keyboard.append(types.KeyboardButton(text=storage.name))
     reply_keyboard = ReplyKeyboardBuilder()
     for i in range(0, len(keyboard), 2):
@@ -32,7 +32,7 @@ async def storage_list(msg: types.Message, state: FSMContext, text="storage_list
 
 async def storage_info(msg: types.Message, state: FSMContext):
     try:
-        storage = await Storage.objects.prefetch_related("translations").aget(translations__name=msg.text)
+        storage = await Storage.objects.prefetch_related("translations").filter(translations__name=msg.text).afirst()
         await _render_storage(msg.from_user.id, msg, state, storage)
         await state.set_state(IDStorage.passport)
     except Storage.DoesNotExist:

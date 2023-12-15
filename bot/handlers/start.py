@@ -93,7 +93,7 @@ async def info_list(msg: types.Message, state: FSMContext):
     if not await Info.objects.translated(msg.bot.lang).filter(is_active=True).aexists():
         return await msg.answer(_("info_not_upload_yeat", msg.bot.lang))
     keyboard = ReplyKeyboardBuilder()
-    async for info in Info.objects.translated(msg.bot.lang).prefetch_related("translations").filter(is_active=True):
+    async for info in Info.objects.translated(msg.bot.lang).prefetch_related("translations").filter(is_active=True, translations__language_code=msg.bot.lang):
         keyboard.row(types.KeyboardButton(text=info.title))
     keyboard.row(types.KeyboardButton(text=_(MENU, msg.bot.lang)))
     await msg.answer(_("info_list_text", msg.bot.lang), reply_markup=keyboard.as_markup(resize_keyboard=True))
