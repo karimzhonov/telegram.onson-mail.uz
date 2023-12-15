@@ -26,7 +26,7 @@ async def storage_list(msg: types.Message, state: FSMContext, text="storage_list
     for i in range(0, len(keyboard), 2):
         reply_keyboard.row(keyboard[i], keyboard[i + 1])
     reply_keyboard.row(types.KeyboardButton(text=_(MENU, msg.bot.lang)))
-    await msg.answer(_(text, msg.bot.lang), reply_markup=reply_keyboard.as_markup(resize_keyboard=True))
+    await msg.answer(_(text, msg.bot.lang), reply_markup=reply_keyboard.as_markup())
     await state.set_state(IDStorage.storage)
 
 
