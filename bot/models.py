@@ -65,7 +65,7 @@ class Info(TranslatableModel):
                         await bot.send_photo(user.id, photo=file, caption=text)
                     elif method == "answer":
                         await bot.send_message(user.id, text)
-                except TelegramAPIError as exp:
+                except Exception as exp:
                     print(exp)
         asyncio.run(theard_main())
 
