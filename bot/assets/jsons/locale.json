@@ -1,5 +1,6 @@
 {
     "ru": {
+        "error": "⚠️ Ошибка в боте ⚠️",
         "add_passport": "➕ Добавить пасспорт",
         "storage_name": "📦 Название склада",
         "storage_address": "📍 Адрес склада",
@@ -146,9 +147,11 @@
         "error_accept_creating": "⚠️ Ошибка при принятии партнерского соглашение ⚠️",
         "info_list_text": "Список руководств",
         "loading": "⏳ Загрузка",
-        "invalid_info": "⚠️ Неверный руководство ⚠️"
+        "invalid_info": "⚠️ Неверный руководство ⚠️",
+        "storage_list_faq": "📍 Введите филиал, в которой возникла проблема"
     },
     "uz": {
+        "error": "⚠️ Botda xotalik ⚠️",
         "add_passport": "➕ Pasport qo'shish",
         "storage_name": "📦 Ombor nomi",
         "storage_address": "📍 Ombor manzili",
@@ -295,9 +298,11 @@
         "error_accept_creating": "⚠️ Hamkorlik shartnomasini qabul qilishda xatolik yuz berdi ⚠️",
         "info_list_text": "Qo'llanmalar ro'yxati",
         "loading": "⏳ Yuklanmoqda",
-        "invalid_info": "⚠️ Noto'g'ri qo'llanmalar ⚠️"
+        "invalid_info": "⚠️ Noto'g'ri qo'llanmalar ⚠️",
+        "storage_list_faq": "📍 Muammo yuzaga kelgan filialni kiriting"
     },
     "uz-cl": {
+        "error": "⚠️ Ботда хатолик ⚠️",
         "add_passport": "➕ Паспорт қўшиш",
         "storage_name": "📦 Омбор номи",
         "storage_address": "📍 Омбор манзили",
@@ -444,6 +449,7 @@
         "error_accept_creating": "⚠️ Ҳамкорлик шартномасини қабул қилишда хатолик юз берди ⚠️",
         "info_list_text": "Қўлланмалар рўйхати",
         "loading": "⏳ Юкланмоқда",
-        "invalid_info": "⚠️ Нотоғри қўлланмалар йоқ ⚠️"
+        "invalid_info": "⚠️ Нотоғри қўлланмалар йоқ ⚠️",
+        "storage_list_faq": "📍 Муаммо юзага келган филиални киритинг"
     }
 }

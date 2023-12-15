@@ -46,6 +46,7 @@ class OnlineBuy(StatesGroup):
 class FAQState(StatesGroup):
     type = State()
     text = State()
+    storage = State()
 
 
 class InfoState(StatesGroup):

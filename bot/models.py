@@ -42,6 +42,7 @@ class Info(TranslatableModel):
     file = models.ImageField("Фото", upload_to="info", null=True, blank=True)
     is_active = models.BooleanField("Актив", default=True)
     url = models.URLField("Ссылка", blank=True, null=True)
+    users = models.ManyToManyField(User)
 
     def __str__(self):
         return self.title or str(self.id)
@@ -58,6 +59,9 @@ class Info(TranslatableModel):
 
         async def theard_main():
             async for user in User.objects.all():
+                if await self.users.filter(id=user.id).aexists():
+                    continue
+                await sync_to_async(self.users.add)(user)
                 try:
                     text, file, method = await sync_to_async(_render_info)(self)
                     if method == "answer_photo":
@@ -123,6 +127,7 @@ class FAQ(models.Model):
     image = models.ImageField(null=True, blank=True, upload_to="faq", verbose_name="Фото вапроса")
     answer_image = models.ImageField(upload_to="faq_answer", blank=True, null=True, verbose_name="Фото ответа")
     message_id = models.IntegerField(null=True)
+    storage = models.ForeignKey("storages.Storage", models.SET_NULL, blank=True, null=True)
 
     class Meta:
         verbose_name = 'Вопрос'

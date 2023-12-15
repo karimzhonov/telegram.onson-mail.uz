@@ -1,6 +1,7 @@
 from typing import Callable, Any, Awaitable
 from aiogram.types import Message, CallbackQuery
 from aiogram import Dispatcher, BaseMiddleware
+from django.conf import settings
 from .models import User, get_text as _
 
 
@@ -22,7 +23,13 @@ class LanguageMiddleware(BaseMiddleware):
         except User.DoesNotExist:
             pass
         message = await event.answer(_("loading", event.bot.lang))
-        response = await handler(event, data)
+        if settings.DEBUG:
+            response = await handler(event, data)
+        else:
+            try:
+                response = await handler(event, data)
+            except Exception:
+                await message.answer(_("error", event.bot.lang))
         await message.delete()
         return response
     

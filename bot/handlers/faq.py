@@ -5,13 +5,15 @@ from bot.models import get_text as _, slug_from_text
 from bot.text_keywords import MENU, FAQ
 from bot.filters.db_filter import DbSearchFilter
 from bot.states import FAQState
-from bot.models import FAQ_TYPES, FAQ as FAQModel
+from bot.models import FAQ_TYPES, FAQ as FAQModel, FAQ_TYPE_DELIVERY
+from storages.models import Storage
 from django.core.files.base import ContentFile
 
 
 def setup(dp: Dispatcher):
     dp.message(DbSearchFilter(FAQ))(entered_faq)
     dp.message(FAQState.type)(entered_faq_type)
+    dp.message(FAQState.storage)(entered_storage_faq)
     dp.message(FAQState.text)(entered_faq_text)
 
 
@@ -37,7 +39,26 @@ async def entered_faq_type(msg: types.Message, state: FSMContext):
     if not slug in dict(FAQ_TYPES).keys():
         return await msg.answer(_("invalid_faq_type", msg.bot.lang))
     await state.update_data(type=slug)
+    if FAQ_TYPE_DELIVERY == slug:
+        return await enter_faq_storage(msg, state)
     await enter_faq_text(msg, state)
+
+
+async def enter_faq_storage(msg: types.Message, state: FSMContext):
+    keyboard = ReplyKeyboardBuilder()
+    async for storage in Storage.objects.prefetch_related("translations").translated(msg.bot.lang).filter(is_active=True, translations__language_code=msg.bot.lang):
+        keyboard.row(types.KeyboardButton(text=storage.name))
+    keyboard.row(types.KeyboardButton(text=_(MENU, msg.bot.lang)))
+    await msg.answer(_("storage_list_faq", msg.bot.lang), reply_markup=keyboard.as_markup(resize_keyboard=True))
+    await state.set_state(FAQState.storage)
+
+async def entered_storage_faq(msg: types.Message, state: FSMContext):
+    try:
+        storage = await Storage.objects.prefetch_related("translations").filter(translations__name=msg.text).afirst()
+        await state.update_data(storage=storage.id)
+        await enter_faq_text(msg, state)
+    except Storage.DoesNotExist:
+        await msg.answer(_("invalid_storage", msg.bot.lang))
 
 
 async def enter_faq_text(msg: types.Message, state: FSMContext):
@@ -55,6 +76,7 @@ async def entered_faq_text(msg: types.Message, state: FSMContext):
         text=text, type=data["type"],
         user_id=msg.from_user.id,
         message_id=msg.message_id,
+        storage_id=data.get("storage")
     )
     if photo:
         await faq.save_image(ContentFile(photo.getvalue()))
