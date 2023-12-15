@@ -101,7 +101,7 @@ async def info_list(msg: types.Message, state: FSMContext):
 
 
 async def info(msg: types.Message, state: FSMContext):
-    info = await Info.objects.prefetch_related("translations").filter(translations__title=msg.text, translations__language_code=msg.bot.lang).afirst()
+    info = await Info.objects.prefetch_related("translations").filter(translations__title=msg.text).afirst()
     if not info:
         return msg.answer(_("invalid_info", msg.bot.lang))
     text, file, method = _render_info(info)

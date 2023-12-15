@@ -32,7 +32,7 @@ async def storage_list(msg: types.Message, state: FSMContext, text="storage_list
 
 async def storage_info(msg: types.Message, state: FSMContext):
     try:
-        storage = await Storage.objects.prefetch_related("translations").aget(translations__name=msg.text, translations__language_code=msg.bot.lang)
+        storage = await Storage.objects.prefetch_related("translations").aget(translations__name=msg.text)
         await _render_storage(msg.from_user.id, msg, state, storage)
         await state.set_state(IDStorage.passport)
     except Storage.DoesNotExist:
