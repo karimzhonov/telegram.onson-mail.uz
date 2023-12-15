@@ -54,22 +54,16 @@ class Info(TranslatableModel):
         from bot.handlers.start import _render_info
         from bot.utils import create_bot
         from bot.settings import TOKEN
-
-        loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(loop)
         bot = create_bot(TOKEN)
-        tasks = []
-        for user in User.objects.all():
-            self.set_current_language(user.lang)
-            text, file, method = _render_info(self)
-            async def send(text, file, method):
+
+        async def theard_main():
+            async for user in User.objects.all():
+                text, file, method = await sync_to_async(_render_info)(self)
                 if method == "answer_photo":
                     await bot.send_photo(user.id, photo=file, caption=text)
                 elif method == "answer":
                     await bot.send_message(user.id, text)
-            tasks.append(loop.create_task(send(text, file, method)))
-        loop.run_until_complete(asyncio.gather(*tasks))
-        loop.close()
+        asyncio.run(theard_main())
 
 
 def get_text(slug, lang, **kwargs) -> str:
