@@ -1,7 +1,7 @@
 from typing import Callable, Any, Awaitable
 from aiogram.types import Message, CallbackQuery
 from aiogram import Dispatcher, BaseMiddleware
-from .models import User
+from .models import User, get_text as _
 
 
 class LanguageMiddleware(BaseMiddleware):
@@ -21,7 +21,10 @@ class LanguageMiddleware(BaseMiddleware):
             await user.acreate_historical_record()
         except User.DoesNotExist:
             pass
-        return await handler(event, data)
+        message = await event.answer(_("loading", event.bot.lang))
+        response = await handler(event, data)
+        await message.delete()
+        return response
     
 
 class LanguageCallBackMiddleware(BaseMiddleware):
@@ -40,7 +43,10 @@ class LanguageCallBackMiddleware(BaseMiddleware):
             event.message.bot.lang = user.lang
         except User.DoesNotExist:
             pass
-        return await handler(event, data)
+        message = await event.message.answer(_("loading", event.bot.lang))
+        response = await handler(event, data)
+        await message.delete()
+        return response
 
 
 def setup(dp: Dispatcher):

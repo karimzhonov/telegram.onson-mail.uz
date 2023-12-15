@@ -101,14 +101,12 @@ async def info_list(msg: types.Message, state: FSMContext):
 
 
 async def info(msg: types.Message, state: FSMContext):
-    message = await msg.answer(_("loading", msg.bot.lang))
     info = await Info.objects.prefetch_related("translations").aget(translations__title=msg.text, translations__language_code=msg.bot.lang)
     text, file, method = _render_info(info)
     if method == "answer_photo":
         await msg.answer_photo(file, caption=text)
     elif method == "answer":
         await msg.answer(text, disable_web_page_preview=False)
-    await message.delete()
 
 
 def _render_info(info: Info):
