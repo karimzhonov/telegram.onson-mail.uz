@@ -31,21 +31,25 @@ class Part(models.Model):
         verbose_name_plural = 'Партии'
 
     def notificate_users(self):
+        import asyncio
         from bot.models import get_text as _
         from bot.utils import create_bot
         from bot.settings import TOKEN
         from users.models import ClientId
         from bot.handlers.online_buy.orders import _render_order
         
-        for order in Order.objects.select_related("client").filter(part=self):
-            client_ids = ClientId.objects.filter(storage=self.storage, selected_client=order.client, clients__in=[order.client], deleted=False, user__isnull=False).select_related("user")
-            for client_id in client_ids:
-                if not client_id.user:
-                    continue
-                user = client_id.user
-                text = _render_order(user, order)
-                bot = create_bot(TOKEN)
-                async_to_sync(bot.send_message)(user.id, text)
+        bot = create_bot(TOKEN)
+
+        async def theard_main():
+            async for order in Order.objects.select_related("client", "part", "part__storage").filter(part=self):
+                client_ids = ClientId.objects.select_related("user").filter(storage=self.storage, selected_client=order.client, clients__in=[order.client], deleted=False, user__isnull=False).select_related("user")
+                async for client_id in client_ids:
+                    if not client_id.user:
+                        continue
+                    user = client_id.user
+                    text = _render_order(user, order)
+                    await bot.send_message(user.id, text)
+        asyncio.run(theard_main())
 
 
 class OrderQueryset(QuarterQuerysetMixin, models.QuerySet):
