@@ -51,6 +51,7 @@ class Info(TranslatableModel):
         verbose_name_plural = 'Телеграм руководстви'
 
     def send_notification(self):
+        from aiogram.utils.exceptions import TelegramAPIError
         from bot.handlers.start import _render_info
         from bot.utils import create_bot
         from bot.settings import TOKEN
@@ -58,11 +59,14 @@ class Info(TranslatableModel):
 
         async def theard_main():
             async for user in User.objects.all():
-                text, file, method = await sync_to_async(_render_info)(self)
-                if method == "answer_photo":
-                    await bot.send_photo(user.id, photo=file, caption=text)
-                elif method == "answer":
-                    await bot.send_message(user.id, text)
+                try:
+                    text, file, method = await sync_to_async(_render_info)(self)
+                    if method == "answer_photo":
+                        await bot.send_photo(user.id, photo=file, caption=text)
+                    elif method == "answer":
+                        await bot.send_message(user.id, text)
+                except TelegramAPIError as exp:
+                    print(exp)
         asyncio.run(theard_main())
 
 
