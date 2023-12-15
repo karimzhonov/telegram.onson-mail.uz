@@ -51,7 +51,6 @@ class Info(TranslatableModel):
         verbose_name_plural = 'Телеграм руководстви'
 
     def send_notification(self):
-        from aiogram.utils.exceptions import TelegramAPIError
         from bot.handlers.start import _render_info
         from bot.utils import create_bot
         from bot.settings import TOKEN
