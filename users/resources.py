@@ -33,7 +33,7 @@ class ClientIdResource(resources.ModelResource):
                     id_str=row.get("id_str"),
                 ).first()
                 if not client_id:
-                    client_id, = ClientId.objects.create(
+                    client_id = ClientId.objects.create(
                         storage_id=row.get("storage"),
                         id_str=row.get("id_str"),
                     )
