@@ -40,6 +40,7 @@ class ClientIdResource(resources.ModelResource):
             try:
                 client_id = ClientId.objects.get(
                         id_str=row.get("id_str"),
+                        storage_id=row.get("storage"),
                     )
                 return client_id, False
             except ClientId.DoesNotExist:
