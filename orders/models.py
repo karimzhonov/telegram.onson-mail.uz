@@ -14,7 +14,7 @@ IN_DELIVERY = "in_delivery"
 PART_STATUS = (
     (IN_FIRST_AEROPORT, "В аэропорту отправителя"),
     (IN_SECOND_AEROPORT, "В аэропорту принимателя"),
-    (IN_DELIVERY, "в Таможенном процессе"),
+    (IN_CUSTOMS, "в Таможенном процессе"),
     (IN_DELIVERY, "в доставке")
 )
 
