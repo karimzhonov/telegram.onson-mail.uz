@@ -56,7 +56,7 @@ class Info(TranslatableModel):
         from bot.utils import create_bot
         from bot.settings import TOKEN
         bot = create_bot(TOKEN)
-
+        count = 0
         async def theard_main():
             async for user in User.objects.all():
                 if await self.users.filter(id=user.id).aexists():
@@ -68,9 +68,11 @@ class Info(TranslatableModel):
                         await bot.send_photo(user.id, photo=file, caption=text)
                     elif method == "answer":
                         await bot.send_message(user.id, text)
+                    count += 1
                 except Exception as exp:
                     print(exp)
         asyncio.run(theard_main())
+        return count
 
 
 def get_text(slug, lang, **kwargs) -> str:

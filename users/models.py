@@ -74,12 +74,13 @@ class ClientId(models.Model):
         from bot.settings import TOKEN
         from bot.handlers.my_passport import _render_passport
         if not self.user:
-            return
+            return 0
         if not self.selected_client.is_warning():
-            return
+            return 0
         text = async_to_sync(_render_passport)(self.selected_client, self.user.lang)
         bot = create_bot(TOKEN)
         async_to_sync(bot.send_message)(self.user.id, text)
+        return 1
 
     async def aadd_client(self, *args: list[Client]):
         return await sync_to_async(self.clients.add)(*args)

@@ -1,5 +1,5 @@
 from typing import Any, Optional
-from django.contrib import admin
+from django.contrib import admin, messages
 from django.db.models import Count
 from django.db.models.functions import TruncDate
 from django.db.models.query import QuerySet
@@ -60,8 +60,10 @@ class InfoAdmin(TranslatableAdmin):
 
     @admin.action(description="Send Notification")
     def send_notification(self, request, queryset):
+        count = 0
         for info in queryset:
-            info.send_notification()
+            count += info.send_notification()
+        messages.success(request, f"Пользователи: {count}")
 
 
 @admin.register(FAQ)

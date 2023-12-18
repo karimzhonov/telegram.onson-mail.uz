@@ -27,11 +27,18 @@ class OrderResource(resources.ModelResource):
         client = Client.objects.filter(pnfl=row.get("client")).first()
         row.update(client=client)
         try:
-            weight = row.get("weight")    
+            weight = str(row.get("weight")    )
             weight = float(weight.replace(",", "."))
             row.update(weight=weight)
         except ValueError:
             raise ValidationError(message=f"{row.get('weight')} - invalid weight")
+        
+        try:
+            facture_price = str(row.get("facture_price")    )
+            facture_price = float(facture_price.replace(",", "."))
+            row.update(facture_price=facture_price)
+        except ValueError:
+            raise ValidationError(message=f"{row.get('facture_price')} - invalid facture_price")
 
 
     def get_or_init_instance(self, instance_loader, row):

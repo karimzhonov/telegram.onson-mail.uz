@@ -41,7 +41,7 @@ class Part(models.Model):
         from bot.handlers.online_buy.orders import _render_order
         
         bot = create_bot(TOKEN)
-
+        count = 0
         async def theard_main():
             async for order in Order.objects.select_related("client", "part", "part__storage").filter(part=self):
                 client_ids = ClientId.objects.select_related("user").filter(storage=self.storage, selected_client=order.client, clients__in=[order.client], deleted=False, user__isnull=False).select_related("user")
@@ -51,7 +51,9 @@ class Part(models.Model):
                     user = client_id.user
                     text = _render_order(user, order)
                     await bot.send_message(user.id, text)
+                    count += 1
         asyncio.run(theard_main())
+        return count
 
 
 class OrderQueryset(QuarterQuerysetMixin, models.QuerySet):

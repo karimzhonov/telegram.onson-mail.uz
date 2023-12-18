@@ -41,12 +41,15 @@ class PartAdmin(SimpleHistoryAdmin, admin.ModelAdmin):
 
     @admin.action(description="Отправка уведомления")
     def send_notification(self, request, queryset):
+        count_orders = 0
         for part in queryset:
-            part.notificate_users()
+            count_orders += part.notificate_users()
         clients = Order.objects.filter(part__in=queryset).values_list("client__id", flat=True)
         storages = queryset.values_list("storage__id", flat=True)
+        cout_clientid = 0
         for clientid in ClientId.objects.filter(storage__id__in=storages, selected_client__id__in=clients).distinct("id"):
-            clientid.send_notification()
+            cout_clientid += clientid.send_notification()
+        messages.success(request, f"Заказы: {count_orders}, Клиент: {cout_clientid}")
 
 
 @admin.register(Order)
