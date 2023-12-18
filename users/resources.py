@@ -27,10 +27,17 @@ class ClientIdResource(resources.ModelResource):
                 "address": row.get("address"),
             }, pnfl=row.get("pnfl"))
             if created:
-                client_id, created = ClientId.objects.get_or_create(
+                created = False
+                client_id = ClientId.objects.filter(
                     storage_id=row.get("storage"),
                     id_str=row.get("id_str"),
-                )
+                ).first()
+                if not client_id:
+                    client_id, = ClientId.objects.create(
+                        storage_id=row.get("storage"),
+                        id_str=row.get("id_str"),
+                    )
+                    created = True
                 if created:
                     client_id.selected_client = client
                     client_id.clients.add(client)
