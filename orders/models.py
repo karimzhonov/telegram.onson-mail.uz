@@ -7,19 +7,21 @@ from collections import defaultdict
 
 LIMIT_FOR_QUARTER = 950
 
-IN_STORAGE = "in_storage"
+IN_FIRST_AEROPORT = "in_first"
+IN_SECOND_AEROPORT = "in_second"
+IN_CUSTOMS = "in_customs"
 IN_DELIVERY = "in_delivery"
-DONE = "done"
 PART_STATUS = (
-    (IN_STORAGE, "В складе"),
-    (IN_DELIVERY, "Доставка"),
-    (DONE, "Доставлено")
+    (IN_FIRST_AEROPORT, "В аэропорту отправителя"),
+    (IN_SECOND_AEROPORT, "В аэропорту принимателя"),
+    (IN_DELIVERY, "в Таможенном процессе"),
+    (IN_DELIVERY, "в доставке")
 )
 
 class Part(models.Model):
     number = models.IntegerField("Номер")
     storage = models.ForeignKey("storages.Storage", models.CASCADE, verbose_name="Склад")
-    status = models.CharField("Статус", max_length=50, default=IN_STORAGE, choices=PART_STATUS)
+    status = models.CharField("Статус", max_length=50, default=IN_FIRST_AEROPORT, choices=PART_STATUS)
     history = HistoricalRecords()
 
     def __str__(self) -> str:
