@@ -1,5 +1,6 @@
 import os
 from django.conf import settings
+from asgiref.sync import sync_to_async
 from aiogram import types, Dispatcher
 from aiogram.fsm.context import FSMContext
 from aiogram.filters.command import CommandStart
@@ -94,6 +95,7 @@ async def info_list(msg: types.Message, state: FSMContext):
         return await msg.answer(_("info_not_upload_yeat", msg.bot.lang))
     keyboard = ReplyKeyboardBuilder()
     async for info in Info.objects.translated(msg.bot.lang).prefetch_related("translations").filter(is_active=True, translations__language_code=msg.bot.lang):
+        await sync_to_async(info.set_current_language)(msg.bot.lang)
         keyboard.row(types.KeyboardButton(text=info.title))
     keyboard.row(types.KeyboardButton(text=_(MENU, msg.bot.lang)))
     await msg.answer(_("info_list_text", msg.bot.lang), reply_markup=keyboard.as_markup(resize_keyboard=True))
@@ -102,6 +104,7 @@ async def info_list(msg: types.Message, state: FSMContext):
 
 async def info(msg: types.Message, state: FSMContext):
     info = await Info.objects.prefetch_related("translations").filter(translations__title=msg.text).afirst()
+    await sync_to_async(info.set_current_language)(msg.bot.lang)
     if not info:
         return msg.answer(_("invalid_info", msg.bot.lang))
     text, file, method = _render_info(info)

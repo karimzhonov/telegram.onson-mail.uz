@@ -1,3 +1,4 @@
+from asgiref.sync import sync_to_async
 from aiogram import types, Dispatcher
 from aiogram.utils.keyboard import ReplyKeyboardBuilder
 from aiogram.fsm.context import FSMContext
@@ -18,6 +19,7 @@ async def storage_list(msg: types.Message, state: FSMContext):
     if not await Storage.objects.translated(msg.bot.lang).filter(is_active=True).aexists():
         return await msg.answer(_("storage_list_empty", msg.bot.lang), reply_markup=keyboard.as_markup(resize_keyboard=True))
     async for storage in Storage.objects.prefetch_related("translations").translated(msg.bot.lang).filter(is_active=True):
+        await sync_to_async(storage.set_current_language)(msg.bot.lang)
         keyboard.row(types.KeyboardButton(text=storage.name))
     keyboard.row(types.KeyboardButton(text=_(MENU, msg.bot.lang)))
     await msg.answer(_("storage_list_text", msg.bot.lang), reply_markup=keyboard.as_markup(resize_keyboard=True))

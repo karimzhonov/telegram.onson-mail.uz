@@ -1,5 +1,4 @@
-import os
-from django.conf import settings
+from asgiref.sync import sync_to_async
 from django.db.models import F, Value
 from aiogram import types, Dispatcher
 from aiogram.fsm.context import FSMContext
@@ -43,6 +42,7 @@ async def my_category(msg: types.Message, state: FSMContext):
     if not await categories.aexists():
         return await msg.answer(_("category_list_empty", msg.bot.lang), reply_markup=keyboard.as_markup(resize_keyboard=True))
     async for category in categories:
+        await sync_to_async(category.set_current_language)(msg.bot.lang)
         all_cats = [c.id async for c in Category.objects.filter_recursive(id=category.id)]
         keyboard.row(types.KeyboardButton(text=f"{category.name} ({await Product.objects.filter(category_id__in=all_cats).acount()})"))
     keyboard.row(types.KeyboardButton(text=_(ONLINE_BUY_MENU, msg.bot.lang)))
@@ -53,7 +53,7 @@ async def my_category(msg: types.Message, state: FSMContext):
 async def entered_category(msg: types.Message, state: FSMContext):
     try:
         text = " ".join(msg.text.split(" ")[:-1])
-        category = await Category.objects.prefetch_related("translations").aget(translations__name=text, translations__language_code=msg.bot.lang)
+        category = await Category.objects.prefetch_related("translations").aget(translations__name=text)
         await state.update_data(
             category=category.id,
             offset=0

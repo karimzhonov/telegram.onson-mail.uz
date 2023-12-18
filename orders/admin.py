@@ -24,7 +24,7 @@ class ProductToCartInline(admin.TabularInline):
 @admin.register(Part)
 class PartAdmin(SimpleHistoryAdmin, admin.ModelAdmin):
     list_filter = ["storage"]
-    list_display = ["number", "storage"]
+    list_display = ["number", "storage", "status"]
     actions = ['send_notification']
     form = PartForm
 

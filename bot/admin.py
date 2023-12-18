@@ -56,6 +56,7 @@ class UserAdmin(AdminChartMixin, admin.ModelAdmin):
 @admin.register(Info)
 class InfoAdmin(TranslatableAdmin):
     actions = ["send_notification"]
+    exclude = ["users"]
 
     @admin.action(description="Send Notification")
     def send_notification(self, request, queryset):
