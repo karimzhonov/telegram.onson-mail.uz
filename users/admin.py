@@ -3,11 +3,14 @@ from django.contrib import admin, messages
 from django.http.request import HttpRequest
 from django.http.response import HttpResponse
 from django.utils.translation import gettext_lazy as _
+from django.db.models import Count
+from django.db.models.functions import TruncDate
 from simple_history.admin import SimpleHistoryAdmin
 from django.contrib.auth.models import User
 from django.contrib.auth.admin import UserAdmin as _UserAdmin
 from django.utils.html import format_html
 from import_export.admin import ImportExportActionModelAdmin
+from admincharts.admin import AdminChartMixin
 from contrib.django.admin import table
 from .models import ClientId, Client, UserSettings, get_storages
 from .resources import ClientIdResource
@@ -35,11 +38,18 @@ class UserAdmin(_UserAdmin):
 
 
 @admin.register(Client)
-class ClientAdmin(admin.ModelAdmin):
+class ClientAdmin(AdminChartMixin, admin.ModelAdmin):
     list_display = ["fio", "pnfl", "passport", "last_quarter"]
     fields = ["pnfl", "passport", "fio", 'phone', "address", "passport_image", "preview_passport", "last_quarter", "quarter_table"]
     readonly_fields = ["preview_passport", "last_quarter", "quarter_table"]
     search_fields = ["fio", "pnfl", "passport"]
+    list_chart_options = {"responsive": True, "scales": {
+        "y": {"min": 0}
+    }}
+    list_chart_type = "line"
+
+    def get_list_chart_queryset(self, changelist):
+        return changelist.queryset
 
     def get_queryset(self, request):
         if request.user.is_superuser:
@@ -60,9 +70,23 @@ class ClientAdmin(admin.ModelAdmin):
     def quarter_table(self, obj: Client):
         return format_html(table(list(obj.order_quarters()), {"quarter": "Квартал", "value": "Значения"}))
 
+    def get_list_chart_data(self, queryset):
+        datasets = {
+            "datasets": [], 
+        }
+        totals = []
+        create_qs = queryset.annotate(
+            date=TruncDate("create_date")
+        ).values("date").annotate(value=Count("id")).values_list('date', 'value').order_by('date')
+        
+        for data in create_qs:
+            totals.append({"x": data[0], "y": data[1]})
+        datasets["datasets"].append({"label": "Созданный пользователи", "data": totals, "backgroundColor": "red", "borderColor": "red"})
+        return datasets
+
 
 @admin.register(ClientId)
-class ClientIdAdmin(ImportExportActionModelAdmin, SimpleHistoryAdmin):
+class ClientIdAdmin(AdminChartMixin, ImportExportActionModelAdmin, SimpleHistoryAdmin):
     list_display = ["get_id", "storage", "selected_client", "user"]
     readonly_fields = ["get_id", "storage"]
     resource_classes = [ClientIdResource]
@@ -73,6 +97,28 @@ class ClientIdAdmin(ImportExportActionModelAdmin, SimpleHistoryAdmin):
     search_fields = ["id", "id_str", "selected_client__fio", "clients__fio", "selected_client__passport", "clients__passport"]
     fields = ["get_id", "storage", "selected_client", "user", "clients", "deleted"]
     ordering = ["-id"]
+
+    list_chart_options = {"responsive": True, "scales": {
+        "y": {"min": 0}
+    }}
+    list_chart_type = "line"
+
+    def get_list_chart_queryset(self, changelist):
+        return changelist.queryset
+
+    def get_list_chart_data(self, queryset):
+        datasets = {
+            "datasets": [], 
+        }
+        totals = []
+        create_qs = queryset.annotate(
+            date=TruncDate("create_date")
+        ).values("date").annotate(value=Count("id")).values_list('date', 'value').order_by('date')
+        
+        for data in create_qs:
+            totals.append({"x": data[0], "y": data[1]})
+        datasets["datasets"].append({"label": "Созданный пользователи", "data": totals, "backgroundColor": "red", "borderColor": "red"})
+        return datasets
 
     def has_import_permission(self, request):
         return request.user.is_superuser

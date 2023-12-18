@@ -5,6 +5,9 @@ from django.http.request import HttpRequest
 from django.http.response import HttpResponse
 from django.http import HttpResponseRedirect
 from django.utils.html import format_html
+from django.db.models import Count
+from django.db.models.functions import TruncDate
+from admincharts.admin import AdminChartMixin
 from simple_history.admin import SimpleHistoryAdmin
 from import_export.admin import ImportExportActionModelAdmin
 from storages.models import ProductToCart
@@ -53,7 +56,7 @@ class PartAdmin(SimpleHistoryAdmin, admin.ModelAdmin):
 
 
 @admin.register(Order)
-class OrderAdmin(ImportExportActionModelAdmin, SimpleHistoryAdmin):
+class OrderAdmin(AdminChartMixin, ImportExportActionModelAdmin, SimpleHistoryAdmin):
     list_display = ["number", "part", "clientid", "client", "name", "weight", "facture_price", "payed_price"]
     list_filter = ["part", "part__storage", "client"]
     search_fields = ["part__number", "part__storage__slug", "client__passport"]
@@ -66,6 +69,14 @@ class OrderAdmin(ImportExportActionModelAdmin, SimpleHistoryAdmin):
     resource_classes = [OrderResource]
     # form = OrderForm
     skip_admin_log = True
+
+    list_chart_options = {"responsive": True, "scales": {
+        "y": {"min": 0}
+    }}
+    list_chart_type = "line"
+
+    def get_list_chart_queryset(self, changelist):
+        return changelist.queryset
 
     def has_import_permission(self, request):
         return request.user.is_superuser
@@ -125,6 +136,20 @@ class OrderAdmin(ImportExportActionModelAdmin, SimpleHistoryAdmin):
                 self.get_export_filename(request, queryset, file_format),
             )
             return response
+        
+    def get_list_chart_data(self, queryset):
+        datasets = {
+            "datasets": [], 
+        }
+        totals = []
+        create_qs = queryset.annotate(
+            _date=TruncDate("date")
+        ).values("_date").annotate(value=Count("id")).values_list('_date', 'value').order_by('_date')
+        
+        for data in create_qs:
+            totals.append({"x": data[0], "y": data[1]})
+        datasets["datasets"].append({"label": "Закази", "data": totals, "backgroundColor": "red", "borderColor": "red"})
+        return datasets
 
 
 @admin.register(Cart)
@@ -183,12 +208,19 @@ class CartAdmin(admin.ModelAdmin):
 
 
 @admin.register(Report)
-class ReportAdmin(admin.ModelAdmin):
+class ReportAdmin(admin.ModelAdmin, AdminChartMixin):
     list_display = ["clientid", "create_date"]
     search_fields = ["clientid__id_str"]
     list_display_links = ["clientid"]
     form = ReportForm
     inlines = [ReportImageInline]
+    list_chart_options = {"responsive": True, "scales": {
+        "y": {"min": 0}
+    }}
+    list_chart_type = "line"
+
+    def get_list_chart_queryset(self, changelist):
+        return changelist.queryset
 
     def get_queryset(self, request):
         if request.user.is_superuser:
@@ -203,3 +235,37 @@ class ReportAdmin(admin.ModelAdmin):
         if object.reportimage_set.all().exists():
             object.send_notification()
     
+    def get_list_chart_data(self, queryset):
+        datasets = {
+            "datasets": [], 
+        }
+        totals = []
+        create_qs = queryset.annotate(
+            date=TruncDate("create_date")
+        ).values("date").annotate(value=Count("id")).values_list('date', 'value').order_by('date')
+        
+        for data in create_qs:
+            totals.append({"x": data[0], "y": data[1]})
+        datasets["datasets"].append({"label": "Созданный пользователи", "data": totals, "backgroundColor": "red", "borderColor": "red"})
+        return datasets
+    
+    def changelist_view(self, request, extra_context=None):
+        response = super().changelist_view(request, extra_context=extra_context)
+        if not request.user.is_superuser:
+            return response
+        # This could be a redirect and not have context_data
+        if not hasattr(response, "context_data"):
+            return response
+
+        if "cl" in response.context_data:
+            changelist = response.context_data["cl"]
+            chart_queryset = self.get_list_chart_queryset(changelist)
+            response.context_data["adminchart_queryset"] = chart_queryset
+            response.context_data[
+                "adminchart_chartjs_config"
+            ] = self.get_list_chart_config(chart_queryset)
+        else:
+            response.context_data["adminchart_queryset"] = None
+            response.context_data["adminchart_chartjs_config"] = None
+
+        return response

@@ -130,6 +130,7 @@ class FAQ(models.Model):
     answer_image = models.ImageField(upload_to="faq_answer", blank=True, null=True, verbose_name="Фото ответа")
     message_id = models.IntegerField(null=True)
     storage = models.ForeignKey("storages.Storage", models.SET_NULL, blank=True, null=True)
+    date = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         verbose_name = 'Вопрос'

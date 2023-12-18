@@ -67,11 +67,19 @@ class InfoAdmin(TranslatableAdmin):
 
 
 @admin.register(FAQ)
-class FAQAdmin(admin.ModelAdmin):
+class FAQAdmin(AdminChartMixin, admin.ModelAdmin):
     readonly_fields = ["faq_image", "faq_answer_image", "text", "user", "answer_user", "not_active", "image", ]
     exclude = ["image", "message_id"]
     list_display = ["user", "text", "answer_user", "answer", "type", "not_active"]
     list_filter = ["type", "user", "answer_user", "not_active"]
+
+    list_chart_options = {"responsive": True, "scales": {
+        "y": {"min": 0}
+    }}
+    list_chart_type = "line"
+
+    def get_list_chart_queryset(self, changelist):
+        return changelist.queryset
 
     def has_add_permission(self, request: HttpRequest) -> bool:
         return False
@@ -101,3 +109,17 @@ class FAQAdmin(admin.ModelAdmin):
         super().save_model(request, obj, form, change)
         if change:
             obj.send_message()
+    
+    def get_list_chart_data(self, queryset):
+        datasets = {
+            "datasets": [], 
+        }
+        totals = []
+        create_qs = queryset.annotate(
+            _date=TruncDate("date")
+        ).values("_date").annotate(value=Count("id")).values_list('_date', 'value').order_by('_date')
+        
+        for data in create_qs:
+            totals.append({"x": data[0], "y": data[1]})
+        datasets["datasets"].append({"label": "Созданный пользователи", "data": totals, "backgroundColor": "red", "borderColor": "red"})
+        return datasets
