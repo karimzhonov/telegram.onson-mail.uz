@@ -52,7 +52,8 @@ class Part(models.Model):
                     text = _render_order(user, order)
                     await bot.send_message(user.id, text)
                     count += 1
-        asyncio.run(theard_main(count))
+            return count
+        count = asyncio.run(theard_main(count))
         return count
 
 

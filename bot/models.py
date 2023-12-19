@@ -71,7 +71,8 @@ class Info(TranslatableModel):
                     count += 1
                 except Exception as exp:
                     print(exp)
-        asyncio.run(theard_main(count))
+            return count
+        count = asyncio.run(theard_main(count))
         return count
 
 
