@@ -57,7 +57,7 @@ class Info(TranslatableModel):
         from bot.settings import TOKEN
         bot = create_bot(TOKEN)
         count = 0
-        async def theard_main():
+        async def theard_main(count):
             async for user in User.objects.all():
                 if await self.users.filter(id=user.id).aexists():
                     continue
@@ -71,7 +71,7 @@ class Info(TranslatableModel):
                     count += 1
                 except Exception as exp:
                     print(exp)
-        asyncio.run(theard_main())
+        asyncio.run(theard_main(count))
         return count
 
 

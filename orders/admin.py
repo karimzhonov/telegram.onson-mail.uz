@@ -7,7 +7,9 @@ from django.http import HttpResponseRedirect
 from django.utils.html import format_html
 from django.db.models import Count
 from django.db.models.functions import TruncDate
+from django.utils import timezone
 from admincharts.admin import AdminChartMixin
+from rangefilter.filters import DateRangeFilterBuilder
 from simple_history.admin import SimpleHistoryAdmin
 from import_export.admin import ImportExportActionModelAdmin
 from storages.models import ProductToCart
@@ -58,7 +60,6 @@ class PartAdmin(SimpleHistoryAdmin, admin.ModelAdmin):
 @admin.register(Order)
 class OrderAdmin(AdminChartMixin, ImportExportActionModelAdmin, SimpleHistoryAdmin):
     list_display = ["number", "part", "clientid", "client", "name", "weight", "facture_price", "payed_price"]
-    list_filter = ["part", "part__storage", "client"]
     search_fields = ["part__number", "part__storage__slug", "client__passport"]
     readonly_fields = ["products_table"]
     exclude = ["products"]
@@ -104,7 +105,7 @@ class OrderAdmin(AdminChartMixin, ImportExportActionModelAdmin, SimpleHistoryAdm
 
     def get_list_filter(self, request: HttpRequest) -> Sequence[str]:
         if request.user.is_superuser:
-            return super().get_list_filter(request)
+            return ["part", "part__storage", "client", ("date", DateRangeFilterBuilder(default_start=timezone.now() - timezone.timedelta(30), default_end=timezone.now()))]
         return []
 
     def get_queryset(self, request):
