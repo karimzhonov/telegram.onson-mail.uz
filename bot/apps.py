@@ -1,6 +1,6 @@
 from django.apps import AppConfig
-from django.utils import timezone
 from django.conf import settings
+from django.utils import timezone
 
 
 class BotConfig(AppConfig):

@@ -1,17 +1,19 @@
+from aiogram import Dispatcher, types
+from aiogram.fsm.context import FSMContext
+from aiogram.utils.keyboard import InlineKeyboardBuilder, ReplyKeyboardBuilder
 from asgiref.sync import sync_to_async
 from django.db.models import F, Value
-from aiogram import types, Dispatcher
-from aiogram.fsm.context import FSMContext
-from aiogram.utils.keyboard import ReplyKeyboardBuilder, InlineKeyboardBuilder
+
 from bot.filters.db_filter import DbSearchFilter
 from bot.filters.prefix import Prefix
 from bot.models import get_text as _
 from bot.states import OnlineBuy
+from bot.text_keywords import (ADD_PRODUCT_TO_CART, ADD_PRODUCT_TO_CHOSEN, MINUS, NEXT, ONLINE_BUY_CART,
+                               ONLINE_BUY_CATEGORY, ONLINE_BUY_MENU, PLUS, PREVIEW, REMOVE_PRODUCT_TO_CHOSEN)
 from bot.utils import get_file
-from bot.text_keywords import ONLINE_BUY_CATEGORY, NEXT, PREVIEW, ADD_PRODUCT_TO_CART, ADD_PRODUCT_TO_CHOSEN, REMOVE_PRODUCT_TO_CHOSEN, PLUS, MINUS, ONLINE_BUY_MENU, ONLINE_BUY_CART
-from storages.models import Category, Product, ProductImage, ProductToChosen, ProductToCart
-from users.models import ClientId
 from orders.models import Cart
+from storages.models import Category, Product, ProductImage, ProductToCart, ProductToChosen
+from users.models import ClientId
 
 LIMIT = 5
 

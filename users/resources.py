@@ -1,5 +1,6 @@
 from import_export import resources
-from .models import ClientId, Client
+
+from .models import Client, ClientId
 
 
 class ClientIdResource(resources.ModelResource):

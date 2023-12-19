@@ -1,6 +1,7 @@
 from django import forms
 from django.forms.utils import ErrorList
-from import_export.forms import ImportForm, ConfirmImportForm
+from import_export.forms import ConfirmImportForm, ImportForm
+
 from storages.models import Storage
 
 

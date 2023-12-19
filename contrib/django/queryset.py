@@ -1,5 +1,5 @@
-from django.db.models.functions import TruncQuarter
 from django.db import models
+from django.db.models.functions import TruncQuarter
 
 
 class QuarterQuerysetMixin:

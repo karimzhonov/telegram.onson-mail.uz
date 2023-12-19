@@ -1,18 +1,20 @@
 import os
+
+from aiogram import Dispatcher, types
+from aiogram.fsm.context import FSMContext
+from aiogram.utils.keyboard import InlineKeyboardBuilder, ReplyKeyboardBuilder
 from django.conf import settings
 from django.db.models import F, Value
-from aiogram import types, Dispatcher
-from aiogram.fsm.context import FSMContext
-from aiogram.utils.keyboard import ReplyKeyboardBuilder, InlineKeyboardBuilder
+
 from bot.filters.db_filter import DbSearchFilter
 from bot.filters.prefix import Prefix
 from bot.models import get_text as _
 from bot.states import OnlineBuy
+from bot.text_keywords import MINUS, NEXT, ONLINE_BUY_CART, ONLINE_BUY_MENU, PLUS, PREVIEW
 from bot.utils import get_file
-from bot.text_keywords import NEXT, PREVIEW, ONLINE_BUY_MENU, ONLINE_BUY_CART, PLUS, MINUS
+from orders.models import Cart
 from storages.models import Product, ProductImage, ProductToCart, Storage
 from users.models import ClientId
-from orders.models import Cart
 
 
 def setup(dp: Dispatcher):
@@ -124,6 +126,7 @@ async def clear_cart(msg: types.Message, state: FSMContext):
 
 async def cart_ordering_start(msg: types.Message, state: FSMContext):
     from bot.handlers.storages import _render_storage
+
     from . import storage_menu_back
 
     data = await state.get_data()

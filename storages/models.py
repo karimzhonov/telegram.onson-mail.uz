@@ -1,8 +1,8 @@
 from django.contrib.gis.db import models
 from django.db.models.expressions import RawSQL
 from django.db.models.fields.related_descriptors import ForwardManyToOneDescriptor
+from parler.managers import ImproperlyConfigured, TranslatableManager, TranslatableQuerySet
 from parler.models import TranslatableModel, TranslatedFields
-from parler.managers import TranslatableQuerySet, TranslatableManager, ImproperlyConfigured
 
 
 class Storage(TranslatableModel):

@@ -1,15 +1,19 @@
-import json, os, re
 import asyncio
-from threading import Thread
-from asgiref.sync import sync_to_async, async_to_sync
-from django.db import models
+import json
+import os
+import re
+
+from asgiref.sync import sync_to_async
 from django.conf import settings
-from django.utils import timezone
 from django.contrib.auth import get_user_model
-from simple_history.models import HistoricalRecords
+from django.db import models
+from django.utils import timezone
 from parler.models import TranslatableModel, TranslatedFields
+from simple_history.models import HistoricalRecords
+
 from app.settings import LANGUAGES
 from bot.utils import get_file
+
 LOCALE_PATH = os.path.join(settings.BASE_DIR, "bot/assets/jsons/locale.json")
 
 
@@ -53,8 +57,8 @@ class Info(TranslatableModel):
 
     def send_notification(self):
         from bot.handlers.start import _render_info
-        from bot.utils import create_bot
         from bot.settings import TOKEN
+        from bot.utils import create_bot
         bot = create_bot(TOKEN)
         count = 0
         async def theard_main(count):
@@ -145,8 +149,8 @@ class FAQ(models.Model):
 
     def send_message(self):
         from bot.models import get_text as _
-        from bot.utils import create_bot
         from bot.settings import TOKEN
+        from bot.utils import create_bot
         
         bot = create_bot(TOKEN)
         answered = []
@@ -160,10 +164,10 @@ class FAQ(models.Model):
         text = f"""
 {answered}: {self.answer}
         """
-        def main():
+        async def main():
             if self.answer_image:
                 media = get_file(str(self.answer_image))
-                return async_to_sync(bot.send_photo)(self.user_id, media, caption=text, reply_to_message_id=self.message_id)
+                return await bot.send_photo(self.user_id, media, caption=text, reply_to_message_id=self.message_id)
             else:
-                return async_to_sync(bot.send_message)(self.user_id, text=text, reply_to_message_id=self.message_id)
-        Thread(target=main).start()
+                return await bot.send_message(self.user_id, text=text, reply_to_message_id=self.message_id)
+        asyncio.run(main())

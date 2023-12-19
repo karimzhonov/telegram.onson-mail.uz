@@ -1,12 +1,14 @@
-from asgiref.sync import sync_to_async
-from aiogram import types, Dispatcher
-from aiogram.utils.keyboard import ReplyKeyboardBuilder
+from aiogram import Dispatcher, types
 from aiogram.fsm.context import FSMContext
-from bot.models import get_text as _
-from bot.text_keywords import CALCULATOR, MENU
+from aiogram.utils.keyboard import ReplyKeyboardBuilder
+from asgiref.sync import sync_to_async
+
 from bot.filters.db_filter import DbSearchFilter
-from storages.models import Storage
+from bot.models import get_text as _
 from bot.states import CalculatorState
+from bot.text_keywords import CALCULATOR, MENU
+from storages.models import Storage
+
 
 def setup(dp: Dispatcher):
     dp.message(DbSearchFilter(CALCULATOR))(storage_list)

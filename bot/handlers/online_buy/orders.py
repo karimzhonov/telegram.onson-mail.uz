@@ -1,10 +1,12 @@
-from aiogram import types, Dispatcher
+from aiogram import Dispatcher, types
 from aiogram.fsm.context import FSMContext
 from aiogram.utils.keyboard import InlineKeyboardBuilder
+from asgiref.sync import async_to_sync
+
 from bot.filters.db_filter import DbSearchFilter
 from bot.filters.prefix import Prefix
 from bot.models import get_text as _
-from bot.text_keywords import ONLINE_BUY_ORDERS
+from bot.text_keywords import ONLINE_BUY_ORDERS, WARINNG
 from orders.models import Order
 from users.models import ClientId
 
@@ -26,7 +28,7 @@ async def my_orders(msg: types.Message, state: FSMContext, offset=0, user_id=Non
         return await msg.answer(_("product_list_empty", msg.bot.lang))
     orders = orders.select_related("client", "part", "part__storage").order_by("-date")
     async for order in orders[offset:offset + LIMIT]:
-        text = _render_order(clientid.user, order)
+        text = await _render_order(clientid.user, order)
         await msg.answer(text)
 
     products_count = await orders.acount()
@@ -37,7 +39,7 @@ async def my_orders(msg: types.Message, state: FSMContext, offset=0, user_id=Non
         await msg.answer(text, reply_markup=keyboard.as_markup(resize_keyboard=True))
 
 
-def _render_order(user, order: Order):
+async def _render_order(user, order: Order, limit=False):
     text = f"""
 {_('part', user.lang)}: {order.part.number}
 {_('order_number', user.lang)}: {order.number}
@@ -49,6 +51,12 @@ def _render_order(user, order: Order):
 {_('order_facture_price', user.lang)}: {order.facture_price} $
 {_('order_price', user.lang)}: {order.payed_price} $
 {_('order_status', user.lang)}: {_(f'order_status_{order.part.status}', user.lang)}
+"""
+    if limit:
+        current_quarter = await order.client.order_quarters().order_by("quarter").alast()
+        current_quarter = 0 if not current_quarter else current_quarter['value']
+        text = f"""{text}
+{WARINNG} {_('current_quarter', user.lang)}: {current_quarter} $ {WARINNG}
 """
     return text
 

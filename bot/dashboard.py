@@ -1,6 +1,7 @@
-from jet.dashboard import modules
 from django.db.models import Count
 from django.db.models.functions import TruncDate
+from jet.dashboard import modules
+
 from .models import User
 
 

@@ -1,13 +1,16 @@
 from typing import Sequence
-from django.contrib.gis import admin
-from django.http.request import HttpRequest
+
 from admincharts.admin import AdminChartMixin
 from adminsortable2.admin import SortableAdminMixin
+from django.contrib.gis import admin
+from django.http.request import HttpRequest
+
 from contrib.parler.admin import TranslatableAdmin
 from orders.models import Order
 from users.models import get_storages
-from .models import Storage, Image, Category, Product, ProductImage
+
 from .forms import ProductForm
+from .models import Category, Image, Product, ProductImage, Storage
 
 
 class ProductImageInline(admin.TabularInline):

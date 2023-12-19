@@ -1,6 +1,7 @@
-from aiogram.types import CallbackQuery
 from aiogram import Bot
 from aiogram.filters.base import Filter
+from aiogram.types import CallbackQuery
+
 from bot.models import User, check_text
 
 

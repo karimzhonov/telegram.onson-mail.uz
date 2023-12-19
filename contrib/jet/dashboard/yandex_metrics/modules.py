@@ -1,13 +1,12 @@
 import datetime
 from urllib.error import HTTPError
 
+from backend.jet_conf import JET_MODULE_YANDEX_METRIKA_ACCESS_TOKEN
 from django.urls import reverse
 from django.utils import formats
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from jet.dashboard.modules import DashboardModule
-
-from backend.jet_conf import JET_MODULE_YANDEX_METRIKA_ACCESS_TOKEN
 
 from .client import YandexMetrikaClient
 from .settings import YandexMetrikaChartSettingsForm, YandexMetrikaSettingsForm

@@ -1,5 +1,3 @@
-import os
-
 JET_THEMES = [
     {
         'theme': 'default', # theme folder name

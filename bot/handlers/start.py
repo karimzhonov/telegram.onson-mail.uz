@@ -1,16 +1,20 @@
 import os
-from django.conf import settings
-from asgiref.sync import sync_to_async
-from aiogram import types, Dispatcher
-from aiogram.fsm.context import FSMContext
+
+from aiogram import Dispatcher, types
 from aiogram.filters.command import CommandStart
-from aiogram.utils.keyboard import ReplyKeyboardBuilder, InlineKeyboardBuilder
+from aiogram.fsm.context import FSMContext
+from aiogram.utils.keyboard import InlineKeyboardBuilder, ReplyKeyboardBuilder
+from asgiref.sync import sync_to_async
+from django.conf import settings
+
 from bot.filters.db_filter import DbSearchFilter
 from bot.filters.prefix import Prefix
-from bot.models import User, Info, LANGUAGES, get_text as _
-from bot.states import LanguageChooseState, InfoState
+from bot.models import LANGUAGES, Info, User
+from bot.models import get_text as _
+from bot.states import InfoState, LanguageChooseState
+from bot.text_keywords import (ABOUT, ACCEPT_URL, ACCPET_BUTTON, CALCULATOR, CHECK, EXIT, EXIT_CONFIRM, FAQ,
+                               FOTO_REPORTS, INFO, LISTPASSPORT, MENU, ONLINE_BUY, SETTINGS, STORAGES, TAKE_ID)
 from bot.utils import get_file, get_file_url
-from bot.text_keywords import TAKE_ID, SETTINGS, INFO, MENU, CHECK, LISTPASSPORT, ONLINE_BUY, CALCULATOR, ABOUT, STORAGES, FOTO_REPORTS, ACCPET_BUTTON, ACCEPT_URL, EXIT, EXIT_CONFIRM, FAQ
 from users.models import ClientId
 
 

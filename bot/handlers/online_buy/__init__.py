@@ -1,15 +1,19 @@
-from asgiref.sync import sync_to_async
-from aiogram import types, Dispatcher
+from aiogram import Dispatcher, types
 from aiogram.fsm.context import FSMContext
 from aiogram.utils.keyboard import ReplyKeyboardBuilder
-from bot.models import get_text as _
+from asgiref.sync import sync_to_async
+
 from bot.filters.db_filter import DbSearchFilter
-from bot.text_keywords import MENU, ONLINE_BUY, ONLINE_BUY_CART, ONLINE_BUY_ABOUT, ONLINE_BUY_CATEGORY, MENU, ONLINE_BUY_CHOSEN, ONLINE_BUY_MENU, ONLINE_BUY_ORDERS
+from bot.models import get_text as _
 from bot.states import OnlineBuy
+from bot.text_keywords import (MENU, ONLINE_BUY, ONLINE_BUY_ABOUT, ONLINE_BUY_CART, ONLINE_BUY_CATEGORY,
+                               ONLINE_BUY_CHOSEN, ONLINE_BUY_MENU, ONLINE_BUY_ORDERS)
 from orders.models import Order
-from storages.models import Storage, Product, ProductToChosen, ProductToCart
+from storages.models import Product, ProductToCart, ProductToChosen, Storage
 from users.models import ClientId
-from . import chosens, category, cart, orders
+
+from . import cart, category, chosens, orders
+
 
 def setup(dp: Dispatcher):
     dp.message(DbSearchFilter(ONLINE_BUY))(storage_list)

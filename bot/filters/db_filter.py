@@ -1,6 +1,7 @@
-from aiogram.types import Message
 from aiogram import Bot
 from aiogram.filters.base import Filter
+from aiogram.types import Message
+
 from bot.models import User, check_text
 
 

@@ -1,20 +1,23 @@
 from typing import Sequence
+
+from admincharts.admin import AdminChartMixin
 from django.contrib import admin, messages
-from django.http.request import HttpRequest
-from django.http.response import HttpResponse
-from django.utils.translation import gettext_lazy as _
+from django.contrib.auth.admin import UserAdmin as _UserAdmin
+from django.contrib.auth.models import User
 from django.db.models import Count
 from django.db.models.functions import TruncDate
-from simple_history.admin import SimpleHistoryAdmin
-from django.contrib.auth.models import User
-from django.contrib.auth.admin import UserAdmin as _UserAdmin
+from django.http.request import HttpRequest
+from django.http.response import HttpResponse
 from django.utils.html import format_html
+from django.utils.translation import gettext_lazy as _
 from import_export.admin import ImportExportActionModelAdmin
-from admincharts.admin import AdminChartMixin
+from simple_history.admin import SimpleHistoryAdmin
+
 from contrib.django.admin import table
-from .models import ClientId, Client, UserSettings, get_storages
-from .resources import ClientIdResource
+
 from .forms import UserConfirmImportForm, UserImportForm
+from .models import Client, ClientId, UserSettings, get_storages
+from .resources import ClientIdResource
 
 admin.site.unregister(User)
 

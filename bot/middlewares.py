@@ -1,8 +1,11 @@
-from typing import Callable, Any, Awaitable
-from aiogram.types import Message, CallbackQuery
-from aiogram import Dispatcher, BaseMiddleware
+from typing import Any, Awaitable, Callable
+
+from aiogram import BaseMiddleware, Dispatcher
+from aiogram.types import CallbackQuery, Message
 from django.conf import settings
-from .models import User, get_text as _
+
+from .models import User
+from .models import get_text as _
 
 
 class LanguageMiddleware(BaseMiddleware):

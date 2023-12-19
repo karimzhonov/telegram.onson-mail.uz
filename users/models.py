@@ -1,10 +1,11 @@
-from django.db import models
-from django.core.exceptions import ObjectDoesNotExist
+import asyncio
+
+from asgiref.sync import sync_to_async
 from django.contrib.auth import get_user_model
-from bot.models import get_text as _
-from asgiref.sync import sync_to_async, async_to_sync
+from django.db import models
 from simple_history.models import HistoricalRecords
 
+from bot.models import get_text as _
 
 User = get_user_model()
 
@@ -70,16 +71,18 @@ class ClientId(models.Model):
         verbose_name_plural = 'ИД клиентов'
     
     def send_notification(self):
-        from bot.utils import create_bot
-        from bot.settings import TOKEN
         from bot.handlers.my_passport import _render_passport
+        from bot.settings import TOKEN
+        from bot.utils import create_bot
         if not self.user:
             return 0
         if not self.selected_client.is_warning():
             return 0
-        text = async_to_sync(_render_passport)(self.selected_client, self.user.lang)
         bot = create_bot(TOKEN)
-        async_to_sync(bot.send_message)(self.user.id, text)
+        async def main():
+            text = await _render_passport(self.selected_client, self.user.lang)
+            await bot.send_message(self.user.id, text)
+        asyncio.run(main)
         return 1
 
     async def aadd_client(self, *args: list[Client]):

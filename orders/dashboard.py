@@ -1,7 +1,8 @@
-from jet.dashboard import modules
 from django.db.models import Count
 from django.db.models.functions import TruncDate
-from .models import Order, IN_DELIVERY, IN_STORAGE, DONE
+from jet.dashboard import modules
+
+from .models import DONE, IN_DELIVERY, IN_STORAGE, Order
 
 
 class OrderLineChart(modules.DashboardModule):

@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.db.models.fields.files import FieldFile
-from django.forms import FileInput, CheckboxInput, forms
+from django.forms import CheckboxInput, FileInput, forms
 from django.template import loader
 from django.templatetags.static import static
 from django.utils.safestring import mark_safe

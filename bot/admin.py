@@ -1,14 +1,17 @@
 from typing import Any, Optional
+
+from admincharts.admin import AdminChartMixin
 from django.contrib import admin, messages
 from django.db.models import Count
 from django.db.models.functions import TruncDate
 from django.db.models.query import QuerySet
 from django.http.request import HttpRequest
 from django.utils.html import format_html
-from admincharts.admin import AdminChartMixin
+
 from contrib.parler.admin import TranslatableAdmin
 from users.models import get_storages
-from .models import User, Info, FAQ, FAQ_TYPE_BOT
+
+from .models import FAQ, FAQ_TYPE_BOT, Info, User
 
 
 @admin.register(User)

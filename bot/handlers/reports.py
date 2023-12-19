@@ -1,8 +1,8 @@
-from asgiref.sync import sync_to_async
-from aiogram import types, Dispatcher
+from aiogram import Dispatcher, types
 from aiogram.fsm.context import FSMContext
-from asgiref.sync import sync_to_async
 from aiogram.utils.keyboard import InlineKeyboardBuilder
+from asgiref.sync import sync_to_async
+
 from bot.filters.db_filter import DbSearchFilter
 from bot.filters.prefix import Prefix
 from bot.models import get_text as _

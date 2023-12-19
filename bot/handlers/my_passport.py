@@ -1,15 +1,15 @@
-from aiogram import types, Dispatcher
+from aiogram import Dispatcher, types
 from aiogram.fsm.context import FSMContext
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 from django.core.exceptions import ValidationError
-from users.models import Client
-from users.validators import validate_phone
-from bot.text_keywords import WARINNG, LISTPASSPORT, MENU
-from bot.models import get_text as _
-from bot.states import ListPassport
+
 from bot.filters.db_filter import DbSearchFilter
 from bot.filters.prefix import Prefix
-
+from bot.models import get_text as _
+from bot.states import ListPassport
+from bot.text_keywords import LISTPASSPORT, MENU, WARINNG
+from users.models import Client
+from users.validators import validate_phone
 
 CHANGE_PHONE = "change_phone"
 CHANGE_ADRESS = "change_adress"

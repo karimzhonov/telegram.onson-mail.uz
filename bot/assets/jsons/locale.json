@@ -40,7 +40,7 @@
         "quarter": "Квартал",
         "limit": "Лимит ($)",
         "summa": "Итого",
-        "current_quarter": "🕒 Текущий квартал",
+        "current_quarter": "🕒 Сумма счет-фактуры за текущий квартал",
         "part": "📋 Партия",
         "order_number": "#️⃣ Номер заказа",
         "client_id": "🆔 Ваш ИД",
@@ -149,7 +149,8 @@
         "info_list_text": "Список руководств",
         "loading": "⏳ Загрузка",
         "invalid_info": "⚠️ Неверный руководство ⚠️",
-        "storage_list_faq": "📍 Введите филиал, в которой возникла проблема"
+        "storage_list_faq": "📍 Введите филиал, в которой возникла проблема",
+        "order_status_in_storage": "order_status_in_storage"
     },
     "uz": {
         "error": "⚠️ Botda xotalik ⚠️",
@@ -192,7 +193,7 @@
         "quarter": "Chorak",
         "limit": "Limit ($)",
         "summa": "Jami",
-        "current_quarter": "🕒 Joriy chorak",
+        "current_quarter": "🕒 Joriy chorakdagi faktura summasi",
         "part": "📋 Partiya",
         "order_number": "#️⃣ Buyurtma raqami",
         "client_id": "🆔 Sizni ID",
@@ -301,7 +302,8 @@
         "info_list_text": "Qo'llanmalar ro'yxati",
         "loading": "⏳ Yuklanmoqda",
         "invalid_info": "⚠️ Noto'g'ri qo'llanmalar ⚠️",
-        "storage_list_faq": "📍 Muammo yuzaga kelgan filialni kiriting"
+        "storage_list_faq": "📍 Muammo yuzaga kelgan filialni kiriting",
+        "order_status_in_storage": "order_status_in_storage"
     },
     "uz-cl": {
         "error": "⚠️ Ботда хатолик ⚠️",
@@ -344,7 +346,7 @@
         "quarter": "Чорак",
         "limit": "Лимит ($)",
         "summa": "Жами",
-        "current_quarter": "🕒 Жорий чорак",
+        "current_quarter": "🕒 Жорий чоракдаги фактура суммаси",
         "part": "📋 Партия",
         "order_number": "#️⃣ Буюртма рақами",
         "client_id": "🆔 Сизни ID",
@@ -453,6 +455,7 @@
         "info_list_text": "Қўлланмалар рўйхати",
         "loading": "⏳ Юкланмоқда",
         "invalid_info": "⚠️ Нотоғри қўлланмалар йоқ ⚠️",
-        "storage_list_faq": "📍 Муаммо юзага келган филиални киритинг"
+        "storage_list_faq": "📍 Муаммо юзага келган филиални киритинг",
+        "order_status_in_storage": "order_status_in_storage"
     }
 }

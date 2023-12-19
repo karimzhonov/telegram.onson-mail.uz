@@ -1,4 +1,4 @@
-from django.db.models import FloatField, Subquery, Func
+from django.db.models import FloatField, Func, Subquery
 
 
 class Round(Func):

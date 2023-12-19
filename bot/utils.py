@@ -1,8 +1,10 @@
 import os
-from aiogram import Dispatcher, Bot, enums, types
+
+from aiogram import Bot, Dispatcher, enums, types
 from aiogram.fsm.storage.redis import RedisStorage
-from PIL import Image
 from django.conf import settings
+from PIL import Image
+
 from .settings import REDIS_URL
 
 

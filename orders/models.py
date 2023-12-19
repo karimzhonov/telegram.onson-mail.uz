@@ -1,9 +1,12 @@
-from asgiref.sync import async_to_sync, sync_to_async
-from django.db import models
-from contrib.django.queryset import QuarterQuerysetMixin
-from simple_history.models import HistoricalRecords
-from admin_async_upload.models import AsyncFileField
+import asyncio
 from collections import defaultdict
+
+from asgiref.sync import sync_to_async
+from django.db import models
+from simple_history.models import HistoricalRecords
+
+from admin_async_upload.models import AsyncFileField
+from contrib.django.queryset import QuarterQuerysetMixin
 
 LIMIT_FOR_QUARTER = 950
 
@@ -34,11 +37,12 @@ class Part(models.Model):
 
     def notificate_users(self):
         import asyncio
-        from bot.models import get_text as _
-        from bot.utils import create_bot
-        from bot.settings import TOKEN
-        from users.models import ClientId
+
         from bot.handlers.online_buy.orders import _render_order
+        from bot.models import get_text as _
+        from bot.settings import TOKEN
+        from bot.utils import create_bot
+        from users.models import ClientId
         
         bot = create_bot(TOKEN)
         count = 0
@@ -49,7 +53,7 @@ class Part(models.Model):
                     if not client_id.user:
                         continue
                     user = client_id.user
-                    text = _render_order(user, order)
+                    text = await _render_order(user, order, True)
                     await bot.send_message(user.id, text)
                     count += 1
             return count
@@ -182,17 +186,17 @@ class Report(models.Model):
         verbose_name_plural = 'Фото отчеты'
 
     def send_notification(self):
-        from bot.models import get_text as _
-        from bot.utils import create_bot
-        from bot.settings import TOKEN
         from bot.handlers.reports import _render_report
+        from bot.models import get_text as _
+        from bot.settings import TOKEN
+        from bot.utils import create_bot
 
         user = self.clientid.user
         if not user:
             return
         photo = _render_report(self)
         bot = create_bot(TOKEN)
-        async_to_sync(bot.send_media_group)(chat_id=user.id, media=photo)
+        asyncio.run(bot.send_media_group(chat_id=user.id, media=photo))
 
 
 class ReportImage(models.Model):

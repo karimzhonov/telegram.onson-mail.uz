@@ -1,21 +1,24 @@
-import os, io
-from aiogram import Dispatcher, F
-from aiogram.types import ContentType as CT
-from aiogram import types, Dispatcher
+import io
+import os
+
+from aiogram import Dispatcher, F, types
 from aiogram.fsm.context import FSMContext
+from aiogram.types import ContentType as CT
 from aiogram.utils.keyboard import ReplyKeyboardBuilder
-from bot.filters.db_filter import DbSearchFilter
-from bot.models import get_text as _
-from bot.states import RegisterState
-from bot.text_keywords import TAKE_ID, ACCEPT, ID_PASSPORT, BIO_PASSPORT, ACCEPT_URL
-from bot.utils import concat_images
-from users.validators import validate_pnfl, validate_passport, validate_phone
-from users.models import Client, ClientId
-from storages.models import Storage
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.files.base import ContentFile
 from PIL import Image
+
+from bot.filters.db_filter import DbSearchFilter
+from bot.models import get_text as _
+from bot.states import RegisterState
+from bot.text_keywords import ACCEPT, ACCEPT_URL, BIO_PASSPORT, ID_PASSPORT, TAKE_ID
+from bot.utils import concat_images
+from storages.models import Storage
+from users.models import Client, ClientId
+from users.validators import validate_passport, validate_phone, validate_pnfl
+
 
 def setup(dp: Dispatcher): 
     dp.message(DbSearchFilter(TAKE_ID))(take_id)

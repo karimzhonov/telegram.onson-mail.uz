@@ -1,5 +1,4 @@
 from django.utils.translation import gettext_lazy as _
-
 from jet.dashboard import modules
 from jet.dashboard.dashboard import AppIndexDashboard, Dashboard
 

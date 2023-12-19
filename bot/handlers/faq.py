@@ -1,14 +1,17 @@
-from asgiref.sync import sync_to_async
-from aiogram import types, Dispatcher
-from aiogram.utils.keyboard import ReplyKeyboardBuilder
+from aiogram import Dispatcher, types
 from aiogram.fsm.context import FSMContext
-from bot.models import get_text as _, slug_from_text
-from bot.text_keywords import MENU, FAQ
-from bot.filters.db_filter import DbSearchFilter
-from bot.states import FAQState
-from bot.models import FAQ_TYPES, FAQ as FAQModel, FAQ_TYPE_DELIVERY
-from storages.models import Storage
+from aiogram.utils.keyboard import ReplyKeyboardBuilder
+from asgiref.sync import sync_to_async
 from django.core.files.base import ContentFile
+
+from bot.filters.db_filter import DbSearchFilter
+from bot.models import FAQ as FAQModel
+from bot.models import FAQ_TYPE_DELIVERY, FAQ_TYPES
+from bot.models import get_text as _
+from bot.models import slug_from_text
+from bot.states import FAQState
+from bot.text_keywords import FAQ, MENU
+from storages.models import Storage
 
 
 def setup(dp: Dispatcher):

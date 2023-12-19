@@ -1,7 +1,10 @@
-import asyncio, logging
+import asyncio
+import logging
+
 from django.core.management import BaseCommand
-from bot.loader import dp
+
 from bot import handlers, middlewares
+from bot.loader import dp
 from bot.settings import TOKEN
 from bot.utils import create_bot
 

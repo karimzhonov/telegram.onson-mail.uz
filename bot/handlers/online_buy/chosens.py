@@ -1,18 +1,21 @@
 import os
+
+from aiogram import Dispatcher, types
+from aiogram.fsm.context import FSMContext
+from aiogram.utils.keyboard import InlineKeyboardBuilder, ReplyKeyboardBuilder
 from django.conf import settings
 from django.db.models import F, Value
-from aiogram import types, Dispatcher
-from aiogram.fsm.context import FSMContext
-from aiogram.utils.keyboard import ReplyKeyboardBuilder, InlineKeyboardBuilder
+
 from bot.filters.db_filter import DbSearchFilter
 from bot.filters.prefix import Prefix
 from bot.models import get_text as _
 from bot.states import OnlineBuy
+from bot.text_keywords import (ADD_PRODUCT_TO_CART, MINUS, NEXT, ONLINE_BUY_CHOSEN, ONLINE_BUY_MENU, PLUS, PREVIEW,
+                               REMOVE_PRODUCT_TO_CHOSEN)
 from bot.utils import get_file
-from bot.text_keywords import ONLINE_BUY_MENU, REMOVE_PRODUCT_TO_CHOSEN, NEXT, PREVIEW, ADD_PRODUCT_TO_CART, ONLINE_BUY_CHOSEN, PLUS, MINUS
-from storages.models import Product, ProductImage, ProductToChosen, ProductToCart
-from users.models import ClientId
 from orders.models import Cart
+from storages.models import Product, ProductImage, ProductToCart, ProductToChosen
+from users.models import ClientId
 
 
 def setup(dp: Dispatcher):

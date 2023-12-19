@@ -1,5 +1,6 @@
 from aiogram import Dispatcher
-from . import storages, my_passport, register, start, about, calc, online_buy, reports, faq
+
+from . import about, calc, faq, my_passport, online_buy, register, reports, start, storages
 
 
 def setup(dp: Dispatcher):
