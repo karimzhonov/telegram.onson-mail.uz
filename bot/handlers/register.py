@@ -60,6 +60,8 @@ async def enter_fio(msg: types.Message, state: FSMContext):
 
 
 async def entered_fio(msg: types.Message, state: FSMContext):
+    if len(msg.text.split(" ")) < 2:
+        return await msg.answer(_("invalid_fio_error", msg.bot.lang))
     await state.update_data(fio=msg.text)
     await enter_passport(msg, state)
 
