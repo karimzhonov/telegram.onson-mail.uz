@@ -43,7 +43,7 @@ async def menu(msg: types.Message, state: FSMContext):
     keyboard = await _menu_keyboard(msg)
     await msg.answer_photo(
         types.BufferedInputFile.from_file(os.path.join(settings.BASE_DIR, "bot/assets/images/onson-logo.png")), 
-        text, reply_markup=keyboard.as_markup(resize_keyboard=True))
+        text, reply_markup=keyboard.as_markup())
 
 
 async def _menu_keyboard(msg: types.Message, user_id=None):

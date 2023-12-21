@@ -1,5 +1,4 @@
-from typing import Any, Optional
-
+from typing import Any
 from admincharts.admin import AdminChartMixin
 from django.contrib import admin, messages
 from django.db.models import Count
@@ -9,9 +8,15 @@ from django.http.request import HttpRequest
 from django.utils.html import format_html
 
 from contrib.parler.admin import TranslatableAdmin
-from users.models import get_storages
+from users.models import get_storages, ClientId
 
 from .models import FAQ, FAQ_TYPE_BOT, Info, User
+
+
+class ClientIdInline(admin.StackedInline):
+    model = ClientId
+    can_delete = False
+    extra = 0
 
 
 @admin.register(User)
@@ -20,6 +25,8 @@ class UserAdmin(AdminChartMixin, admin.ModelAdmin):
     list_chart_options = {"responsive": True, "scales": {
         "y": {"min": 0}
     }}
+    search_fields = ["id", "username", "first_name", "last_name"]
+    inlines = [ClientIdInline]
 
     def get_queryset(self, request):
         if request.user.is_superuser:
