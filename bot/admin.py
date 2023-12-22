@@ -28,6 +28,11 @@ class UserAdmin(AdminChartMixin, admin.ModelAdmin):
     search_fields = ["id", "username", "first_name", "last_name"]
     inlines = [ClientIdInline]
 
+    def get_list_filter(self, request: HttpRequest) -> list[str]:
+        if request.user.is_superuser:
+            return ["id", "username", "first_name", "last_name", ("create_date", admin.DateFieldListFilter)]
+        return []
+
     def get_queryset(self, request):
         if request.user.is_superuser:
             return super().get_queryset(request)

@@ -14,7 +14,7 @@ from import_export.admin import ImportExportActionModelAdmin
 from simple_history.admin import SimpleHistoryAdmin
 
 from contrib.django.admin import table
-from rangefilter.filters import DateRangeFilterBuilder
+from rangefilter.filters import DateRangeQuickSelectListFilterBuilder
 from storages.models import ProductToCart
 from users.models import ClientId, get_storages
 
@@ -63,7 +63,7 @@ class PartAdmin(SimpleHistoryAdmin, admin.ModelAdmin):
 @admin.register(Order)
 class OrderAdmin(AdminChartMixin, ImportExportActionModelAdmin, SimpleHistoryAdmin):
     list_display = ["number", "part", "clientid", "client", "name", "weight", "facture_price", "payed_price"]
-    search_fields = ["part__number", "part__storage__slug", "client__passport"]
+    search_fields = ["part__number", "client__passport", "client__pnfl"]
     readonly_fields = ["products_table"]
     exclude = ["products"]
 
@@ -108,7 +108,7 @@ class OrderAdmin(AdminChartMixin, ImportExportActionModelAdmin, SimpleHistoryAdm
 
     def get_list_filter(self, request: HttpRequest) -> Sequence[str]:
         if request.user.is_superuser:
-            return ["part", "part__storage", "client", ("date", DateRangeFilterBuilder(default_start=timezone.now() - timezone.timedelta(30), default_end=timezone.now()))]
+            return ["part", "part__storage", "client", ("date", admin.DateFieldListFilter)]
         return []
 
     def get_queryset(self, request):

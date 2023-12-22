@@ -23,7 +23,7 @@ class User(models.Model):
     first_name = models.CharField("Имя", max_length=255, blank=True, null=True)
     last_name = models.CharField("Фамилия", max_length=255, blank=True, null=True)
     lang = models.CharField("Язык", choices=LANGUAGES, max_length=20, default="uz")
-    create_date = models.DateTimeField(auto_now_add=True, null=True)
+    create_date = models.DateTimeField(auto_now_add=True, null=True, verbose_name="Дата создание")
     last_date = models.DateTimeField(default=timezone.now)
     history = HistoricalRecords()
 
