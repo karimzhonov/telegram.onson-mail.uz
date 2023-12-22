@@ -151,7 +151,8 @@
         "loading": "⏳ Загрузка",
         "invalid_info": "⚠️ Неверный руководство ⚠️",
         "storage_list_faq": "📍 Введите филиал, в которой возникла проблема",
-        "order_status_in_storage": "order_status_in_storage"
+        "order_status_in_storage": "order_status_in_storage",
+        "orders": "📦 Все заказы"
     },
     "uz": {
         "error": "⚠️ Botda xotalik ⚠️",
@@ -305,7 +306,8 @@
         "loading": "⏳ Yuklanmoqda",
         "invalid_info": "⚠️ Noto'g'ri qo'llanmalar ⚠️",
         "storage_list_faq": "📍 Muammo yuzaga kelgan filialni kiriting",
-        "order_status_in_storage": "order_status_in_storage"
+        "order_status_in_storage": "order_status_in_storage",
+        "orders": "📦 Barcha buyurtmalar"
     },
     "uz-cl": {
         "error": "⚠️ Ботда хатолик ⚠️",
@@ -459,6 +461,7 @@
         "loading": "⏳ Юкланмоқда",
         "invalid_info": "⚠️ Нотоғри қўлланмалар йоқ ⚠️",
         "storage_list_faq": "📍 Муаммо юзага келган филиални киритинг",
-        "order_status_in_storage": "order_status_in_storage"
+        "order_status_in_storage": "order_status_in_storage",
+        "orders": "📦 Барча буюуртмалар"
     }
 }

@@ -6,14 +6,14 @@ from aiogram.fsm.context import FSMContext
 from aiogram.utils.keyboard import InlineKeyboardBuilder, ReplyKeyboardBuilder
 from asgiref.sync import sync_to_async
 from django.conf import settings
-
+from orders.models import Order
 from bot.filters.db_filter import DbSearchFilter
 from bot.filters.prefix import Prefix
 from bot.models import LANGUAGES, Info, User
 from bot.models import get_text as _
 from bot.states import InfoState, LanguageChooseState
 from bot.text_keywords import (ABOUT, ACCEPT_URL, ACCPET_BUTTON, CALCULATOR, CHECK, EXIT, EXIT_CONFIRM, FAQ,
-                               FOTO_REPORTS, INFO, LISTPASSPORT, MENU, ONLINE_BUY, SETTINGS, STORAGES, TAKE_ID)
+                               FOTO_REPORTS, INFO, LISTPASSPORT, MENU, ONLINE_BUY, SETTINGS, STORAGES, TAKE_ID, ORDERS)
 from bot.utils import get_file, get_file_url
 from users.models import ClientId
 
@@ -53,9 +53,13 @@ async def _menu_keyboard(msg: types.Message, user_id=None):
         keyboard.row(types.KeyboardButton(text=_(LISTPASSPORT, msg.bot.lang)))
     else:
         keyboard.row(types.KeyboardButton(text=_(TAKE_ID, msg.bot.lang)))
-    keyboard.row(types.KeyboardButton(text=_(ACCPET_BUTTON, msg.bot.lang)), types.KeyboardButton(text=_(STORAGES, msg.bot.lang)))
-    keyboard.row(types.KeyboardButton(text=_(ONLINE_BUY, msg.bot.lang)), types.KeyboardButton(text=_(FOTO_REPORTS, msg.bot.lang)), types.KeyboardButton(text=_(CALCULATOR, msg.bot.lang)))
-    keyboard.row(types.KeyboardButton(text=_(SETTINGS, msg.bot.lang)), types.KeyboardButton(text=_(INFO, msg.bot.lang)))
+    if await ClientId.objects.filter(user_id=user_id, deleted=False).aexists():
+        clientid = await ClientId.objects.filter(user_id=user_id, deleted=False).afirst()
+        keyboard.row(types.KeyboardButton(text=_(ACCPET_BUTTON, msg.bot.lang)), types.KeyboardButton(text=_(STORAGES, msg.bot.lang)), types.KeyboardButton(text=f"{_(ORDERS, msg.bot.lang)} ({await Order.objects.filter(with_online_buy=False, client__in=clientid.clients.all()).acount()})"))
+    else:
+        keyboard.row(types.KeyboardButton(text=_(ACCPET_BUTTON, msg.bot.lang)), types.KeyboardButton(text=_(STORAGES, msg.bot.lang)), types.KeyboardButton(text=_(ORDERS, msg.bot.lang)))
+    keyboard.row(types.KeyboardButton(text=_(ONLINE_BUY, msg.bot.lang)), types.KeyboardButton(text=_(FOTO_REPORTS, msg.bot.lang)))
+    keyboard.row(types.KeyboardButton(text=_(SETTINGS, msg.bot.lang)), types.KeyboardButton(text=_(INFO, msg.bot.lang)), types.KeyboardButton(text=_(CALCULATOR, msg.bot.lang)))
     if await ClientId.objects.filter(user_id=user_id).aexists():
         keyboard.row(types.KeyboardButton(text=_(FAQ, msg.bot.lang)), types.KeyboardButton(text=_(EXIT, msg.bot.lang)))
     else:
