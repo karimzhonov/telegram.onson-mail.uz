@@ -77,7 +77,7 @@ class InfoAdmin(TranslatableAdmin):
 
 
 @admin.register(FAQ)
-class FAQAdmin(AdminChartMixin, admin.ModelAdmin):
+class FAQAdmin(admin.ModelAdmin, AdminChartMixin):
     readonly_fields = ["faq_image", "faq_answer_image", "text", "user", "answer_user", "not_active", "image", ]
     exclude = ["image", "message_id"]
     list_display = ["user", "text", "answer_user", "answer", "type", "not_active"]
@@ -112,12 +112,12 @@ class FAQAdmin(AdminChartMixin, admin.ModelAdmin):
             return super().get_queryset(request)
         return super().get_queryset(request).exclude(type=FAQ_TYPE_BOT)
 
-    def save_model(self, request: Any, obj: Any, form: Any, change: Any) -> None:
-        if change:
+    def save_model(self, request: Any, obj: FAQ, form: Any, change: Any) -> None:
+        if change and obj.answer:
             obj.not_active = True
             obj.answer_user = request.user
         super().save_model(request, obj, form, change)
-        if change:
+        if change and obj.answer:
             obj.send_message()
     
     def get_list_chart_data(self, queryset):
@@ -133,3 +133,24 @@ class FAQAdmin(AdminChartMixin, admin.ModelAdmin):
             totals.append({"x": data[0], "y": data[1]})
         datasets["datasets"].append({"label": "Созданный пользователи", "data": totals, "backgroundColor": "red", "borderColor": "red"})
         return datasets
+
+    def changelist_view(self, request, extra_context=None):
+        response = super().changelist_view(request, extra_context=extra_context)
+        if not request.user.is_superuser:
+            return response
+        # This could be a redirect and not have context_data
+        if not hasattr(response, "context_data"):
+            return response
+
+        if "cl" in response.context_data:
+            changelist = response.context_data["cl"]
+            chart_queryset = self.get_list_chart_queryset(changelist)
+            response.context_data["adminchart_queryset"] = chart_queryset
+            response.context_data[
+                "adminchart_chartjs_config"
+            ] = self.get_list_chart_config(chart_queryset)
+        else:
+            response.context_data["adminchart_queryset"] = None
+            response.context_data["adminchart_chartjs_config"] = None
+
+        return response

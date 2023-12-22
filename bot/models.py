@@ -128,7 +128,7 @@ class FAQ(models.Model):
     text = models.TextField(verbose_name="Вапрос")
     type = models.CharField(verbose_name="Тип", max_length=255, choices=FAQ_TYPES)
     user = models.ForeignKey(User, models.CASCADE, verbose_name="Владелец вопроса")
-    answer = models.TextField(null=True, verbose_name="Ответ")
+    answer = models.TextField(null=True, verbose_name="Ответ", blank=True)
     answer_user = models.ForeignKey(get_user_model(), models.CASCADE, null=True, verbose_name="Ответил")
     not_active = models.BooleanField(default=False, verbose_name="Ответено")
     image = models.ImageField(null=True, blank=True, upload_to="faq", verbose_name="Фото вапроса")
