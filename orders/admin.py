@@ -214,7 +214,7 @@ class CartAdmin(admin.ModelAdmin):
 @admin.register(Report)
 class ReportAdmin(admin.ModelAdmin, AdminChartMixin):
     list_display = ["clientid", "create_date"]
-    search_fields = ["clientid__id_str"]
+    search_fields = ["clientid__id_str", "clientid__id"]
     list_display_links = ["clientid"]
     form = ReportForm
     inlines = [ReportImageInline]
