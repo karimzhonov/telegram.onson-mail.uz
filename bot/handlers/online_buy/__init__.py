@@ -73,7 +73,7 @@ async def _render_storage_menu(msg: types.Message, state: FSMContext):
             [types.KeyboardButton(text=f"{_(ONLINE_BUY_CART, msg.bot.lang)} ({await ProductToCart.objects.filter(cart__clientid=clientid).acount()})")],
         )
         keyboard.append(
-            [types.KeyboardButton(text=f"{_(ONLINE_BUY_ORDERS, msg.bot.lang)} ({await Order.objects.filter(part__storage_id=data['storage'], clientid=clientid.get_id(), with_online_buy=True).acount()})")],
+            [types.KeyboardButton(text=f"{_(ONLINE_BUY_ORDERS, msg.bot.lang)} ({await Order.objects.filter(part__storage_id=data['storage'], client__clientid__user_id=clientid.user_id, with_online_buy=True).acount()})")],
         )
     else:
         keyboard.append(

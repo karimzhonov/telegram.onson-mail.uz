@@ -22,7 +22,7 @@ async def my_orders(msg: types.Message, state: FSMContext, offset=0, user_id=Non
     clientid = await ClientId.objects.filter(user_id=user_id).select_related("user", "storage").afirst()
     if not clientid:
         return await msg.answer(_("product_list_empty", msg.bot.lang))
-    orders = Order.objects.filter(with_online_buy=False, client__in=clientid.clients.all())
+    orders = Order.objects.filter(with_online_buy=False, client__clientid__user_id=user_id)
     if not await orders.aexists():
         return await msg.answer(_("product_list_empty", msg.bot.lang))
     orders = orders.select_related("client", "part", "part__storage").order_by("-date")
