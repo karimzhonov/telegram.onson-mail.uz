@@ -125,13 +125,19 @@ class Cart(models.Model):
         from bot.models import get_text as _
         text = [f"{_('client_id', lang)}: <code>{self.clientid.get_id()}</code>"]
         summa = defaultdict(int)
+        has_not_given = False
         for pc in self._annotated_qs():
-            pc_summa = (pc.product.price * pc.count + pc.product.buyer_price) * (1 + pc.product.transfer_fee * 0.01)
-            summa[pc.product.currency] += round(pc_summa, 2)
+            if pc.price:
+                pc_summa = round((pc.price + pc.product.buyer_price) * (1 + pc.product.transfer_fee * 0.01), 2)
+                summa[pc.product.currency] += pc_summa
+            else:
+                has_not_given = True
             text.append(pc.product.product_to_text(lang, pc.count))
         cart_itog = [f"{_('cart_itog', lang)}: "]
         for sc, s in summa.items():
             cart_itog.append(f"{round(s, 2)} {sc}")
+        if has_not_given:
+            cart_itog.append(_("not_given_prices_in_cart", lang))
         cart_itog = "\n".join(cart_itog)
         text.append("\n")
         text.append(cart_itog)

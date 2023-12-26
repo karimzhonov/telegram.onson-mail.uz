@@ -111,10 +111,12 @@ class Product(models.Model):
     storage = models.ForeignKey(Storage, models.CASCADE, null=True, verbose_name="Склад")
     name=models.CharField(max_length=255, verbose_name="Название", null=True)
     currency = models.CharField(max_length=20, default="$", verbose_name="Валюта")
-    price = models.FloatField(verbose_name="Цена")
+    price = models.FloatField(verbose_name="Цена", null=True, blank=True)
+    price_many = models.FloatField(verbose_name="Цена оптом", null=True, blank=True)
+    count_many = models.IntegerField(verbose_name="Оптом кол-во", null=True, blank=True)
     category = models.ForeignKey(Category, models.CASCADE, verbose_name="Категория")
     is_active = models.BooleanField(default=True, verbose_name="Актив")
-    weight = models.FloatField(verbose_name="Вес")
+    weight = models.FloatField(verbose_name="Вес", null=True, blank=True)
     created_date = models.DateTimeField(auto_now_add=True, verbose_name="Дата создание")
     transfer_fee = models.FloatField("Комиссия за перевод (%)", null=True)
     buyer_price = models.FloatField("Услуга баера", null=True)
@@ -136,15 +138,22 @@ class Product(models.Model):
             return f"""
 {_("product_name", lang)}: {self.name}
 {_("product_category", lang)}: {self.category.name}
-{_("product_weight", lang)}: {self.weight}
-{_("product_price", lang)}: {self.price} {self.currency}
+{_("product_weight", lang)}: {self.weight if self.weight else _("not_given", lang)}
+{_("product_price", lang)}: {self.price if self.price else _("not_given", lang)} {self.currency if self.price else ""}
+{_("product_price_many", lang, count=self.count_many)}: {self.price_many if self.price_many else _("not_given", lang)} {self.currency if self.price_many else ""}
 {_("product_transfer_fee", lang)}: {self.transfer_fee} %
 {_("product_buyer_price", lang)}: {self.buyer_price} {self.currency}"""
+        if not self.count_many:
+            price = self.price
+        else:
+            price = self.price_many if count >= self.count_many else self.price
+            if not price:
+                price = self.price
         return f"""
 {_("product_name", lang)}: {self.name}
 {_("product_category", lang)}: {self.category.name}
-{_("product_weight", lang)}: {self.weight} x {count} = {self.weight * count}
-{_("product_price", lang)}: {self.price} {self.currency} x {count} = {self.price * count} {self.currency}
+{_("product_weight", lang)}: {f'{self.weight} x {count} = {self.weight * count}' if self.weight else _("not_given", lang)}
+{_("product_price", lang)}: {f'{price} {self.currency} x {count} = {price * count} {self.currency}' if price else _("not_given", lang)}
 {_("product_transfer_fee", lang)}: {self.transfer_fee} %
 {_("product_buyer_price", lang)}: {self.buyer_price} {self.currency}"""
 
@@ -161,7 +170,13 @@ class ProductToCart(models.Model):
 
     @property
     def price(self):
-        return round(self.product.price * self.count, 2)
+        if not self.product.count_many:
+            price = self.product.price
+        else:
+            price = self.product.price if self.product.count_many > self.count else self.product.price_many
+            if not price:
+                price = self.product.price
+        return round(price * self.count, 2) if price else None
     
     class Meta:
         unique_together = ["product", "cart"]

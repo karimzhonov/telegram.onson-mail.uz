@@ -46,7 +46,7 @@ async def my_category(msg: types.Message, state: FSMContext):
     async for category in categories:
         await sync_to_async(category.set_current_language)(msg.bot.lang)
         all_cats = [c.id async for c in Category.objects.filter_recursive(id=category.id)]
-        keyboard.row(types.KeyboardButton(text=f"{category.name} ({await Product.objects.filter(category_id__in=all_cats).acount()})"))
+        keyboard.row(types.KeyboardButton(text=f"{category.name} ({await Product.objects.filter(category_id__in=all_cats, storage_id=data.get('storage')).acount()})"))
     keyboard.row(types.KeyboardButton(text=_(ONLINE_BUY_MENU, msg.bot.lang)))
     await msg.answer(_("online_buy_category_list_text", msg.bot.lang), reply_markup=keyboard.as_markup(resize_keyboard=True))
     await state.set_state(OnlineBuy.category)
@@ -69,7 +69,7 @@ async def entered_category(msg: types.Message, state: FSMContext):
 
 async def my_products(msg: types.Message, state: FSMContext, offset=0):
     data = await state.get_data()
-    products = Product.objects.select_related("category").prefetch_related("category__translations").filter(category_id=data["category"], category__translations__language_code=msg.bot.lang).order_by("-created_date")
+    products = Product.objects.select_related("category").prefetch_related("category__translations").filter(category_id=data["category"], category__translations__language_code=msg.bot.lang, storage_id=data.get('storage')).order_by("-created_date")
     if not await products.aexists():
         return await msg.answer(_("online_buy_product_list_empty", msg.bot.lang))
     if offset == 0:
