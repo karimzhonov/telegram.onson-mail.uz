@@ -131,6 +131,7 @@ class Cart(models.Model):
                 pc_summa = round((pc.price + pc.product.buyer_price) * (1 + pc.product.transfer_fee * 0.01), 2)
                 summa[pc.product.currency] += pc_summa
             else:
+                pc_summa = round((pc.product.buyer_price) * (1 + pc.product.transfer_fee * 0.01), 2)
                 has_not_given = True
             text.append(pc.product.product_to_text(lang, pc.count))
         cart_itog = [f"{_('cart_itog', lang)}: "]
