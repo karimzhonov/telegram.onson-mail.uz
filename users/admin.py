@@ -96,7 +96,7 @@ class ClientIdAdmin(AdminChartMixin, ImportExportActionModelAdmin, SimpleHistory
     import_form_class = UserImportForm
     confirm_form_class = UserConfirmImportForm
     skip_admin_log = True
-    list_filter = ["deleted", "storage"]
+    list_filter = ["deleted", "storage", "selected_client"]
     search_fields = ["id", "id_str", "selected_client__fio", "clients__fio", "selected_client__passport", "clients__passport"]
     fields = ["get_id", "storage", "selected_client", "user", "clients", "deleted"]
     ordering = ["-id"]
