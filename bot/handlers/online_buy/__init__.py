@@ -97,9 +97,14 @@ async def _render_storage_menu(msg: types.Message, state: FSMContext):
     keyboard.append(
         [types.KeyboardButton(text=_(ONLINE_BUY_ABOUT, msg.bot.lang))]
     )
-    keyboard.append(
-        [types.KeyboardButton(text=_(ONLINE_BUY, msg.bot.lang))]
-    )
+    if DEFAULT_STORAGE:
+        keyboard.append(
+            [types.KeyboardButton(text=_(MENU, msg.bot.lang))]
+        )
+    else:
+        keyboard.append(
+            [types.KeyboardButton(text=_(ONLINE_BUY, msg.bot.lang))]
+        )
     keyboard = ReplyKeyboardBuilder(keyboard)
     await msg.answer(_("online_by_menu", msg.bot.lang), reply_markup=keyboard.as_markup(resize_keyboard=True))
 
