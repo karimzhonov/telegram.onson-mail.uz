@@ -15,6 +15,9 @@ from users.models import ClientId
 from . import cart, category, chosens, orders
 
 
+DEFAULT_STORAGE = "onson2"
+
+
 def setup(dp: Dispatcher):
     dp.message(DbSearchFilter(ONLINE_BUY))(storage_list)
     dp.message(OnlineBuy.storage)(storage_menu)
@@ -27,6 +30,11 @@ def setup(dp: Dispatcher):
 
 
 async def storage_list(msg: types.Message, state: FSMContext):
+    if DEFAULT_STORAGE:
+        storage = await Storage.objects.aget(slug=DEFAULT_STORAGE)
+        await state.update_data(storage=storage.id)
+        await _render_storage_menu(msg, state)
+        return await state.set_state(OnlineBuy.menu)
     keyboard = ReplyKeyboardBuilder()
     if not await Storage.objects.translated(msg.bot.lang).filter(has_online_buy=True).aexists():
         return await msg.answer(_("storage_list_empty", msg.bot.lang), reply_markup=keyboard.as_markup(resize_keyboard=True))
