@@ -133,7 +133,7 @@ class FAQ(models.Model):
     not_active = models.BooleanField(default=False, verbose_name="Ответено")
     image = models.ImageField(null=True, blank=True, upload_to="faq", verbose_name="Фото вапроса")
     answer_image = models.ImageField(upload_to="faq_answer", blank=True, null=True, verbose_name="Фото ответа")
-    message_id = models.IntegerField(null=True)
+    message_id = models.BigIntegerField(null=True)
     storage = models.ForeignKey("storages.Storage", models.SET_NULL, blank=True, null=True)
     date = models.DateTimeField(auto_now_add=True)
 

@@ -98,7 +98,7 @@ class Category(TranslatableModel):
     is_active = models.BooleanField(default=True, verbose_name="Актив")
 
     def __str__(self) -> str:
-        return self.name if not self.parent else f"{self.name}-{self.parent}"
+        return self.name if not self.parent else f"{self.name}->{self.parent}"
     
     class Meta:
         verbose_name = 'Категория'
