@@ -311,7 +311,7 @@
         "storage_list_faq": "📍 Muammo yuzaga kelgan filialni kiriting",
         "order_status_in_storage": "order_status_in_storage",
         "orders": "📦 Barcha buyurtmalar",
-        "product_price_many": "Narxi (ulgurji, {count} donadan ortiq)",
+        "product_price_many": "💸 Narxi (ulgurji, {count} donadan ortiq)",
         "not_given": "Ko'rsatilmagan",
         "not_given_prices_in_cart": "Sotuvchi bilan kelishiladigan, narxlari ko'rsatilmagan tavarlar ham mavjud"
     },
@@ -469,7 +469,7 @@
         "storage_list_faq": "📍 Муаммо юзага келган филиални киритинг",
         "order_status_in_storage": "order_status_in_storage",
         "orders": "📦 Барча буюртмалар",
-        "product_price_many": "Нархи (улгурчи, {count} донадан ортиқ)",
+        "product_price_many": "💸 Нархи (улгурчи, {count} донадан ортиқ)",
         "not_given": "Кўрсатилмаган",
         "not_given_prices_in_cart": "Сотувчи билан келишиладиган нархлар кўрсатилмаган таварлар хам мавжуд"
     }
