@@ -2,7 +2,7 @@ import asyncio
 import json
 import os
 import re
-from typing import Iterable, Optional
+from typing import Any, Dict, Iterable, Optional, Tuple
 
 from asgiref.sync import sync_to_async
 from django.conf import settings
@@ -179,6 +179,7 @@ class Message(models.Model):
     text = models.TextField()
     image = models.ImageField(null=True, blank=True, upload_to="message", verbose_name="Фото")
     date = models.DateTimeField(auto_now_add=True)
+    message_id = models.BigIntegerField(null=True)
     
     class Meta:
         verbose_name = 'Сообщение'
@@ -200,5 +201,19 @@ class Message(models.Model):
                 return await bot.send_photo(self.user_id, media, caption=text)
             else:
                 return await bot.send_message(self.user_id, text=text)
-        asyncio.run(main())
-        
+        message = asyncio.run(main())
+        self.message_id = message.message_id
+        self.save()
+
+    def delete(self, using=None, keep_parents=False) -> Tuple[int, Dict[str, int]]:
+        from bot.models import get_text as _
+        from bot.settings import TOKEN
+        from bot.utils import create_bot
+
+        if self.message_id:
+            bot = create_bot(TOKEN)
+            async def main():
+                return await bot.delete_message(self.user_id, self.message_id)
+                
+            asyncio.run(main())
+        return super().delete(using, keep_parents)

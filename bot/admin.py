@@ -27,13 +27,10 @@ class ClientIdInline(admin.StackedInline):
 
 class MessageInline(admin.TabularInline):
     model = Message
-    can_delete = True
     extra = 0
+    exclude = ['message_id']
 
     def has_change_permission(self, *args, **kwargs) -> bool:
-        return False
-    
-    def has_delete_permission(self, *args, **kwargs) -> bool:
         return False
 
 
@@ -56,6 +53,8 @@ class UserAdmin(admin.ModelAdmin):
                 messages.error(request, f"Ошибка: {_exp}")
                 instance.delete()
         return instances
+    
+
 
     def get_list_filter(self, request: HttpRequest) -> list[str]:
         if request.user.is_superuser:
