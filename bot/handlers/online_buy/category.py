@@ -9,7 +9,7 @@ from bot.filters.prefix import Prefix
 from bot.models import get_text as _
 from bot.states import OnlineBuy
 from bot.text_keywords import (ADD_PRODUCT_TO_CART, ADD_PRODUCT_TO_CHOSEN, MINUS, NEXT, ONLINE_BUY_CART,
-                               ONLINE_BUY_CATEGORY, ONLINE_BUY_MENU, PLUS, PREVIEW, REMOVE_PRODUCT_TO_CHOSEN)
+                               ONLINE_BUY_CATEGORY, ONLINE_BUY_MENU, PLUS, PREVIEW, REMOVE_PRODUCT_TO_CHOSEN, GO_TO_CATEGORY, GO_TO_PRODUCT)
 from bot.utils import get_file
 from orders.models import Cart
 from storages.models import Category, Product, ProductImage, ProductToCart, ProductToChosen
@@ -22,7 +22,8 @@ def setup(dp: Dispatcher):
     dp.message(OnlineBuy.category)(entered_category)
     dp.message(OnlineBuy.product)(entered_category)
     dp.callback_query(Prefix("category"))(product_action)
-
+    dp.callback_query(Prefix(GO_TO_CATEGORY))(go_to_category)
+    dp.callback_query(Prefix(GO_TO_PRODUCT))(go_to_product)
 
 async def _alert_clientid(cq: types.CallbackQuery, clientid: ClientId):
     if not clientid:
@@ -67,7 +68,8 @@ async def entered_category(msg: types.Message, state: FSMContext):
         await msg.answer(_("invalid_category", msg.bot.lang))
 
 
-async def my_products(msg: types.Message, state: FSMContext, offset=0):
+async def my_products(msg: types.Message, state: FSMContext, offset=0, user_id=None):
+    user_id = msg.from_user.id if not user_id else user_id
     data = await state.get_data()
     products = Product.objects.select_related("category").prefetch_related("category__translations").filter(category_id=data["category"], category__translations__language_code=msg.bot.lang, storage_id=data.get('storage')).order_by("-created_date")
     if not await products.aexists():
@@ -78,7 +80,7 @@ async def my_products(msg: types.Message, state: FSMContext, offset=0):
         ]).as_markup(resize_keyboard=True))
     async for product in products[offset:offset + LIMIT]:
         image = await ProductImage.objects.filter(product=product).order_by("id").afirst()
-        await _render_product(product, image, msg, state, False, msg.from_user.id)
+        await _render_product(product, image, msg, state, False, user_id)
     await state.set_state(OnlineBuy.product)
     products_count = await products.acount()
     text = f"""{_("showed_offset_products_in_count", msg.bot.lang, offset=LIMIT + offset, count=await products.acount())}"""
@@ -212,4 +214,30 @@ async def product_action(cq: types.CallbackQuery, state: FSMContext):
         image = await ProductImage.objects.filter(id=cq_data_list[2]).afirst()
         product = await Product.objects.select_related("category").prefetch_related("category__translations").aget(id=cq_data_list[1])
         return await _render_product(product, image, msg, state, True, cq.from_user.id)
-    
+
+
+async def go_to_category(cq: types.CallbackQuery, state: FSMContext):
+    type, *cq_data_list = cq.data.split(":")
+    await state.update_data(
+        storage=cq_data_list[0],
+        category=cq_data_list[1],
+        offset=0
+    )
+    await my_products(cq.message, state, user_id=cq.from_user.id)
+
+
+async def go_to_product(cq: types.CallbackQuery, state: FSMContext):
+    type, *cq_data_list = cq.data.split(":")
+    await state.update_data(
+        storage=cq_data_list[0],
+        category=cq_data_list[1],
+        offset=0
+    )
+    message = await cq.message.answer(_("online_buy_product_list", cq.message.bot.lang), reply_markup=ReplyKeyboardBuilder([
+        [types.KeyboardButton(text=_(ONLINE_BUY_CATEGORY, cq.message.bot.lang)), types.KeyboardButton(text=_(ONLINE_BUY_CART, cq.message.bot.lang))]
+    ]).as_markup(resize_keyboard=True))
+    await message.delete()
+    product = await Product.objects.select_related("category").prefetch_related("category__translations").aget(id=cq_data_list[2])
+    image = await ProductImage.objects.filter(product=product).order_by("id").afirst()
+    await _render_product(product, image, cq.message, state, False, cq.from_user.id)
+    await state.set_state(OnlineBuy.product)

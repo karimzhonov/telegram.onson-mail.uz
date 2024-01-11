@@ -2,7 +2,7 @@ from typing import Sequence
 
 from admincharts.admin import AdminChartMixin
 from adminsortable2.admin import SortableAdminMixin
-from django.contrib.gis import admin
+from django.contrib import admin, messages
 from django.http.request import HttpRequest
 
 from contrib.parler.admin import TranslatableAdmin
@@ -84,9 +84,17 @@ class ProductAdmin(admin.ModelAdmin):
     list_display = ["name", "category"]
     search_fields = ["translations__name", "category__translations__name"]
     form = ProductForm
+    actions = ["send_notification"]
 
     def get_queryset(self, request):
         if request.user.is_superuser:
             return super().get_queryset(request)
         storages = get_storages(request.user)
         return super().get_queryset(request).filter(storage__in=storages)
+
+    @admin.action(description="Send Notification")
+    def send_notification(self, request, queryset):
+        count = 0
+        for product in queryset:
+            count += product.send_notification()
+        messages.success(request, f"Пользователи: {count}")

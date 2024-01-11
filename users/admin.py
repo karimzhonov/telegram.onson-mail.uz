@@ -1,10 +1,10 @@
-from typing import Sequence
+from django.core.exceptions import ImproperlyConfigured
 
 from admincharts.admin import AdminChartMixin
 from django.contrib import admin, messages
 from django.contrib.auth.admin import UserAdmin as _UserAdmin
 from django.contrib.auth.models import User
-from django.db.models import Count
+from django.db.models import Count, Subquery, OuterRef, Case, When,Q, FloatField
 from django.db.models.functions import TruncDate
 from django.http.request import HttpRequest
 from django.http.response import HttpResponse
@@ -28,6 +28,56 @@ class UserSettingsAdmin(admin.StackedInline):
     max_num = 1
 
 
+class IsWarningFilter(admin.ListFilter):
+    title = "Красный паспорт"
+    parameter_name = '_is_warning'
+
+    def __init__(self, request, params, model, model_admin) -> None:
+        super().__init__(request, params, model, model_admin)
+        if self.parameter_name is None:
+            raise ImproperlyConfigured(
+                "The list filter '%s' does not specify a 'parameter_name'."
+                % self.__class__.__name__
+            )
+        if self.parameter_name in params:
+            value = params.pop(self.parameter_name)
+            self.used_parameters[self.parameter_name] = value
+
+    def has_output(self) -> bool:
+        return True
+    
+    def choices(self, changelist):
+        for lookup, title in (
+            (None, _("All")),
+            ("1", _("Yes")),
+            ("0", _("No")),
+        ):
+            yield {
+                "selected": self.value() == lookup,
+                "query_string": changelist.get_query_string(
+                    {self.parameter_name: lookup}
+                ),
+                "display": title,
+            }
+
+    def value(self):
+        """
+        Return the value (in string format) provided in the request's
+        query string for this filter, if any, or None if the value wasn't
+        provided.
+        """
+        return self.used_parameters.get(self.parameter_name)
+    
+    def queryset(self, request, queryset):
+        from orders.models import Order, LIMIT_FOR_QUARTER
+        if not self.value():
+            return queryset
+        return queryset.annotate(
+            _last_quarter_value=Subquery(Order.objects.filter(client_id=OuterRef('pnfl')).quarter("date", "facture_price").order_by("-quarter").values("value")[:1], output_field=FloatField()),
+            _is_warning=Case(When(Q(_last_quarter_value__gte=LIMIT_FOR_QUARTER), True), default=False)
+        ).filter(_is_warning=self.value())
+    
+
 @admin.register(User)
 class UserAdmin(_UserAdmin):
     list_display = ("username", "email", "first_name", "last_name", "is_staff", "usersettings")
@@ -50,6 +100,7 @@ class ClientAdmin(AdminChartMixin, admin.ModelAdmin):
         "y": {"min": 0}
     }}
     list_chart_type = "line"
+    list_filter = [IsWarningFilter, ]
 
     def get_list_chart_queryset(self, changelist):
         return changelist.queryset
@@ -126,7 +177,7 @@ class ClientIdAdmin(AdminChartMixin, ImportExportActionModelAdmin, SimpleHistory
     def has_import_permission(self, request):
         return request.user.is_superuser
 
-    def get_list_filter(self, request: HttpRequest) -> Sequence[str]:
+    def get_list_filter(self, request: HttpRequest) -> list[str]:
         if request.user.is_superuser:
             return super().get_list_filter(request)
         return ["deleted"]

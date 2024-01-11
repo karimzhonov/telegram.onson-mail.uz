@@ -1,3 +1,6 @@
+import asyncio
+from aiogram import types
+from aiogram.utils.keyboard import InlineKeyboardBuilder
 from django.contrib.gis.db import models
 from django.db.models.expressions import RawSQL
 from django.db.models.fields.related_descriptors import ForwardManyToOneDescriptor
@@ -156,6 +159,36 @@ class Product(models.Model):
 {_("product_price", lang)}: {f'{price} {self.currency} x {count} = {price * count} {self.currency}' if price else _("not_given", lang)}
 {_("product_transfer_fee", lang)}: {self.transfer_fee} %
 {_("product_buyer_price", lang)}: {self.buyer_price} {self.currency}"""
+
+    def send_notification(self):
+        from bot.settings import TOKEN
+        from bot.utils import create_bot, get_file
+        from bot.models import User, get_text as _
+        from bot.text_keywords import GO_TO_CATEGORY, GO_TO_PRODUCT
+
+        bot = create_bot(TOKEN)
+        count = 0
+        async def theard_main(count):
+            async for user in User.objects.all():
+                keyboard = InlineKeyboardBuilder()
+                keyboard.row(types.InlineKeyboardButton(text=_(GO_TO_CATEGORY, user.lang), callback_data=f"{GO_TO_CATEGORY}:{self.storage_id}:{self.category_id}"))
+                keyboard.row(types.InlineKeyboardButton(text=_(GO_TO_PRODUCT, user.lang), callback_data=f"{GO_TO_PRODUCT}:{self.storage_id}:{self.category_id}:{self.id}"))
+                try:
+                    text = self.product_to_text(user.lang)
+                    image = await self.productimage_set.all().afirst()
+                    if image:
+                        await bot.send_photo(
+                            types.InputMediaPhoto(media=get_file(str(image.image)), caption=text),
+                            reply_markup=keyboard.as_markup(resize_keyboard=True)
+                        )
+                    else:
+                        await bot.send_message(user.id, text, reply_markup=keyboard.as_markup(resize_keyboard=True))
+                    count += 1
+                except Exception as _exp:
+                    print(_exp)
+            return count
+        count = asyncio.run(theard_main(count))
+        return count
 
 
 class ProductImage(models.Model):
