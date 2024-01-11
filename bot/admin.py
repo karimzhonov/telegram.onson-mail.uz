@@ -13,12 +13,19 @@ from users.models import get_storages, ClientId
 from .models import FAQ, FAQ_TYPE_BOT, Info, User, Message
 
 
-class ClientIdInline(admin.StackedInline):
+class ClientIdInline(admin.TabularInline):
     model = ClientId
     can_delete = False
     extra = 0
+    show_change_link = True
+    exclude = ['id_str']
+    readonly_fields = ['get_id']
+    fields = ["get_id", "selected_client"]
 
     def has_add_permission(self, *args, **kwargs) -> bool:
+        return False
+    
+    def has_change_permission(self, *args, **kwargs) -> bool:
         return False
     
     def has_delete_permission(self, *args, **kwargs) -> bool:
@@ -42,7 +49,7 @@ class UserAdmin(admin.ModelAdmin):
         "y": {"min": 0}
     }}
     search_fields = ["id", "username", "first_name", "last_name"]
-    inlines = [MessageInline]
+    inlines = [ClientIdInline, MessageInline]
 
     def save_formset(self, request: Any, form: Any, formset: Any, change: Any) -> None:
         instances = formset.save(commit=True)
