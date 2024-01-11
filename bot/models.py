@@ -180,6 +180,7 @@ class Message(models.Model):
     image = models.ImageField(null=True, blank=True, upload_to="message", verbose_name="Фото")
     date = models.DateTimeField(auto_now_add=True)
     message_id = models.BigIntegerField(null=True)
+    sender_user = models.ForeignKey(get_user_model(), models.SET_NULL, blank=True, null=True)
     
     class Meta:
         verbose_name = 'Сообщение'
@@ -188,7 +189,7 @@ class Message(models.Model):
     def __str__(self) -> str:
         return self.text
     
-    def send_message(self):
+    def send_message(self, user=None):
         from bot.models import get_text as _
         from bot.settings import TOKEN
         from bot.utils import create_bot
@@ -203,6 +204,7 @@ class Message(models.Model):
                 return await bot.send_message(self.user_id, text=text)
         message = asyncio.run(main())
         self.message_id = message.message_id
+        self.sender_user = user
         self.save()
 
     def delete(self, using=None, keep_parents=False) -> Tuple[int, Dict[str, int]]:

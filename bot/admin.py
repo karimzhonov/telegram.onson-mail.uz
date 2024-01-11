@@ -29,6 +29,7 @@ class MessageInline(admin.TabularInline):
     model = Message
     extra = 0
     exclude = ['message_id']
+    readonly_fields = ["sender_user"]
 
     def has_change_permission(self, *args, **kwargs) -> bool:
         return False
@@ -47,7 +48,7 @@ class UserAdmin(admin.ModelAdmin):
         instances = formset.save(commit=True)
         for instance in instances:
             try:
-                instance.send_message()
+                instance.send_message(request.user)
                 messages.success(request, "Отправлено")
             except Exception as _exp:
                 messages.error(request, f"Ошибка: {_exp}")
