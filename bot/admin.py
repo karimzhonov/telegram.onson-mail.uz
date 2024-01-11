@@ -44,7 +44,7 @@ class UserAdmin(admin.ModelAdmin):
         "y": {"min": 0}
     }}
     search_fields = ["id", "username", "first_name", "last_name"]
-    inlines = [ClientIdInline, MessageInline]
+    inlines = [MessageInline]
 
     def save_formset(self, request: Any, form: Any, formset: Any, change: Any) -> None:
         instances = formset.save(commit=True)
