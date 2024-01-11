@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, Optional
 from admincharts.admin import AdminChartMixin
 from django.contrib import admin, messages
 from django.db.models import Count
@@ -10,7 +10,7 @@ from django.utils.html import format_html
 from contrib.parler.admin import TranslatableAdmin
 from users.models import get_storages, ClientId
 
-from .models import FAQ, FAQ_TYPE_BOT, Info, User
+from .models import FAQ, FAQ_TYPE_BOT, Info, User, Message
 
 
 class ClientIdInline(admin.StackedInline):
@@ -18,15 +18,44 @@ class ClientIdInline(admin.StackedInline):
     can_delete = False
     extra = 0
 
+    def has_add_permission(self, *args, **kwargs) -> bool:
+        return False
+    
+    def has_delete_permission(self, *args, **kwargs) -> bool:
+        return False
+
+
+class MessageInline(admin.TabularInline):
+    model = Message
+    can_delete = True
+    extra = 0
+
+    def has_change_permission(self, *args, **kwargs) -> bool:
+        return False
+    
+    def has_delete_permission(self, *args, **kwargs) -> bool:
+        return False
+
 
 @admin.register(User)
-class UserAdmin(AdminChartMixin, admin.ModelAdmin):
+class UserAdmin(admin.ModelAdmin):
     list_chart_type = "line"
     list_chart_options = {"responsive": True, "scales": {
         "y": {"min": 0}
     }}
     search_fields = ["id", "username", "first_name", "last_name"]
-    inlines = [ClientIdInline]
+    inlines = [ClientIdInline, MessageInline]
+
+    def save_formset(self, request: Any, form: Any, formset: Any, change: Any) -> None:
+        instances = formset.save(commit=True)
+        for instance in instances:
+            try:
+                instance.send_message()
+                messages.success(request, "Отправлено")
+            except Exception as _exp:
+                messages.error(request, f"Ошибка: {_exp}")
+                instance.delete()
+        return instances
 
     def get_list_filter(self, request: HttpRequest) -> list[str]:
         if request.user.is_superuser:

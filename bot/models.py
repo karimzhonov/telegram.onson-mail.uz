@@ -2,6 +2,7 @@ import asyncio
 import json
 import os
 import re
+from typing import Iterable, Optional
 
 from asgiref.sync import sync_to_async
 from django.conf import settings
@@ -171,3 +172,33 @@ class FAQ(models.Model):
             else:
                 return await bot.send_message(self.user_id, text=text, reply_to_message_id=self.message_id)
         asyncio.run(main())
+
+
+class Message(models.Model):
+    user = models.ForeignKey(User, models.CASCADE)
+    text = models.TextField()
+    image = models.ImageField(null=True, blank=True, upload_to="message", verbose_name="Фото")
+    date = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        verbose_name = 'Сообщение'
+        verbose_name_plural = 'Сообщении'
+    
+    def __str__(self) -> str:
+        return self.text
+    
+    def send_message(self):
+        from bot.models import get_text as _
+        from bot.settings import TOKEN
+        from bot.utils import create_bot
+        
+        bot = create_bot(TOKEN)
+        text = self.text
+        async def main():
+            if self.image:
+                media = get_file(str(self.image))
+                return await bot.send_photo(self.user_id, media, caption=text)
+            else:
+                return await bot.send_message(self.user_id, text=text)
+        asyncio.run(main())
+        
