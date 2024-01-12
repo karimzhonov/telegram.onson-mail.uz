@@ -1,4 +1,4 @@
-from typing import Any, Optional
+from typing import Any
 from admincharts.admin import AdminChartMixin
 from django.contrib import admin, messages
 from django.db.models import Count
@@ -43,7 +43,7 @@ class MessageInline(admin.TabularInline):
 
 
 @admin.register(User)
-class UserAdmin(admin.ModelAdmin):
+class UserAdmin(AdminChartMixin, admin.ModelAdmin):
     list_chart_type = "line"
     list_chart_options = {"responsive": True, "scales": {
         "y": {"min": 0}
