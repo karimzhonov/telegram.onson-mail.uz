@@ -44,7 +44,7 @@ async def _render_order(user, order: Order, limit=False):
 {_('part', user.lang)}: {order.part.number}
 {_('order_number', user.lang)}: {order.number}
 {_('client_id', user.lang)}: {order.clientid}
-{_('client', user.lang)}: {order.client}
+{_('client', user.lang)}: {order.client.fio}
 {_('passport', user.lang)}: {order.client.passport}
 {_('order_name', user.lang)}: {order.name}
 {_('order_weight', user.lang)}: {order.weight} {_('kg', user.lang)}

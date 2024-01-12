@@ -25,15 +25,18 @@ class LanguageMiddleware(BaseMiddleware):
             await user.acreate_historical_record()
         except User.DoesNotExist:
             pass
-        message = await event.answer(_("loading", event.bot.lang))
+        
         if settings.DEBUG:
+            message = await event.answer(_("loading", event.bot.lang))
             response = await handler(event, data)
+            await message.delete()
         else:
             try:
+                message = await event.answer(_("loading", event.bot.lang))
                 response = await handler(event, data)
+                await message.delete()
             except Exception:
                 await message.answer(_("error", event.bot.lang))
-        await message.delete()
         return response
     
 
