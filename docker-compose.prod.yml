@@ -25,9 +25,9 @@ services:
     working_dir: "/app/"
     volumes:
       - .:/app/
-    command: python manage.py runserver localhost:8000
+    command: python manage.py runserver localhost:7000
     ports:
-      - 8000:8000
+      - 7000:7000
     restart: always
     env_file: .env
 
