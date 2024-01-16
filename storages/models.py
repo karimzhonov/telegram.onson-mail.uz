@@ -1,4 +1,5 @@
 import asyncio
+from threading import Thread
 from aiogram import types
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 from django.contrib.gis.db import models
@@ -197,8 +198,9 @@ class Product(models.Model):
                 except Exception as _exp:
                     print(_exp)
             return count
-        count = asyncio.run(theard_main(count))
-        return count
+        Thread(target=asyncio.run, args=(theard_main(count),)).start()
+        # count = asyncio.run(theard_main(count))
+        return 0
 
 
 class ProductImage(models.Model):
