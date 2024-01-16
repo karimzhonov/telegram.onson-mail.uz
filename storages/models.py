@@ -178,7 +178,7 @@ class Product(models.Model):
                     text = self.product_to_text(user.lang)
                     image = await self.productimage_set.all().afirst()
                     if image:
-                        await bot.send_photo(
+                        await bot.send_photo(user.id,
                             types.InputMediaPhoto(media=get_file(str(image.image)), caption=text),
                             reply_markup=keyboard.as_markup(resize_keyboard=True)
                         )
