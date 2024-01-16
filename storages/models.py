@@ -169,6 +169,7 @@ class Product(models.Model):
         bot = create_bot(TOKEN)
         count = 0
         async def theard_main(count):
+            has_images = await self.productimage_set.all().aexists()
             async for user in User.objects.all():
                 keyboard = InlineKeyboardBuilder()
                 # keyboard.row(types.InlineKeyboardButton(text=_(GO_TO_CATEGORY, user.lang), callback_data=f"{GO_TO_CATEGORY}:{self.storage_id}:{self.category_id}"))
@@ -176,12 +177,20 @@ class Product(models.Model):
                 keyboard.row(types.InlineKeyboardButton(text=_(GO_TO_CHANNEL, user.lang), url=ONLINE_BUY_URL))
                 try:
                     text = self.product_to_text(user.lang)
-                    image = await self.productimage_set.all().afirst()
-                    if image:
-                        await bot.send_photo(user.id,
-                            types.InputMediaPhoto(media=get_file(str(image.image)), caption=text),
-                            reply_markup=keyboard.as_markup(resize_keyboard=True)
+                    if has_images:
+                        medias = []
+                        async for image in self.productimage_set.all():
+                            if not medias:
+                                medias.append(types.InputMediaPhoto(media=get_file(str(image.image)), caption=text))
+                            else:
+                                medias.append(types.InputMediaPhoto(media=get_file(str(image.image))))
+                        await bot.send_media_group(user.id,
+                            media=medias,
                         )
+                        text = _('redirect_to_online_buy_channel', user.lang)
+                        await bot.send_message(user.id, text, reply_markup=InlineKeyboardBuilder([
+                            [types.InlineKeyboardButton(text=_(GO_TO_CHANNEL, user.lang), url=ONLINE_BUY_URL)]
+                        ]).as_markup(resize_keyboard=True))
                     else:
                         await bot.send_message(user.id, text, reply_markup=keyboard.as_markup(resize_keyboard=True))
                     count += 1
