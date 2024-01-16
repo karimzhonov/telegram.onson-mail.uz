@@ -1,13 +1,13 @@
 from aiogram import Dispatcher, types
 from aiogram.fsm.context import FSMContext
-from aiogram.utils.keyboard import ReplyKeyboardBuilder
+from aiogram.utils.keyboard import ReplyKeyboardBuilder, InlineKeyboardBuilder
 from asgiref.sync import sync_to_async
 
 from bot.filters.db_filter import DbSearchFilter
 from bot.models import get_text as _
 from bot.states import OnlineBuy
 from bot.text_keywords import (MENU, ONLINE_BUY, ONLINE_BUY_ABOUT, ONLINE_BUY_CART, ONLINE_BUY_CATEGORY,
-                               ONLINE_BUY_CHOSEN, ONLINE_BUY_MENU, ONLINE_BUY_ORDERS)
+                               ONLINE_BUY_CHOSEN, ONLINE_BUY_MENU, ONLINE_BUY_ORDERS, GO_TO_CHANNEL)
 from orders.models import Order
 from storages.models import Product, ProductToCart, ProductToChosen, Storage
 from users.models import ClientId
@@ -16,10 +16,10 @@ from . import cart, category, chosens, orders
 
 
 DEFAULT_STORAGE = "onson2"
-
+ONLINE_BUY_URL = 'https://t.me/Onson2_Turkiya'
 
 def setup(dp: Dispatcher):
-    dp.message(DbSearchFilter(ONLINE_BUY))(storage_list)
+    dp.message(DbSearchFilter(ONLINE_BUY))(redirect_to_channel)
     dp.message(OnlineBuy.storage)(storage_menu)
     dp.message(DbSearchFilter(ONLINE_BUY_MENU))(storage_menu_back)
     dp.message(DbSearchFilter(ONLINE_BUY_ABOUT))(about)
@@ -27,6 +27,13 @@ def setup(dp: Dispatcher):
     chosens.setup(dp)
     category.setup(dp)
     orders.setup(dp)
+
+
+async def redirect_to_channel(msg: types.Message, state: FSMContext):
+    text = _('redirect_to_online_buy_channel', msg.bot.lang)
+    await msg.answer(text, reply_markup=InlineKeyboardBuilder([
+        [types.InlineKeyboardButton(text=_(GO_TO_CHANNEL, msg.bot.lang), url=ONLINE_BUY_URL)]
+    ]).as_markup(resize_keyboard=True))
 
 
 async def storage_list(msg: types.Message, state: FSMContext):

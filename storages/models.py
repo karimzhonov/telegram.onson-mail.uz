@@ -164,15 +164,16 @@ class Product(models.Model):
         from bot.settings import TOKEN
         from bot.utils import create_bot, get_file
         from bot.models import User, get_text as _
-        from bot.text_keywords import GO_TO_CATEGORY, GO_TO_PRODUCT
-
+        from bot.text_keywords import GO_TO_CATEGORY, GO_TO_PRODUCT, GO_TO_CHANNEL
+        from bot.handlers.online_buy import ONLINE_BUY_URL
         bot = create_bot(TOKEN)
         count = 0
         async def theard_main(count):
             async for user in User.objects.all():
                 keyboard = InlineKeyboardBuilder()
-                keyboard.row(types.InlineKeyboardButton(text=_(GO_TO_CATEGORY, user.lang), callback_data=f"{GO_TO_CATEGORY}:{self.storage_id}:{self.category_id}"))
-                keyboard.row(types.InlineKeyboardButton(text=_(GO_TO_PRODUCT, user.lang), callback_data=f"{GO_TO_PRODUCT}:{self.storage_id}:{self.category_id}:{self.id}"))
+                # keyboard.row(types.InlineKeyboardButton(text=_(GO_TO_CATEGORY, user.lang), callback_data=f"{GO_TO_CATEGORY}:{self.storage_id}:{self.category_id}"))
+                # keyboard.row(types.InlineKeyboardButton(text=_(GO_TO_PRODUCT, user.lang), callback_data=f"{GO_TO_PRODUCT}:{self.storage_id}:{self.category_id}:{self.id}"))
+                keyboard.row(types.InlineKeyboardButton(text=_(GO_TO_CHANNEL, user.lang), url=ONLINE_BUY_URL))
                 try:
                     text = self.product_to_text(user.lang)
                     image = await self.productimage_set.all().afirst()

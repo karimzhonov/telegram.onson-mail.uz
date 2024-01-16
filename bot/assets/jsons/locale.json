@@ -157,7 +157,9 @@
         "not_given": "Не указано",
         "not_given_prices_in_cart": "Еще имеются не указанные цени который согласуется с байером",
         "go_to_category": "Перейти к категориям",
-        "go_to_product": "Перейти к продукту"
+        "go_to_product": "Перейти к продукту",
+        "redirect_to_online_buy_channel": "Перейдите в канал для получения больше информации",
+        "to_channel": "Перейти к каналу"
     },
     "uz": {
         "error": "⚠️ Botda xotalik ⚠️",
@@ -317,7 +319,9 @@
         "not_given": "Ko'rsatilmagan",
         "not_given_prices_in_cart": "Sotuvchi bilan kelishiladigan, narxlari ko'rsatilmagan tavarlar ham mavjud",
         "go_to_category": "Kategoriyalarga o'tish",
-        "go_to_product": "Mahsulotga o'tish"
+        "go_to_product": "Mahsulotga o'tish",
+        "redirect_to_online_buy_channel": "Qo'shimcha ma'lumot olish uchun kanalga o'ting.",
+        "to_channel": "Kanalga o'tish"
     },
     "uz-cl": {
         "error": "⚠️ Ботда хатолик ⚠️",
@@ -477,6 +481,8 @@
         "not_given": "Кўрсатилмаган",
         "not_given_prices_in_cart": "Сотувчи билан келишиладиган нархлар кўрсатилмаган таварлар хам мавжуд",
         "go_to_category": "Категорияларга ўтиш",
-        "go_to_product": "Махсулотга отиш"
+        "go_to_product": "Махсулотга отиш",
+        "redirect_to_online_buy_channel": "Қўшимча маълумот олиш учун каналга ўтинг.",
+        "to_channel": "Каналга ўтиш"
     }
 }
