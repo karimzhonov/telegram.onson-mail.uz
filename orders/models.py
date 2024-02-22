@@ -54,8 +54,11 @@ class Part(models.Model):
                         continue
                     user = client_id.user
                     text = await _render_order(user, order, True)
-                    await bot.send_message(user.id, text)
-                    count += 1
+                    try:
+                        await bot.send_message(user.id, text)
+                        count += 1
+                    except Exception as _exp:
+                        print(_exp)
             return count
         count = asyncio.run(theard_main(count))
         return count
