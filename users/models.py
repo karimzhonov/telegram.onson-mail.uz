@@ -82,7 +82,7 @@ class ClientId(models.Model):
         async def main():
             text = await _render_passport(self.selected_client, self.user.lang)
             await bot.send_message(self.user.id, text)
-        asyncio.run(main)
+        asyncio.run(main())
         return 1
 
     async def aadd_client(self, *args: list[Client]):
