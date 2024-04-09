@@ -206,7 +206,10 @@ class Report(models.Model):
             return
         photo = _render_report(self)
         bot = create_bot(TOKEN)
-        asyncio.run(bot.send_media_group(chat_id=user.id, media=photo))
+        try:
+            asyncio.run(bot.send_media_group(chat_id=user.id, media=photo))
+        except Exception:
+            pass
 
 
 class ReportImage(models.Model):
