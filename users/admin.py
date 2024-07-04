@@ -121,7 +121,7 @@ class ClientAdmin(AdminChartMixin, admin.ModelAdmin):
         last_quarter = obj.order_quarters().order_by("quarter").last()
         if not last_quarter:
             return 0
-        return last_quarter["value"] if (last_quarter["date"].month - 1) // 3 + 1 == (timezone.now().date().month - 1) // 3 + 1 else 0
+        return last_quarter["value"] if (last_quarter["quarter"].month - 1) // 3 + 1 == (timezone.now().date().month - 1) // 3 + 1 else 0
     
     @admin.display(description="Таблица кварталов")
     def quarter_table(self, obj: Client):
