@@ -10,6 +10,7 @@ from django.http.request import HttpRequest
 from django.http.response import HttpResponse
 from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
+from django.utils import timezone
 from import_export.admin import ImportExportActionModelAdmin
 from simple_history.admin import SimpleHistoryAdmin
 
@@ -118,7 +119,9 @@ class ClientAdmin(AdminChartMixin, admin.ModelAdmin):
     @admin.display(description="Последный квартал")
     def last_quarter(self, obj: Client):
         last_quarter = obj.order_quarters().order_by("quarter").last()
-        return 0 if not last_quarter else last_quarter["value"]
+        if not last_quarter:
+            return 0
+        return last_quarter["value"] if (last_quarter["date"].month - 1) // 3 + 1 == (timezone.now().date().month - 1) // 3 + 1 else 0
     
     @admin.display(description="Таблица кварталов")
     def quarter_table(self, obj: Client):
