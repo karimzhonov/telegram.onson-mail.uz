@@ -74,9 +74,59 @@ class IsWarningFilter(admin.ListFilter):
         if not self.value():
             return queryset
         return queryset.annotate(
-            _last_quarter_value=Subquery(Order.objects.filter(client_id=OuterRef('pnfl')).quarter("date", "facture_price").order_by("-quarter").values("value")[:1], output_field=FloatField()),
-            _is_warning=Case(When(Q(_last_quarter_value__gte=LIMIT_FOR_QUARTER), True), default=False)
-        ).filter(_is_warning=self.value())
+            _last_quarter_value=Subquery(Order.objects.filter(client_id=OuterRef('pnfl')).quarter("date", "facture_price").filter(quarter__quarter=((timezone.now().date().month - 1) // 3 + 1)).values("value")[:1], output_field=FloatField()),
+            _has_order=Case(When(Q(_last_quarter_value__gte=LIMIT_FOR_QUARTER), True), default=False)
+        ).filter(_has_order=self.value())
+
+
+class HasOrderFilter(admin.ListFilter):
+    title = "Есть заказы в этом квартале"
+    parameter_name = '_has_order'
+
+    def __init__(self, request, params, model, model_admin) -> None:
+        super().__init__(request, params, model, model_admin)
+        if self.parameter_name is None:
+            raise ImproperlyConfigured(
+                "The list filter '%s' does not specify a 'parameter_name'."
+                % self.__class__.__name__
+            )
+        if self.parameter_name in params:
+            value = params.pop(self.parameter_name)
+            self.used_parameters[self.parameter_name] = value
+
+    def has_output(self) -> bool:
+        return True
+    
+    def choices(self, changelist):
+        for lookup, title in (
+            (None, _("All")),
+            ("1", _("Yes")),
+            ("0", _("No")),
+        ):
+            yield {
+                "selected": self.value() == lookup,
+                "query_string": changelist.get_query_string(
+                    {self.parameter_name: lookup}
+                ),
+                "display": title,
+            }
+
+    def value(self):
+        """
+        Return the value (in string format) provided in the request's
+        query string for this filter, if any, or None if the value wasn't
+        provided.
+        """
+        return self.used_parameters.get(self.parameter_name)
+    
+    def queryset(self, request, queryset):
+        from orders.models import Order
+        if not self.value():
+            return queryset
+        return queryset.annotate(
+            _last_quarter_value=Subquery(Order.objects.filter(client_id=OuterRef('pnfl')).quarter("date", "facture_price").filter(quarter__quarter=((timezone.now().date().month - 1) // 3 + 1)).values("value")[:1], output_field=FloatField()),
+            _has_order=Case(When(Q(_last_quarter_value__gt=0), True), default=False)
+        ).filter(_has_order=self.value())
     
 
 @admin.register(User)
@@ -101,7 +151,7 @@ class ClientAdmin(AdminChartMixin, admin.ModelAdmin):
         "y": {"min": 0}
     }}
     list_chart_type = "line"
-    list_filter = [IsWarningFilter, ]
+    list_filter = [IsWarningFilter, HasOrderFilter]
 
     def get_list_chart_queryset(self, changelist):
         return changelist.queryset
