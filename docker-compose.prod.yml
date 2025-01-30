@@ -15,7 +15,7 @@ services:
       - web
     env_file: .env
     ports:
-      - 443:443
+      - "443:443"
 
   web:
     container_name: onson-web
@@ -27,7 +27,7 @@ services:
       - .:/app/
     command: python manage.py runserver 0.0.0.0:7000
     ports:
-      - 7000:7000
+      - "7000:7000"
     restart: always
     env_file: .env
 

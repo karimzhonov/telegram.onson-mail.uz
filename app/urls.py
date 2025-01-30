@@ -24,6 +24,7 @@ urlpatterns = [
     path('admin_async_upload/', include('admin_async_upload.urls')),
     # path('jet/', include('jet.urls', 'jet')),  # Django JET URLS
     # path('jet/dashboard/', include('jet.dashboard.urls', 'jet-dashboard')),  # Django JET dashboard URLS
+    path('', include('orders.urls')),
 ]
 
 

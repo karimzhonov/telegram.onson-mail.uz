@@ -1,0 +1,16 @@
+version: '3.3'
+
+services:
+  web:
+    container_name: onson-web
+    build:
+      dockerfile: Dockerfile.web
+      context: .
+    working_dir: "/app/"
+    volumes:
+      - .:/app/
+    command: python manage.py runserver 0.0.0.0:7000
+    ports:
+      - "7000:7000"
+    restart: always
+    env_file: .env
