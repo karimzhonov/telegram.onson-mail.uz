@@ -8,13 +8,12 @@ from django.http import HttpResponseRedirect
 from django.http.request import HttpRequest
 from django.http.response import HttpResponse
 from django.urls import path, reverse
-from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
 from django.utils.html import format_html
 from import_export.admin import ImportExportActionModelAdmin
 from simple_history.admin import SimpleHistoryAdmin
 
 from contrib.django.admin import table
-from rangefilter.filters import DateRangeQuickSelectListFilterBuilder
 from storages.models import ProductToCart
 from users.models import ClientId, get_storages
 
@@ -22,6 +21,7 @@ from .forms import CartForm, OrderConfirmImportForm, OrderImportForm, PartForm, 
 from .inlines import ReportImageInline
 from .models import Cart, Order, Part, Report
 from .resources import OrderResource
+from .formats import OrderXLSX
 
 
 class ProductToCartInline(admin.TabularInline):
@@ -67,12 +67,12 @@ class OrderAdmin(AdminChartMixin, ImportExportActionModelAdmin, SimpleHistoryAdm
     readonly_fields = ["products_table"]
     exclude = ["products"]
 
-    resource_classes = []
     import_form_class = OrderImportForm
     confirm_form_class = OrderConfirmImportForm
     resource_classes = [OrderResource]
     # form = OrderForm
     skip_admin_log = True
+    formats = [OrderXLSX]
 
     list_chart_options = {"responsive": True, "scales": {
         "y": {"min": 0}

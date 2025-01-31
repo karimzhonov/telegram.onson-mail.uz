@@ -39,7 +39,6 @@ class Part(models.Model):
         import asyncio
 
         from bot.handlers.online_buy.orders import _render_order
-        from bot.models import get_text as _
         from bot.settings import TOKEN
         from bot.utils import create_bot
         from users.models import ClientId
