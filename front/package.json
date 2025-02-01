@@ -17,6 +17,7 @@
     "autoprefixer": "^10.4.14",
     "nuxt": "^3.3.3",
     "postcss": "^8.4.21",
-    "tailwindcss": "^3.3.1"
+    "tailwindcss": "^3.3.1",
+    "esno": "^0.17.0"
   }
 }
