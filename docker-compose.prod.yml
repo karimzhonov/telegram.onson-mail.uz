@@ -47,7 +47,7 @@ services:
   front:
       container_name: onson-front
       build: 
-        context: .
+        context: ./front
         dockerfile: Dockerfile.front
       ports:
         - 3000:3000
