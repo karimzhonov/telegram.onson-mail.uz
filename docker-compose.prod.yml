@@ -43,3 +43,15 @@ services:
       - ${REDIS_PORT}
     volumes:
       - ./redis_data:/data
+
+  front:
+      container_name: onson-front
+      build: 
+        context: .
+        dockerfile: Dockerfile.front
+      ports:
+        - 3000:3000
+      command: sh -c "npm run serve"
+      restart: always
+      env_file:
+        - ./.env
