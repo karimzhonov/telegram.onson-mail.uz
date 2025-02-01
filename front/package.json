@@ -5,8 +5,9 @@
     "build": "nuxt build",
     "dev": "nuxt dev",
     "generate": "nuxt generate",
-    "serve": "nuxt preview",
-    "postinstall": "nuxt prepare"
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare",
+    "serve": "esno .output/server/index.mjs"
   },
   "devDependencies": {
     "@nuxt/image": "^1.0.0-rc.1",
