@@ -20,11 +20,11 @@
 
                 <div class="flex items-center gap-x-3 text-gray-600 dark:text-gray-300">
                     <NuxtLink target="_blank" to="#" class="transition hover:!text-primary">
-                        <img src="Telegram.svg" height="35" width="35"/>
+                        <img src="/Telegram.svg" height="35" width="35"/>
                     </NuxtLink>
 
                     <NuxtLink target="_blank" to="#" class="transition hover:!text-primary">
-                        <img src="Instagram.svg" height="35" width="35"/>
+                        <img src="/Instagram.svg" height="35" width="35"/>
                     </NuxtLink>
                 </div>
             </div>

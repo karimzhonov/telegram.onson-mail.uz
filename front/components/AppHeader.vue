@@ -59,11 +59,11 @@ const navLinks = [
                 <div class="flex items-center bg-inherit gap-1 lg:gap-3 min-w-max">
                     <ElementsThemeSwitcher />
                     <NuxtLink target="_blank" to="https://t.me/onson_mail_bot" class="transition hover:!text-primary">
-                        <img src="Telegram.svg" height="25" width="25"/>
+                        <img src="/Telegram.svg" height="25" width="25"/>
                     </NuxtLink>
 
                     <NuxtLink target="_blank" to="https://www.instagram.com/onson.mail" class="transition hover:!text-primary">
-                        <img class="p-2.5" src="Instagram.svg" height="45" width="45"/>
+                        <img class="p-2.5" src="/Instagram.svg" height="45" width="45"/>
                     </NuxtLink>
 
                     <div class="flex lg:hidden border-l border-box-border pl-2">
