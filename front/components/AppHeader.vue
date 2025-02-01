@@ -29,7 +29,7 @@ const navLinks = [
 
 </script>
 <template>
-    <header class="absolute inset-x-0 top-0 py-3 z-50">
+    <header class="inset-x-0 top-0 py-3 z-50 header">
         <AtomsContainer class-name="relative">
             <nav class="flex items-center justify-between w-full relative">
                 <!-- app logo -->
@@ -39,8 +39,8 @@ const navLinks = [
                             <img src="/logo.png" width="50" height="50" />
                         </span>
                         <span class="text-lg text-gray-700 dark:text-white">
-                            <p class="mb-0 font-bold" style="line-height: 16px;">ONSON</p>
-                            <p class="mb=0 font-bold" style="font-size: 12px; line-height: 12px;">MAIL TOUR</p>
+                            <p class="mb-0 font-bold text-transparent bg-clip-text bg-gradient-to-br from-primary to-[#8cd66a]" style="line-height: 16px;">ONSON</p>
+                            <p class="mb=0 font-bold text-transparent bg-clip-text bg-gradient-to-br from-primary to-[#8cd66a]" style="font-size: 12px; line-height: 12px;">MAIL TOUR</p>
                         </span>
                     </NuxtLink>
                 </div>
@@ -84,3 +84,9 @@ const navLinks = [
         </AtomsContainer>
     </header>
 </template>
+<style>
+.header {
+    position: sticky;
+    background-color: rgb(var(--color-bg));
+}
+</style>
