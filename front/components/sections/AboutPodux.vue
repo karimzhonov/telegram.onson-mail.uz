@@ -24,18 +24,18 @@
                                 class="text-center rounded-xl bg-box-bg shadow-lg shadow-box-shadow border border-box-border p-3">
                                 <h3 class="text-gray-800 dark:text-white font-bold text-xl sm:text-2xl lg:text-3xl">10 000+
                                 </h3>
-                                <p class="text-sm sm:text-base text-gray-600 dark:text-gray-300">тонн успешно доставленного груза</p>
+                                <p class="text-sm sm:text-base text-gray-600 dark:text-gray-300" lang="ru" style="word-wrap: break-word;hyphens: auto;">тонн успешно доставленного груза</p>
                             </div>
                             <div
                                 class="text-center rounded-xl bg-box-bg shadow-lg shadow-box-shadow border border-box-border p-3">
                                 <h3 class="text-gray-800 dark:text-white font-bold text-xl sm:text-2xl lg:text-3xl">1 000+</h3>
-                                <p class="text-sm sm:text-base text-gray-600 dark:text-gray-300">организованных туров</p>
+                                <p class="text-sm sm:text-base text-gray-600 dark:text-gray-300" lang="ru" style="word-wrap: break-word;hyphens: auto;">организованных туров</p>
                             </div>
                             <div
                                 class="text-center rounded-xl bg-box-bg shadow-lg shadow-box-shadow border border-box-border p-3">
                                 <h3 class="text-gray-800 dark:text-white font-bold text-xl sm:text-2xl lg:text-3xl">100+
                                 </h3>
-                                <p class="text-sm sm:text-base text-gray-600 dark:text-gray-300">успешных бизнес-стратегий внедрено</p>
+                                <p class="text-sm sm:text-base text-gray-600 dark:text-gray-300" lang="ru" style="word-wrap: break-word;hyphens: auto;">успешных бизнес-стратегий внедрено</p>
                             </div>
                         </div>
                         

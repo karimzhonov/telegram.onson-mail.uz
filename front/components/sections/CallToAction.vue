@@ -26,7 +26,7 @@
                     </p>
                     <div class="mx-auto max-w-md sm:max-w-xl pt-10">
                         <form action="" class="flex items-center relative gap-x-2">
-                            <input type="text" placeholder="Введите свой номер отслеживания"
+                            <input type="text" placeholder="Введите номер отслеживания"
                                 class="outline-none border-2 border-transparent focus:border-primary bg-body text-gray-600 dark:text-gray-200 rounded-3xl px-6 py-3 w-full">
                             <div
                                 class="sm:inline-flex sm:min-w-max absolute sm:relative top-0.5 right-0.5 sm:top-0 sm:right-0">
