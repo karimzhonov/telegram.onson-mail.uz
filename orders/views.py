@@ -1,19 +1,10 @@
-from django.shortcuts import render
-from .models import Order, PART_STATUS
+from rest_framework.generics import RetrieveAPIView
+from .models import Order
+from .serializers import OrderSerializer
 
-def index(request):
-    order = None
-    error = False
-    try:
-        number = request.GET.get('number')
-        if number:
-            order = Order.objects.get(number=number)
-    except Order.DoesNotExist:
-        error = True
-    context = {
-        'order': order,
-        'error': error,
-        'status': dict(PART_STATUS)[order.part.status] if order else None,
-    }
-    print(context)
-    return render(request, "orders/index.html", context)
+
+class OrderByNumberView(RetrieveAPIView):
+    lookup_field = 'number'
+    lookup_url_kwarg = 'number'
+    serializer_class = OrderSerializer
+    queryset = Order.objects.all()

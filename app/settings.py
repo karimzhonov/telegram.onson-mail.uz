@@ -56,11 +56,15 @@ INSTALLED_APPS = [
     'storages',
     'users',
     'orders',
+    'rest_framework',
+    'corsheaders',
+    'drf_spectacular',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -152,6 +156,22 @@ PARLER_LANGUAGES = {
     }
 }
 
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': (),
+    'DEFAULT_AUTHENTICATION_CLASSES': (),
+    'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework.renderers.JSONRenderer',
+    ),
+    'DEFAULT_PARSER_CLASSES': [
+        'rest_framework.parsers.JSONParser',
+    ],
+    'DEFAULT_FILTER_BACKENDS': [],
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    'DATETIME_FORMAT': "%d.%m.%Y %H:%M:%S",
+    'DATE_FORMAT': "%d.%m.%Y",
+}
+
 PARLER_DEFAULT_LANGUAGE_CODE = 'uz'
 
 # Static files (CSS, JavaScript, Images)
@@ -169,10 +189,29 @@ STATIC_ROOT = BASE_DIR / "static"
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 10240
 
+CORS_ORIGIN_ALLOW_ALL = True
+# XS_SHARING_ALLOWED_METHODS = ['POST', 'GET', 'OPTIONS', 'PUT', 'PATCH', 'DELETE']
+# CORS_ALLOW_HEADERS = (
+#     'accept',
+#     'accept-encoding',
+#     'authorization',
+#     'content-type',
+#     'dnt',
+#     'origin',
+#     'user-agent',
+#     'referer',
+#     'x-csrftoken',
+#     'x-requested-with',
+#     'x-device-id',
+#     'x-lang',
+#     'x-admin',
+#     'admin',
+#     'dev_mode',
+# )
 USE_X_FORWARDED_HOST = True
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 X_FRAME_OPTIONS = 'ALLOWALL'
 
-CSRF_TRUSTED_ORIGINS = ["http://178.208.81.109:8000", "http://178.208.81.109"]
+CSRF_TRUSTED_ORIGINS = ["http://178.208.75.215", "http://localhost:3000", "https://onson-mail.uz"]
 

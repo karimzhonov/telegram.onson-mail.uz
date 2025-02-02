@@ -1,7 +1,7 @@
 from django.urls import path
 
-from .views import index
+from .views import OrderByNumberView
 
 urlpatterns = [
-    path('', index, name='index'),
+    path('order/<number>/', OrderByNumberView.as_view(), name='index'),
 ]

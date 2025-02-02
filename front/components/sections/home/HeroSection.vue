@@ -21,7 +21,7 @@
                         <h1 class="text-gray-800 pt-4 dark:text-white font-bold text-4xl md:text-5xl lg:text-6xl">
                             
                             <span class="text-transparent bg-clip-text bg-gradient-to-br from-primary to-[#8cd66a]">ONSONMAIL</span>
-                            <br>ваш путь к воплощению мечты.
+                            <br>ваш путь к воплощению мечты
                         </h1>
                         <p class="text-gray-800 pt-4 dark:text-white">
                             <span class="text-transparent bg-clip-text bg-gradient-to-br from-primary to-[#8cd66a] font-bold">ONSONMAIL</span> — это динамично развивающаяся компания, предоставляющая профессиональные услуги в сфере грузоперевозок, туризма и консалтинга. Мы стремимся к совершенству, предлагая надежные решения, ориентированные на потребности наших клиентов.

@@ -14,3 +14,6 @@ django-jazzmin==2.6.0
 django-admincharts
 django-image-uploader-widget
 django-admin-sortable2==2.1.4
+djangorestframework==3.13.1
+drf-spectacular==0.24.1
+django-cors-headers==3.13.0

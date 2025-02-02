@@ -9,7 +9,7 @@
                         </span>
                         <span class="text-lg text-gray-700 dark:text-white">
                             <p class="mb-0 font-bold" style="line-height: 16px;">ONSON</p>
-                            <p class="mb=0 font-bold" style="font-size: 12px; line-height: 12px;">MAIL TOUR</p>
+                            <p class="mb=0 font-bold" style="font-size: 12px; line-height: 12px;">MAIL GROUP</p>
                         </span>
                     </NuxtLink>
 

@@ -40,7 +40,7 @@ const navLinks = [
                         </span>
                         <span class="text-lg text-gray-700 dark:text-white">
                             <p class="mb-0 font-bold text-transparent bg-clip-text bg-gradient-to-br from-primary to-[#8cd66a]" style="line-height: 16px;">ONSON</p>
-                            <p class="mb=0 font-bold text-transparent bg-clip-text bg-gradient-to-br from-primary to-[#8cd66a]" style="font-size: 12px; line-height: 12px;">MAIL TOUR</p>
+                            <p class="mb=0 font-bold text-transparent bg-clip-text bg-gradient-to-br from-primary to-[#8cd66a]" style="font-size: 12px; line-height: 12px;">MAIL GROUP</p>
                         </span>
                     </NuxtLink>
                 </div>

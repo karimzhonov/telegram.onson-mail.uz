@@ -1,6 +1,6 @@
 <script setup lang="ts">
 useHead({
-  title: 'Onson Mail Tour',
+  title: 'Onson Mail Group',
   meta: [
     { name: 'description', content: 'Cargo, turism and consalting' },
   ],
