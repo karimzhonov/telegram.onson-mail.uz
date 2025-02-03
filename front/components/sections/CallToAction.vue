@@ -105,7 +105,7 @@ export default {
             if (!this.number) return
             try {
                 // const response = await axios.get(`http://localhost:8000/api/orders/order/${this.number}/`)
-                response = await axios.get(`https://api.onson-mail.uz/api/orders/order/${this.number}/`)
+                const response = await axios.get(`https://api.onson-mail.uz/api/orders/order/${this.number}/`)
                 this.order = response.data
             } catch {
                 this.error = true

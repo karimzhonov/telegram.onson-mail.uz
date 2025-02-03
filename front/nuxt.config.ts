@@ -1,13 +1,19 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
-export default {
+import {defineNuxtConfig} from 'nuxt/config'
+
+export default defineNuxtConfig({
     ssr: false,
+
     modules: [
+        "@vite-pwa/nuxt",
         '@nuxtjs/color-mode',
         '@nuxt/image',
     ],
+
     css: [
         '~/assets/css/app.css'
     ],
+
     colorMode: {
         preference: 'system', // default value of $colorMode.preference
         fallback: 'dark', // fallback value if not system preference found
@@ -18,36 +24,60 @@ export default {
         classSuffix: '',
         storageKey: 'nuxt-color-mode'
     },
+
     postcss: {
         plugins: {
             tailwindcss: {},
             autoprefixer: {}
         }
     },
-    vite: {
-        server: {
-            fs: {
-                // Allow serving files from one level up to the project root
-                allow: ['/'],
-            },
+
+    pwa: {
+        strategies: 'generateSW',
+        srcDir: 'service-worker',
+        filename: 'sw.ts',
+        registerType: 'autoUpdate',
+        manifest: {
+            name: "Onson Mail",
+            short_name: "Onson Mail",
+            description: "Onson Mail Group",
+            display: "minimal-ui",
+            start_url: "/",
+            scope: "/",
+            theme_color: '#00D8A5',
+            icons: [
+                {
+                    src: "logo192.png",
+                    sizes: "192x192",
+                    type: "image/png",
+                },
+                {
+                    src: 'logo512.png',
+                    sizes: '512x512',
+                    type: 'image/png',
+                },
+            ],
+        },
+        workbox: {
+            globPatterns: ['**/*.{js,css,html,png,svg,ico}'],
+        },
+        injectManifest: {
+            globPatterns: ['**/*.{js,css,html,png,svg,ico}'],
+        },
+        client: {
+            installPrompt: true,
+            // you don't need to include this: only for testing purposes
+            // if enabling periodic sync for update use 1 hour or so (periodicSyncForUpdates: 3600)
+            periodicSyncForUpdates: 20,
+        },
+        devOptions: {
+            enabled: true,
+            suppressWarnings: true,
+            navigateFallback: '/',
+            navigateFallbackAllowlist: [/^\/$/],
+            type: 'module',
         },
     },
-    buildModules: [
-        '@nuxtjs/pwa',
-    ],
-    pwa: {
-        manifest: {
-            name: 'Onson Mail',
-            short_name: 'Onson Mail',
-            lang: 'ru',
-            description: 'Onson Mail Group',
-        },
-        icon: {
-            source: '/logo.png',
-            fileName: 'logo.png',
-        },
-        meta: {
-            mobileAppIOS: true
-        }
-    }
-}
+
+    compatibilityDate: '2025-02-03',
+})
