@@ -20,6 +20,7 @@
     "tailwindcss": "^3.3.1"
   },
   "dependencies": {
+    "@nuxtjs/pwa": "^3.3.5",
     "axios": "^1.7.9"
   }
 }
