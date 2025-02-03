@@ -1,0 +1,17 @@
+version: '3.3'
+
+services:
+
+  front:
+      container_name: onson-front
+      build:
+        context: ./front
+        dockerfile: Dockerfile.dev
+      ports:
+        - "3000:3000"
+      command: sh -c "npm run dev"
+      restart: always
+      env_file:
+        - ./.env
+      volumes:
+        - ./front/:/app/
