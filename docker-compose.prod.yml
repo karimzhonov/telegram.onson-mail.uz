@@ -50,8 +50,5 @@ services:
       ports:
         - "3000:3000"
       command: sh -c "npm run preview"
-      restart: always
       env_file:
         - ./.env
-      volumes:
-        - ./front/:/app/

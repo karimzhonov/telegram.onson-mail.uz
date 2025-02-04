@@ -1,19 +1,27 @@
-FROM node:lts-alpine as prod
+ARG NODE_VERSION=20.18.0
 
-# make the 'app' folder the current working directory
+FROM node:${NODE_VERSION}-slim as base
+
+ARG PORT=3000
+
 WORKDIR /app
 
+# Build
+FROM base as build
 
-# copy project files and folders to the current working directory (i.e. 'app' folder)
-COPY . .
-RUN npm cache clear -f
-RUN npm ci
+COPY --link package.json package-lock.json .
+RUN npm install
 
-ENV HOST=0.0.0.0
-ENV PORT=3000
-ENV NITRO_HOST=0.0.0.0
-ENV NITRO_PORT=3000
-
-EXPOSE 3000
+COPY --link . .
 
 RUN npm run build
+
+# Run
+FROM base
+
+ENV PORT=$PORT
+ENV NODE_ENV=production
+
+COPY --from=build /app/.output /app/.output
+# Optional, only needed if you rely on unbundled dependencies
+# COPY --from=build /app/node_modules /app/node_modules
