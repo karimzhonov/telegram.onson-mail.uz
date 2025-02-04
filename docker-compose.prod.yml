@@ -53,5 +53,5 @@ services:
       restart: always
       env_file:
         - ./.env
-      volumes:
-        - ./front/:/app/
+#      volumes:
+#        - ./front/:/app/
