@@ -33,37 +33,47 @@ export default defineNuxtConfig({
     },
 
     pwa: {
-        strategies: 'generateSW',
-        srcDir: 'service-worker',
-        filename: 'sw.ts',
-        registerType: 'autoUpdate',
+        // strategies: 'injectManifest',
+        // srcDir: 'service-worker',
+        // filename: 'sw.ts',
+        // registerType: 'autoUpdate',
         manifest: {
             name: "Onson Mail",
             short_name: "Onson Mail",
             description: "Onson Mail Group",
-            display: "minimal-ui",
-            start_url: "/",
-            scope: "/",
+            // display: "minimal-ui",
+            // start_url: "/",
+            // scope: "/",
             theme_color: '#00D8A5',
             icons: [
                 {
-                    src: "logo192.png",
+                    src: "/icons/logo64.png",
+                    sizes: "64x64",
+                    type: "image/png",
+                },
+                {
+                    src: "/icons/logo144.png",
+                    sizes: "144x144",
+                    type: "image/png",
+                },
+                {
+                    src: "/icons/logo192.png",
                     sizes: "192x192",
                     type: "image/png",
                 },
                 {
-                    src: 'logo512.png',
+                    src: '/icons/logo512.png',
                     sizes: '512x512',
                     type: 'image/png',
                 },
             ],
         },
         workbox: {
-            globPatterns: ['**/*.{js,css,html,png,svg,ico}'],
+            navigateFallback: '/',
         },
-        injectManifest: {
-            globPatterns: ['**/*.{js,css,html,png,svg,ico}'],
-        },
+        // injectManifest: {
+        //     globPatterns: ['**/*.{js,css,html,png,svg,ico}'],
+        // },
         client: {
             installPrompt: true,
             // you don't need to include this: only for testing purposes
@@ -72,9 +82,9 @@ export default defineNuxtConfig({
         },
         devOptions: {
             enabled: true,
-            suppressWarnings: true,
-            navigateFallback: '/',
-            navigateFallbackAllowlist: [/^\/$/],
+            // suppressWarnings: true,
+            // navigateFallback: '/',
+            // navigateFallbackAllowlist: [/^\/$/],
             type: 'module',
         },
     },
