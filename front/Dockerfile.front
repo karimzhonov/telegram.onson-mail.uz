@@ -2,7 +2,7 @@ FROM node:lts-alpine as prod
 
 COPY package*.json ./
 RUN npm cache clear -f
-RUN npm ci
+RUN npm i
 
 # make the 'app' folder the current working directory
 WORKDIR /app
