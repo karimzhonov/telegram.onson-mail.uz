@@ -49,6 +49,6 @@ services:
         dockerfile: Dockerfile.front
       ports:
         - "3000:3000"
-      command: sh -c "nuxi start"
+      command: sh -c "npm run serve"
       env_file:
         - ./.env
