@@ -68,7 +68,8 @@
                         </div>
                         
                         <div class="flex mb-2">    
-                            <p class="text-gray-600 dark:text-gray-300 text-xl flex" style="text-wrap: nowrap">Название тавара: <p class="font-bold text-transparent bg-clip-text bg-gradient-to-br from-primary to-[#8cd66a] ml-2 text-xl" lang="ru" style="word-wrap: break-word;hyphens: auto;">{{ order.name }} </p></p>
+                            <p class="text-gray-600 dark:text-gray-300 text-xl flex" style="text-wrap: nowrap">Название тавара:</p>
+                            <p class="font-bold text-transparent bg-clip-text bg-gradient-to-br from-primary to-[#8cd66a] ml-2 text-xl" lang="ru" style="word-wrap: break-word;hyphens: auto;">{{ order.name }} </p>
                         </div>
 
                         <div class="flex mb-2">    
