@@ -52,5 +52,3 @@ services:
       command: sh -c "npm run preview"
       env_file:
         - ./.env
-      volumes:
-        - ./front:/app
