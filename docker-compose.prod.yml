@@ -14,8 +14,6 @@ services:
     depends_on:
       - web
     env_file: .env
-    ports:
-      - "443:443"
 
   web:
     container_name: onson-web
@@ -50,8 +48,8 @@ services:
         context: ./front
         dockerfile: Dockerfile.front
       ports:
-        - 3000:3000
-      command: sh -c "npm run serve"
+        - "3000:3000"
+      command: sh -c "npm run preview"
       restart: always
       env_file:
         - ./.env
