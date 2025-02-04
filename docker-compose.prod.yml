@@ -49,6 +49,6 @@ services:
         dockerfile: Dockerfile.front
       ports:
         - "3000:3000"
-      command: sh -c "npm run preview"
+      command: sh -c "npm run start"
       env_file:
         - ./.env
